@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.vafer</groupId>
+  <artifactId>dependency</artifactId>
+  <name>dependency</name>
+  <version>0.1</version>
+  <description>
+    This project provides an API to analyse and modify class dependencies
+  </description>
+  <url>http://vafer.org/projects/dependency</url>
+
+  <licenses>
+    <license>
+      <name>Apache License 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>tcurdt</id>
+      <name>Torsten Curdt</name>
+      <email>tcurdt at apache.org</email>
+      <roles>
+        <role>Lead Developer</role>
+      </roles>
+      <timezone>+10</timezone>
+    </developer>
+  </developers>
+
+   <scm>
+      <connection>scm:svn:http://vafer.org/svn/projects/dependency</connection>
+      <developerConnection>scm:svn:https://vafer.org/svn/projects/dependency/</developerConnection>
+      <url>http://vafer.org/svn/projects/dependency/</url>
+   </scm>
+
+  <distributionManagement>
+    <site>
+      <id>website</id>
+      <url>scp://vafer.org/home/tcurdt/apache2/vafer.org/root/projects/dependency</url>
+    </site>
+  </distributionManagement>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>2.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+  </dependencies>
+
+  <reporting>
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependencies</report>
+              <report>project-team</report>
+              <report>license</report>
+              <report>scm</report>
+<!--
+              <report>mailing-list</report>
+              <report>cim</report>
+              <report>issue-tracking</report>
+-->
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+      <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-site-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+  </reporting>
+</project>
