@@ -30,8 +30,8 @@
   </developers>
 
    <scm>
-      <connection>scm:svn:http://vafer.org/svn/projects/dependency</connection>
-      <developerConnection>scm:svn:https://vafer.org/svn/projects/dependency/</developerConnection>
+      <connection>scm:svn:http://vafer.org/svn/projects/dependency/trunk</connection>
+      <developerConnection>scm:svn:https://vafer.org/svn/projects/dependency/trunk</developerConnection>
       <url>http://vafer.org/svn/projects/dependency/</url>
    </scm>
 

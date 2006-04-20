@@ -19,16 +19,16 @@
       <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
     </links>
 
-    <menu name="Project">
 <!--
+    <menu name="Project">
       <item name="Download" href="download.html"/>
       <item name="Introduction" href="index.html"/>
       <item name="Release Notes" href="release-notes.html" />
       <item name="General Information" href="about.html"/>
       <item name="For Maven 1.0 Users" href="maven1.html"/>
       <item name="Road Map" href="roadmap.html" />
--->
     </menu>
+-->
 
     ${reports}
 
