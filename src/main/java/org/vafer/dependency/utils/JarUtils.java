@@ -25,7 +25,10 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import org.vafer.dependency.Console;
+import org.vafer.dependency.asm.RenamingAdapter;
 
 
 public final class JarUtils {
@@ -33,8 +36,8 @@ public final class JarUtils {
     
     public static boolean combineJars(
             final File[] pInputJars,
-            final ResourceMatcher pMatcher,
-            final ResourceRenamer pRenamer,
+            final ResourceMatcher[] pMatchers,
+            final ResourceRenamer[] pRenamers,
             final File pOutputJar
             ) throws IOException {
 
@@ -69,8 +72,8 @@ public final class JarUtils {
                 
                 final String oldName = entry.getName();
                 
-                if (pMatcher.keepResourceWithName(oldName)) {
-                    final String newName = pRenamer.getNewResourceNameFor(pInputJars[i], oldName);
+                if (pMatchers[i].keepResourceWithName(oldName)) {
+                    final String newName = pRenamers[i].getNewResourceNameForResource(oldName);
                     
                     if (newName.equals(oldName)) {
                         if (pConsole != null) {
@@ -92,8 +95,12 @@ public final class JarUtils {
                             if (pConsole != null) {
                                 pConsole.println("adjusting class " + oldName + "->" + newName);
                             }
+                            
+                            final ClassReader r = new ClassReader(oldClassBytes);
+                            final ClassWriter w = new ClassWriter(true);
+                            r.accept(new RenamingAdapter(w, pRenamers[i]), false);
 
-                            final byte[] newClassBytes = oldClassBytes;
+                            final byte[] newClassBytes = w.toByteArray();
                             IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputJar);
                         } else {
                             IOUtils.copy(inputStream, outputJar);                                                

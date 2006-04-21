@@ -15,10 +15,9 @@
  */
 package org.vafer.dependency.utils;
 
-import java.io.File;
 
 
 public interface ResourceRenamer {
 
-    String getNewResourceNameFor( File pFile, String pOldName );
+    String getNewResourceNameForResource( String pOldName );
 }

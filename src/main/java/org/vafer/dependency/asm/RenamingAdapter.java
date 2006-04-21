@@ -20,6 +20,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.vafer.dependency.utils.ResourceRenamer;
 
 
 public final class RenamingAdapter extends DelegatingAdapter {
@@ -27,6 +28,13 @@ public final class RenamingAdapter extends DelegatingAdapter {
     private String oldName;
     private String newName;
 
+    public RenamingAdapter( final ClassVisitor pClassVisitor, final ResourceRenamer pResourceRenamer ) {        
+        super(pClassVisitor);
+    }
+
+    /**
+     * @deprecated
+     */
     public RenamingAdapter( final ClassVisitor pClassVisitor, final String pNewName, final String pOldName ) {
         super(pClassVisitor);
         newName = toInternalName(pNewName);
