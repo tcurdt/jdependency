@@ -117,6 +117,11 @@ public final class ClazzpathUnit
         f.close();
     }
 
+    public File getFile()
+    {
+    	return location;
+    }
+    
     public Set getClazzes()
     {
         final Set all = new HashSet();
