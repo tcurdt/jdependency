@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
@@ -32,7 +33,6 @@ import org.vafer.dependency.asm.RenamingAdapter;
 
 
 public final class JarUtils {
-
     
     public static boolean combineJars(
             final File[] pInputJars,
