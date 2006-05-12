@@ -114,21 +114,18 @@ public abstract class DelegatingAdapter implements ClassVisitor, FieldVisitor, M
     }
 
 
-    public void visit( int version, int access, String name, String signature, String superName,
-            String[] interfaces ) {
+    public void visit( int version, int access, String name, String signature, String superName, String[] interfaces ) {
         cv.visit(version, access, name, signature, superName, interfaces);
     }
 
 
-    public final FieldVisitor visitField( int access, String name, String desc, String signature,
-            Object value ) {
+    public final FieldVisitor visitField( int access, String name, String desc, String signature, Object value ) {
         fv = doVisitField(access, name, desc, signature, value);
         return this;
     }
 
 
-    protected FieldVisitor doVisitField( int access, String name, String desc, String signature,
-            Object value ) {
+    protected FieldVisitor doVisitField( int access, String name, String desc, String signature, Object value ) {
         return cv.visitField(access, name, desc, signature, value);
     }
 
@@ -138,15 +135,13 @@ public abstract class DelegatingAdapter implements ClassVisitor, FieldVisitor, M
     }
 
 
-    public final MethodVisitor visitMethod( int access, String name, String desc, String signature,
-            String[] exceptions ) {
+    public final MethodVisitor visitMethod( int access, String name, String desc, String signature, String[] exceptions ) {
         mv = doVisitMethod(access, name, desc, signature, exceptions);
         return this;
     }
 
 
-    protected MethodVisitor doVisitMethod( int access, String name, String desc, String signature,
-            String[] exceptions ) {
+    protected MethodVisitor doVisitMethod( int access, String name, String desc, String signature, String[] exceptions ) {
         return cv.visitMethod(access, name, desc, signature, exceptions);
     }
 
@@ -211,8 +206,7 @@ public abstract class DelegatingAdapter implements ClassVisitor, FieldVisitor, M
     }
 
 
-    public void visitLocalVariable( String name, String desc, String signature, Label start,
-            Label end, int index ) {
+    public void visitLocalVariable( String name, String desc, String signature, Label start, Label end, int index ) {
         mv.visitLocalVariable(name, desc, signature, start, end, index);
     }
 

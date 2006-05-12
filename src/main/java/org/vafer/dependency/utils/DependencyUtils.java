@@ -10,7 +10,7 @@ import java.util.jar.JarInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
-import org.vafer.dependency.asm.DependencyVisitor;
+import org.vafer.dependency.asm.CollectingDependencyVisitor;
 
 public final class DependencyUtils {
 
@@ -35,7 +35,7 @@ public final class DependencyUtils {
 	            final String name = entry.getName();
 	            
 	            if (name.endsWith(".class")) {
-	                final DependencyVisitor v = new DependencyVisitor();
+	                final CollectingDependencyVisitor v = new CollectingDependencyVisitor();
 	                new ClassReader( inputStream ).accept( v, false );
 	                dependencies.addAll(v.getDependencies());
 	            } else {
@@ -50,7 +50,7 @@ public final class DependencyUtils {
 	}
 
 	public static Set getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
-        final DependencyVisitor v = new DependencyVisitor();
+        final CollectingDependencyVisitor v = new CollectingDependencyVisitor();
         new ClassReader( pInputStream ).accept( v, false );
         final Set depNames = v.getDependencies();
         return depNames;

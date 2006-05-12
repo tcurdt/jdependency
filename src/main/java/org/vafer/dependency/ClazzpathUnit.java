@@ -25,8 +25,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import org.objectweb.asm.ClassReader;
-import org.vafer.dependency.asm.DependencyVisitor;
+import org.vafer.dependency.asm.CollectingDependencyVisitor;
 
 public final class ClazzpathUnit
 {
@@ -82,7 +83,7 @@ public final class ClazzpathUnit
                 clazzes.put( clazzName, clazz );
                 clazzpath.clazzes.put( clazzName, clazz );
 
-                final DependencyVisitor v = new DependencyVisitor();
+                final CollectingDependencyVisitor v = new CollectingDependencyVisitor();
                 new ClassReader( f.getInputStream( entry ) ).accept( v, false );
                 final Set depNames = v.getDependencies();
 
