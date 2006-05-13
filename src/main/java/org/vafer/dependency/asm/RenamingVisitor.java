@@ -8,13 +8,12 @@ public final class RenamingVisitor extends DependencyVisitor {
 	private final ResourceRenamer renamer;
 	
 	public RenamingVisitor(final ClassVisitor pClassVisitor, final ResourceRenamer pRenamer) {
-		super();
+		super(pClassVisitor);
 		renamer = pRenamer;
 	}
 	
 	protected String visitDependency( final String pClassName ) {
-		final String newClassName = renamer.getNewResourceNameForResource(pClassName);
-		System.out.println("renaming " + pClassName + " into " + newClassName);
+		final String newClassName = renamer.getNewNameFor(pClassName);
 		return newClassName;
 	}
 

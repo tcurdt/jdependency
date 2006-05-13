@@ -73,7 +73,7 @@ public final class JarUtils {
                 final String oldName = entry.getName();
                 
                 if (pMatchers[i].keepResourceWithName(oldName)) {
-                    final String newName = pRenamers[i].getNewResourceNameForResource(oldName);
+                    final String newName = pRenamers[i].getNewNameFor(oldName);
                     
                     if (newName.equals(oldName)) {
                         if (pConsole != null) {

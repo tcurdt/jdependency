@@ -50,6 +50,11 @@
       <artifactId>asm-commons</artifactId>
       <version>2.2.1</version>
     </dependency>
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm-util</artifactId>
+      <version>2.2.1</version>
+    </dependency>
   </dependencies>
   <reporting>
     <plugins>
