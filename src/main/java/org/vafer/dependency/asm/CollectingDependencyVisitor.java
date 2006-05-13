@@ -3,7 +3,7 @@ package org.vafer.dependency.asm;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class CollectingDependencyVisitor extends AbstractDependencyVisitor {
+public final class CollectingDependencyVisitor extends DependencyVisitor {
 
 	final Set classes = new HashSet();
 

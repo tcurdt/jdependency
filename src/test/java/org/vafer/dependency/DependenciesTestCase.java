@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import org.vafer.dependency.classes.Class1;
 import org.vafer.dependency.classes.Class2;
 import org.vafer.dependency.classes.Class3;
+import org.vafer.dependency.classes.Class4;
 import org.vafer.dependency.utils.DependencyUtils;
 
 public class DependenciesTestCase extends TestCase {
@@ -36,6 +37,18 @@ public class DependenciesTestCase extends TestCase {
 		final Set dependencies = DependencyUtils.getDependenciesOfClass(Class3.class);
 		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
 				Class3.class.getName(),
+				"java.lang.String",
+				"java.lang.Object"
+				}));
+		assertEquals(expectedDependencies, dependencies);
+	}
+
+	public void testClass4() throws Exception {
+		final Set dependencies = DependencyUtils.getDependenciesOfClass(Class4.class);
+		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
+				Class4.class.getName(),
+				"java.util.HashMap",
+				"java.util.Map",
 				"java.lang.String",
 				"java.lang.Object"
 				}));

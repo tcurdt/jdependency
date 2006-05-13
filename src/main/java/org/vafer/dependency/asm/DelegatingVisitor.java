@@ -22,14 +22,14 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-public abstract class DelegatingAdapter implements ClassVisitor, FieldVisitor, MethodVisitor {
+public class DelegatingVisitor implements ClassVisitor, FieldVisitor, MethodVisitor {
 
     private ClassVisitor cv;
     private MethodVisitor mv;
     private FieldVisitor fv;
 
 
-    protected DelegatingAdapter(final ClassVisitor pClassVisitor) {
+    public DelegatingVisitor(final ClassVisitor pClassVisitor) {
         cv = pClassVisitor;
     }
 

@@ -29,7 +29,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.vafer.dependency.Console;
-import org.vafer.dependency.asm.RenamingAdapter;
+import org.vafer.dependency.asm.RenamingVisitor;
 
 
 public final class JarUtils {
@@ -98,7 +98,7 @@ public final class JarUtils {
                             
                             final ClassReader r = new ClassReader(oldClassBytes);
                             final ClassWriter w = new ClassWriter(true);
-                            r.accept(new RenamingAdapter(w, pRenamers[i]), false);
+                            r.accept(new RenamingVisitor(w, pRenamers[i]), false);
 
                             final byte[] newClassBytes = w.toByteArray();
                             IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputJar);
