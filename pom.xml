@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?><project>
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.vafer</groupId>
   <artifactId>dependency</artifactId>
-  <name>dependency</name>
   <version>0.1</version>
-  <description>This project provides an API to analyse and modify class dependencies</description>
+
+  <name>dependency</name>
   <url>http://vafer.org/projects/dependency</url>
+  <description>
+    This project provides an API to analyse and modify class dependencies
+  </description>
+
   <developers>
     <developer>
       <id>tcurdt</id>
@@ -17,6 +22,7 @@
       <timezone>+10</timezone>
     </developer>
   </developers>
+
   <licenses>
     <license>
       <name>Apache License 2</name>
@@ -24,26 +30,18 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
   <scm>
     <connection>scm:svn:http://vafer.org/svn/projects/dependency/trunk</connection>
     <developerConnection>scm:svn:https://vafer.org/svn/projects/dependency/trunk</developerConnection>
     <url>http://vafer.org/svn/projects/dependency</url>
   </scm>
+
   <dependencies>
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
       <version>2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
     </dependency>
     <dependency>
       <groupId>asm</groupId>
@@ -55,38 +53,74 @@
       <artifactId>asm-util</artifactId>
       <version>2.2.1</version>
     </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+    </dependency>
   </dependencies>
+
   <reporting>
     <plugins>
+
+      <plugin> 
+        <groupId>org.codehaus.mojo</groupId> 
+        <artifactId>taglist-maven-plugin</artifactId> 
+        <version>2.0-SNAPSHOT</version>
+        <configuration> 
+          <tags>
+            <tag>TODO</tag>
+            <tag>@todo</tag>
+            <tag>FIXME</tag>
+            <tag>@deprecated</tag>
+          </tags>
+        </configuration> 
+      </plugin>
+
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jxr-maven-plugin</artifactId>
       </plugin>
+
+      <plugin>     
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.0-SNAPSHOT</version>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <reportSets>
           <reportSet>
             <reports>
-              <report>dependencies</report>
               <report>project-team</report>
+              <report>dependencies</report>
               <report>license</report>
               <report>scm</report>
             </reports>
           </reportSet>
         </reportSets>
       </plugin>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-      </plugin>
     </plugins>
   </reporting>
+
   <distributionManagement>
     <site>
       <id>website</id>
       <url>scp://vafer.org/home/tcurdt/apache2/vafer.org/root/projects/dependency</url>
     </site>
   </distributionManagement>
+
 </project>
