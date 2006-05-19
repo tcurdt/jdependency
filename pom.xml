@@ -3,7 +3,7 @@
 
   <groupId>org.vafer</groupId>
   <artifactId>dependency</artifactId>
-  <version>0.1</version>
+  <version>0.1-SNAPSHOT</version>
 
   <name>dependency</name>
   <url>http://vafer.org/projects/dependency</url>
