@@ -3,7 +3,7 @@
   <groupId>org.vafer</groupId>
   <artifactId>dependency</artifactId>
   <name>dependency</name>
-  <version>0.1</version>
+  <version>0.2-SNAPSHOT</version>
   <description>This project provides an API to analyse and modify class dependencies</description>
   <url>http://vafer.org/projects/dependency</url>
   <developers>
@@ -25,9 +25,9 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:http://vafer.org/svn/projects/dependency/tags/dependency-0.1</connection>
-    <developerConnection>scm:svn:https://vafer.org/svn/projects/dependency/tags/dependency-0.1</developerConnection>
-    <url>http://vafer.org/svn/projects/dependency/tags/dependency-0.1</url>
+    <connection>scm:svn:http://vafer.org/svn/projects/dependency/trunk</connection>
+    <developerConnection>scm:svn:https://vafer.org/svn/projects/dependency/trunk</developerConnection>
+    <url>http://vafer.org/svn/projects/dependency</url>
   </scm>
   <build>
     <extensions>
