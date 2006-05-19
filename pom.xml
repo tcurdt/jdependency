@@ -3,7 +3,7 @@
   <groupId>org.vafer</groupId>
   <artifactId>dependency</artifactId>
   <name>dependency</name>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.1-SNAPSHOT</version>
   <description>This project provides an API to analyse and modify class dependencies</description>
   <url>http://vafer.org/projects/dependency</url>
   <developers>
