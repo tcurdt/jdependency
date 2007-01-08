@@ -1,3 +1,71 @@
-How to Use
+Howto use "dependency"
 
- Well, later...
+ Dependency is a little library based on ASM to gather class dependency
+ information. So can easily extract what classes are a single class or
+ a whole jar requires at to load. (It does not take reflection into account
+ though)
+
++--------------------
+Set dependencies = DependencyUtils.getDependenciesOfClass(SomeClass.class);
+Set dependencies = DependencyUtils.getDependenciesOfJar(jarInputStream);
++--------------------
+
+ You can find out what classes are missing from a classpath, what the
+ transitive dependencies are of a class or jar and what classes are
+ not required.
+
++--------------------
+Clazzpath clazzpath = new Clazzpath();
+ClazzpathUnit jar = new ClazzpathUnit(clazzpath, new File("my.jar"));
+new ClazzpathUnit(clazzpath, new File("depA.jar"));
+new ClazzpathUnit(clazzpath, new File("depB.jar"));
+
+Set allClazzes = clazzpath.getClazzes();
+Set missing = clazzpath.getMissingClazzes();
+Set jarClazzes = jar.getClazzes();
+Set jarDependencies = jar.getDependencies();
+Set jarTransitiveDependencies = jar.getTransitiveDependencies();
+
+Collection remove = new ArrayList();
+remove.addAll( allClazzes );
+remove.removeAll( jarClazzes );
+remove.removeAll( jarTransitiveDependencies );
+
+// remove holds all classes that can be removed
++--------------------
+
+ This libraries basically provides the core of the maven2 minijar
+ plugin that does something in between jarjar and proguard - just
+ on the class level. While proguard is more sophisticated in it's
+ analysis it's also more complex. The minijar plugin is KISS (keep
+ it simple and stupid) approach that still provides a good "compression"
+ ratio if you want to shrink your jar to only the classes you need.
+ With the dependency library you can also easily inline dependencies
+ by renaming classes and while adjusting the references.
+
++--------------------
+ClassWriter writer = new ClassWriter(true, false);
+
+new ClassReader(cl.getResourceAsStream("java/util/HashMap.class")).accept(
+  new RenamingVisitor(writer), new ResourceRenamer() {
+    public String getNewNameFor(final String oldName) {
+      if (oldName.startsWith("java.util.HashMap")) {
+        return "my." + oldName;
+      }
+    return oldName;
+}}), false);
++--------------------
+
+ Using the JarUtils it's easy to filer and rename and create
+ a single jar that only includes what you define and with the
+ name you provide.
+
++--------------------
+JarUtils.combineJars(
+ new File[] { new File("a.jar"), new File("b.jar") },
+ new ResourceMatcher[] { }
+ new ResourceMatcher[] { }
+ new ResourceRenamer[] { },
+ new File("output.jar")
+);
++--------------------

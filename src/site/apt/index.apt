@@ -1,3 +1,5 @@
 About
 
- This library provides an API to analyse and modify class dependencies 
+ This library provides an API to analyse and modify class dependencies.
+ It provides the core to the maven2 minijar plugin and provides something
+ in the middle between jarjar and proguard.

@@ -165,12 +165,6 @@ public abstract class DependencyVisitor extends DelegatingVisitor implements Cla
 	}
 
 	public void visitLdcInsn(Object cst) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("visitLdcInsn").append(": ");
-		sb.append("cst").append("=").append(cst).append(", ");
-		System.out.println(sb.toString());
-
-		//FIXME
 		
 		super.visitLdcInsn(cst);
 	}
