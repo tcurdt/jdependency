@@ -1,7 +1,22 @@
 package org.vafer.dependency;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Method;
+
 import junit.framework.TestCase;
 
+import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
@@ -83,4 +98,183 @@ public class RenamingTestCase extends TestCase {
 
         assertEquals("my.java.util.HashMap", renamedClass.getName());
 	}
+
+
+    
+    
+    
+	public static class FileInputStreamProxy extends InputStream {
+		
+		private final InputStream in = new ByteArrayInputStream((
+				"public class Test {" +
+				"public static void main(String[] args) {} }"
+				).getBytes());
+		
+		public FileInputStreamProxy(File file) throws FileNotFoundException {
+			System.out.println("Reading from file " + file);
+		}
+
+		public FileInputStreamProxy(FileDescriptor fdObj) {
+		}
+
+		public FileInputStreamProxy(String name) throws FileNotFoundException {
+		}
+		
+		public int read() throws IOException {
+			return in.read();
+		}
+
+		public int available() throws IOException {
+			return in.available();			
+		}
+
+		public void close() throws IOException {
+			in.close();
+		}
+
+		public synchronized void mark(int readlimit) {
+			in.mark(readlimit);
+		}
+
+		public boolean markSupported() {
+			return in.markSupported();
+		}
+
+		public int read(byte[] b, int off, int len) throws IOException {
+			return in.read(b, off, len);
+		}
+
+		public int read(byte[] b) throws IOException {
+			return in.read(b);
+		}
+
+		public synchronized void reset() throws IOException {
+			in.reset();
+		}
+
+		public long skip(long n) throws IOException {
+			return in.skip(n);
+		}
+	};
+
+	
+	public static class FileOutputStreamProxy extends OutputStream {
+		
+		final private ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		public FileOutputStreamProxy(File file, boolean append) throws FileNotFoundException {
+		}
+	
+		public FileOutputStreamProxy(File file) throws FileNotFoundException {
+			System.out.println("Writing to file " + file);
+		}
+	
+		public FileOutputStreamProxy(FileDescriptor fdObj) {
+		}
+	
+		public FileOutputStreamProxy(String name, boolean append) throws FileNotFoundException {
+		}
+	
+		public FileOutputStreamProxy(String name) throws FileNotFoundException {
+		}
+		
+		public void write(int value) throws IOException {
+			out.write(value);
+		}
+
+		public void close() throws IOException {
+			System.out.println("Wrote " + out.size() + " bytes");
+			out.close();
+		}
+
+		public void flush() throws IOException {
+			out.flush();
+		}
+
+		public void write(byte[] b, int off, int len) throws IOException {
+			out.write(b, off, len);
+		}
+
+		public void write(byte[] b) throws IOException {
+			out.write(b);
+		}
+	};
+
+    
+    public void testJavacInputRename() throws Exception {
+
+    	final ClassLoader cl = new ClassLoader() {
+
+			protected Class findClass(final String name) throws ClassNotFoundException {
+
+				//System.out.println("findClass " + name);
+				
+				if (name.startsWith("java.")) {
+					return super.findClass(name);
+				}
+				
+				InputStream classStream = getResourceAsStream(name.replace('.', '/') + ".class");
+				
+				try {
+					
+					final byte[] classBytes;
+
+					if (name.startsWith("")) {
+				        final ClassWriter renamedCw = new ClassWriter(true, false);
+				        new ClassReader(classStream).accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
+							public String getNewNameFor(final String pOldName) {
+								if (pOldName.startsWith(FileOutputStream.class.getName())) {
+									//System.out.println("rewriting FOS" + name);
+									return FileOutputStreamProxy.class.getName();
+								}
+								if (pOldName.startsWith(FileInputStream.class.getName())) {
+									//System.out.println("rewriting FIS" + name);
+									return FileInputStreamProxy.class.getName();
+								}
+								return pOldName;
+							}        		
+			        	}), false);
+
+			        	classBytes = renamedCw.toByteArray();
+						
+					} else {
+						classBytes = IOUtils.toByteArray(classStream);						
+					}
+					
+					return defineClass(name, classBytes, 0, classBytes.length);
+				} catch (IOException e) {
+					throw new ClassNotFoundException("", e);
+				}
+			}
+
+			protected synchronized Class loadClass(String classname, boolean resolve) throws ClassNotFoundException {
+				
+			       Class theClass = findLoadedClass(classname);
+			        if (theClass != null) {
+			            return theClass;
+			        }
+
+		            try {
+		                theClass = findClass(classname);
+		            } catch (ClassNotFoundException cnfe) {
+		                theClass = getParent().loadClass(classname);
+		            }
+
+			        if (resolve) {
+			            resolveClass(theClass);
+			        }
+
+			        return theClass;
+			}
+    	};
+    	
+        final Class renamedClass = cl.loadClass("com.sun.tools.javac.Main");
+
+		final Method compile = renamedClass.getMethod("compile", new Class[] { String[].class, PrintWriter.class });
+		final StringWriter out = new StringWriter();
+		Integer ok = (Integer) compile.invoke(null, new Object[] { new String[]{ "/Users/tcurdt/Test.java" }, new PrintWriter(out) });
+		
+		assertEquals(ok.intValue(), 0);
+	}
+
 }

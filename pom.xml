@@ -31,6 +31,24 @@
     <url>http://vafer.org/svn/projects/dependency</url>
   </scm>
   <build>
+      
+    <plugins>
+      <plugin>     
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>never</forkMode>
+          <includes>
+            <include>**/*TestCase.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/Abstract*</exclude>
+          </excludes>
+          <testFailureIgnore>true</testFailureIgnore>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+      
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
