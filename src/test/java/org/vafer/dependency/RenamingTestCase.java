@@ -30,7 +30,7 @@ public class RenamingTestCase extends TestCase {
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		
         final ClassWriter originalCw = new ClassWriter(true, false);
-        new ClassReader(cl.getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
         	.accept(new CheckClassAdapter(originalCw), false);
         final Class originalClass = cl.loadClass(originalCw.toByteArray());
         
@@ -41,7 +41,7 @@ public class RenamingTestCase extends TestCase {
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		
         final ClassWriter originalCw = new ClassWriter(true, false);
-        new ClassReader(cl.getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
     	.accept(new DelegatingVisitor(new CheckClassAdapter(originalCw)), false);
         final Class originalClass = cl.loadClass(originalCw.toByteArray());
         
@@ -52,7 +52,7 @@ public class RenamingTestCase extends TestCase {
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		
         final ClassWriter originalCw = new ClassWriter(true, false);
-        new ClassReader(cl.getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
     	.accept(new RenamingVisitor(new CheckClassAdapter(originalCw), new ResourceRenamer() {
 			public String getNewNameFor(final String pOldName) {
 				return pOldName;
@@ -67,7 +67,7 @@ public class RenamingTestCase extends TestCase {
     	final BytecodeClassLoader cl = new BytecodeClassLoader();
     	
         final ClassWriter renamedCw = new ClassWriter(true, false);
-        new ClassReader(cl.getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
         	.accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
 				public String getNewNameFor(final String pOldName) {
 					if (pOldName.startsWith("org.vafer.dependency.")) {
@@ -85,7 +85,7 @@ public class RenamingTestCase extends TestCase {
     	final BytecodeClassLoader cl = new BytecodeClassLoader();
     	
         final ClassWriter renamedCw = new ClassWriter(true, false);
-        new ClassReader(cl.getResourceAsStream("java/util/HashMap.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream("java/util/HashMap.class"))
         	.accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
 				public String getNewNameFor(final String pOldName) {
 					if (pOldName.startsWith("java.util.HashMap")) {
@@ -203,7 +203,7 @@ public class RenamingTestCase extends TestCase {
     
     public void testJavacInputRename() throws Exception {
 
-    	final ClassLoader cl = new ClassLoader() {
+    	final ClassLoader cl = new ClassLoader(getClass().getClassLoader()) {
 
 			protected Class findClass(final String name) throws ClassNotFoundException {
 
