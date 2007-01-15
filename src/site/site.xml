@@ -16,7 +16,7 @@
 
   <skin>
     <groupId>org.apache.maven.skins</groupId>
-    <artifactId>maven-stylus-skin</artifactId>
+    <artifactId>maven-vafer-skin</artifactId>
     <version>1.0</version>
   </skin>
 
