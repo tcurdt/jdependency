@@ -34,6 +34,7 @@ import org.vafer.dependency.asm.RenamingVisitor;
 
 public final class JarUtils {
     
+    // TODO: add a class to the output jar and wrap calls to getResource() and getResourceStream() for runtime renaming of resources
     public static boolean combineJars(
             final File[] pInputJars,
             final ResourceMatcher[] pMatchers,
