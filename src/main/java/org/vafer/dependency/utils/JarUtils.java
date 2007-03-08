@@ -20,6 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
@@ -33,16 +36,25 @@ import org.vafer.dependency.asm.RenamingVisitor;
 
 
 public final class JarUtils {
-    
+    	
     // TODO: add a class to the output jar and wrap calls to getResource() and getResourceStream() for runtime renaming of resources
-    public static boolean combineJars(
+	
+	public static boolean combineJars(
             final File[] pInputJars,
             final ResourceMatcher[] pMatchers,
             final ResourceRenamer[] pRenamers,
             final File pOutputJar
             ) throws IOException {
+		return combineJars(pInputJars, pMatchers, pRenamers, pOutputJar, null);
+	}
 
-        Console pConsole = null;
+	public static boolean combineJars(
+			final File[] pInputJars,
+			final ResourceMatcher[] pMatchers,
+			final ResourceRenamer[] pRenamers,
+			final File pOutputJar,
+			final Console pConsole
+			) throws IOException {
         
         boolean changed = false;
         
@@ -54,6 +66,7 @@ public final class JarUtils {
         final JarOutputStream outputJar = new JarOutputStream(new FileOutputStream(pOutputJar));
                 
         for (int i = 0; i < inputStreams.length; i++) {
+        	final Map resourceMap = new HashMap();
             final JarInputStream inputStream = inputStreams[i];
             while (true) {
                 final JarEntry entry = inputStream.getNextJarEntry();
@@ -73,51 +86,67 @@ public final class JarUtils {
                 
                 final String oldName = entry.getName();
                 
-                if (pMatchers[i].keepResourceWithName(oldName)) {
-                    final String newName = pRenamers[i].getNewNameFor(oldName);
-                    
-                    if (newName.equals(oldName)) {
-                        if (pConsole != null) {
-                            pConsole.println("keeping original resource " + oldName);
-                        }
-
-                        outputJar.putNextEntry(new JarEntry(newName));
-                        IOUtils.copy(inputStream, outputJar);                    
-                    } else {
-                        if (pConsole != null) {
-                            pConsole.println("renaming resource " + oldName + "->" + newName);
-                        }
-                        changed = true;
-
-                        outputJar.putNextEntry(new JarEntry(newName));
-                        if (oldName.endsWith(".class")) {
-                            final byte[] oldClassBytes = IOUtils.toByteArray(inputStream);
-
-                            if (pConsole != null) {
-                                pConsole.println("adjusting class " + oldName + "->" + newName);
-                            }
-                            
-                            final ClassReader r = new ClassReader(oldClassBytes);
-                            final ClassWriter w = new ClassWriter(true);
-                            r.accept(new RenamingVisitor(w, pRenamers[i]), false);
-
-                            final byte[] newClassBytes = w.toByteArray();
-                            IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputJar);
-                        } else {
-                            IOUtils.copy(inputStream, outputJar);                                                
-                        }
-                    }                    
-
-
-                } else {
+                if (!pMatchers[i].keepResourceWithName(oldName)) {
                     changed = true;
                     if (pConsole != null) {
                         pConsole.println("removing resource " + oldName);
                     }
 
                     IOUtils.copy(inputStream, new NullOutputStream());
-                }            
+                    continue;
+                }
+
+                final String newName = pRenamers[i].getNewNameFor(oldName);
+                
+                if (newName.equals(oldName)) {
+                    if (pConsole != null) {
+                        pConsole.println("keeping original resource " + oldName);
+                    }
+
+                    outputJar.putNextEntry(new JarEntry(newName));
+                    IOUtils.copy(inputStream, outputJar);
+                    continue;
+                }
+
+                if (pConsole != null) {
+                    pConsole.println("renaming resource " + oldName + "->" + newName);
+                }
+                
+                resourceMap.put(oldName, newName);
+                                
+                changed = true;
+
+                outputJar.putNextEntry(new JarEntry(newName));
+                if (oldName.endsWith(".class")) {
+                    final byte[] oldClassBytes = IOUtils.toByteArray(inputStream);
+
+                    if (pConsole != null) {
+                        pConsole.println("adjusting class " + oldName + "->" + newName);
+                    }
+                    
+                    final ClassReader r = new ClassReader(oldClassBytes);
+                    final ClassWriter w = new ClassWriter(true);
+                    r.accept(new RenamingVisitor(w, pRenamers[i]), false);
+
+                    final byte[] newClassBytes = w.toByteArray();
+                    IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputJar);
+                } else {
+                    IOUtils.copy(inputStream, outputJar);                                                
+                }
             }
+            
+            // add a class for runtime resolving of renamed resources
+            if (pConsole != null) {
+            	for (Iterator it = resourceMap.entrySet().iterator(); it.hasNext();) {
+					final Map.Entry mapping = (Map.Entry) it.next();
+					
+					final String oldName = (String) mapping.getKey();
+					final String newName = (String) mapping.getValue();
+					
+	                pConsole.println("mapped " + oldName + "->" + newName);					
+				}            	
+            }
+            
             inputStream.close();
         }
         outputJar.close();
