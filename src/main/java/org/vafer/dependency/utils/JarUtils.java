@@ -32,6 +32,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.vafer.dependency.Console;
+import org.vafer.dependency.MapperDump;
 import org.vafer.dependency.asm.RenamingVisitor;
 
 
@@ -146,6 +147,17 @@ public final class JarUtils {
 	                pConsole.println("mapped " + oldName + "->" + newName);					
 				}            	
             }
+            
+            if (resourceMap.size() > 0) {
+            	final String clazzName = "org/vafer/Mapper.class";
+                outputJar.putNextEntry(new JarEntry(pRenamers[i].getNewNameFor(clazzName)));
+                try {
+					final byte[] clazzBytes = MapperDump.dump(clazzName, resourceMap);
+                    IOUtils.copy(new ByteArrayInputStream(clazzBytes), outputJar);					
+				} catch (Exception e) {
+					throw new IOException("could not generate mapper class " + e);
+				}            	
+            }            
             
             inputStream.close();
         }

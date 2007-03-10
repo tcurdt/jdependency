@@ -1,11 +1,27 @@
 package org.vafer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Mapper {
-	public final static String resolve( final String pString ) {
+
+	private final static Map map;
+	
+	static {
+		map = new HashMap();
+		map.put("a", "m/a");
+		map.put("b", "m/b");		
+	}
+	
+	public final static String resolve( final String pResourceName ) {
 		
-		System.out.println("mapping " + pString);
+		final String newResourceName = (String) map.get(pResourceName);
 		
-		return "mapped" + pString;
+		if (newResourceName == null) {
+			return pResourceName;
+		}
+				
+		return newResourceName;
 	}
 
 }
