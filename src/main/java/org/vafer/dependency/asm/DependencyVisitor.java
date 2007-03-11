@@ -20,6 +20,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.EmptyVisitor;
 
 public abstract class DependencyVisitor extends DelegatingVisitor implements ClassVisitor, FieldVisitor, MethodVisitor {
@@ -101,6 +102,8 @@ public abstract class DependencyVisitor extends DelegatingVisitor implements Cla
 		super.visit(version, access, name, signature, superName, interfaces);
 	}
 
+	
+	
 	public AnnotationVisitor doVisitFieldAnnotation(String desc, boolean visible) {
 
 		desc = translateDescription(desc);
@@ -165,7 +168,10 @@ public abstract class DependencyVisitor extends DelegatingVisitor implements Cla
 	}
 
 	public void visitLdcInsn(Object cst) {
-		
+		if (cst instanceof Type) {
+			final Type type = (Type) cst;
+			cst = Type.getType(translateDescription(type.getDescriptor()));
+		}
 		super.visitLdcInsn(cst);
 	}
 

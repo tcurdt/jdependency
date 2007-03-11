@@ -19,7 +19,7 @@ public class ResourceLookupTestCase extends TestCase {
         final ClassReader r = new ClassReader(is);
         final ClassWriter w = new ClassWriter(true);
 
-        final RuntimeWrappingClassAdapter t = new RuntimeWrappingClassAdapter(w, new Console() {
+        final RuntimeWrappingClassAdapter t = new RuntimeWrappingClassAdapter(w, "org/vafer/Mapper", new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
 			}        	

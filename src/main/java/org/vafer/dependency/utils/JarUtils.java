@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+import java.util.zip.ZipException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
@@ -34,12 +35,11 @@ import org.objectweb.asm.ClassWriter;
 import org.vafer.dependency.Console;
 import org.vafer.dependency.MapperDump;
 import org.vafer.dependency.asm.RenamingVisitor;
+import org.vafer.dependency.asm.RuntimeWrappingClassAdapter;
 
 
 public final class JarUtils {
     	
-    // TODO: add a class to the output jar and wrap calls to getResource() and getResourceStream() for runtime renaming of resources
-	
 	public static boolean combineJars(
             final File[] pInputJars,
             final ResourceMatcher[] pMatchers,
@@ -69,6 +69,7 @@ public final class JarUtils {
         for (int i = 0; i < inputStreams.length; i++) {
         	final Map resourceMap = new HashMap();
             final JarInputStream inputStream = inputStreams[i];
+        	final String mapper = pRenamers[i].getNewNameFor("org/vafer/Mapper");
             while (true) {
                 final JarEntry entry = inputStream.getNextJarEntry();
                 
@@ -117,7 +118,18 @@ public final class JarUtils {
                                 
                 changed = true;
 
-                outputJar.putNextEntry(new JarEntry(newName));
+                try{ 
+                	outputJar.putNextEntry(new JarEntry(newName));
+                } catch(ZipException e) {
+                	if (e.getMessage().startsWith("duplicate entry:")) {
+                		
+                		pConsole.println("duplicate entry " + newName);
+                		
+	                	IOUtils.copy(inputStream, new NullOutputStream());
+	                	continue;
+                	}
+                }
+
                 if (oldName.endsWith(".class")) {
                     final byte[] oldClassBytes = IOUtils.toByteArray(inputStream);
 
@@ -127,7 +139,7 @@ public final class JarUtils {
                     
                     final ClassReader r = new ClassReader(oldClassBytes);
                     final ClassWriter w = new ClassWriter(true);
-                    r.accept(new RenamingVisitor(w, pRenamers[i]), false);
+                    r.accept(new RenamingVisitor(new RuntimeWrappingClassAdapter(w, mapper, pConsole), pRenamers[i]), false);
 
                     final byte[] newClassBytes = w.toByteArray();
                     IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputJar);
@@ -149,10 +161,9 @@ public final class JarUtils {
             }
             
             if (resourceMap.size() > 0) {
-            	final String clazzName = "org/vafer/Mapper.class";
-                outputJar.putNextEntry(new JarEntry(pRenamers[i].getNewNameFor(clazzName)));
+                outputJar.putNextEntry(new JarEntry(mapper + ".class"));
                 try {
-					final byte[] clazzBytes = MapperDump.dump(clazzName, resourceMap);
+					final byte[] clazzBytes = MapperDump.dump(mapper, resourceMap);
                     IOUtils.copy(new ByteArrayInputStream(clazzBytes), outputJar);					
 				} catch (Exception e) {
 					throw new IOException("could not generate mapper class " + e);

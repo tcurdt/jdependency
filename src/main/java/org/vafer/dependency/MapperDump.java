@@ -18,6 +18,8 @@ public class MapperDump implements Opcodes {
 
 		cw.visit(V1_2, ACC_PUBLIC + ACC_SUPER, pClassName, null, "java/lang/Object", null);
 
+		cw.visitSource("Mapper.java", null);
+
 		{
 			fv = cw.visitField(ACC_PRIVATE + ACC_FINAL + ACC_STATIC, "map", "Ljava/util/Map;", null, null);
 			fv.visitEnd();
@@ -25,15 +27,19 @@ public class MapperDump implements Opcodes {
 		{
 			mv = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
 			mv.visitCode();
+			Label l0 = new Label();
+			mv.visitLabel(l0);
 			mv.visitTypeInsn(NEW, "java/util/HashMap");
 			mv.visitInsn(DUP);
 			mv.visitMethodInsn(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V");
 			mv.visitFieldInsn(PUTSTATIC, pClassName, "map", "Ljava/util/Map;");
-			
+			Label l1 = new Label();
+			mv.visitLabel(l1);
+
 			for (Iterator it = pMapping.entrySet().iterator(); it.hasNext();) {
 				final Map.Entry entry = (Map.Entry) it.next();
 				final String oldResource = (String) entry.getKey();
-				final String newResource = (String) entry.getKey();
+				final String newResource = (String) entry.getValue();
 
 				mv.visitFieldInsn(GETSTATIC, pClassName, "map", "Ljava/util/Map;");
 				mv.visitLdcInsn(oldResource);
@@ -43,32 +49,50 @@ public class MapperDump implements Opcodes {
 			}
 			
 			mv.visitInsn(RETURN);
+			mv.visitMaxs(3, 0);
 			mv.visitEnd();
 		}
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 			mv.visitCode();
+			Label l0 = new Label();
+			mv.visitLabel(l0);
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
 			mv.visitInsn(RETURN);
+			Label l1 = new Label();
+			mv.visitLabel(l1);
+			mv.visitLocalVariable("this", "L" + pClassName + ";", null, l0, l1, 0);
+			mv.visitMaxs(1, 1);
 			mv.visitEnd();
 		}
 		{
 			mv = cw.visitMethod(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, "resolve", "(Ljava/lang/String;)Ljava/lang/String;", null, null);
 			mv.visitCode();
+			Label l0 = new Label();
+			mv.visitLabel(l0);
 			mv.visitFieldInsn(GETSTATIC, pClassName, "map", "Ljava/util/Map;");
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
 			mv.visitTypeInsn(CHECKCAST, "java/lang/String");
 			mv.visitVarInsn(ASTORE, 1);
+			Label l1 = new Label();
+			mv.visitLabel(l1);
 			mv.visitVarInsn(ALOAD, 1);
 			Label l2 = new Label();
 			mv.visitJumpInsn(IFNONNULL, l2);
+			Label l3 = new Label();
+			mv.visitLabel(l3);
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitInsn(ARETURN);
 			mv.visitLabel(l2);
 			mv.visitVarInsn(ALOAD, 1);
 			mv.visitInsn(ARETURN);
+			Label l4 = new Label();
+			mv.visitLabel(l4);
+			mv.visitLocalVariable("pResourceName", "Ljava/lang/String;", null, l0, l4, 0);
+			mv.visitLocalVariable("newResourceName", "Ljava/lang/String;", null, l1, l4, 1);
+			mv.visitMaxs(2, 2);
 			mv.visitEnd();
 		}
 		cw.visitEnd();

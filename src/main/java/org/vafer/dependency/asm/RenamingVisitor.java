@@ -13,7 +13,7 @@ public final class RenamingVisitor extends DependencyVisitor {
 	}
 	
 	protected String visitDependency( final String pClassName ) {
-		final String newClassName = renamer.getNewNameFor(pClassName);
+		final String newClassName = renamer.getNewNameFor(pClassName.replace('.', '/')).replace('/', '.');
 		return newClassName;
 	}
 

@@ -70,8 +70,8 @@ public class RenamingTestCase extends TestCase {
         new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
         	.accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
 				public String getNewNameFor(final String pOldName) {
-					if (pOldName.startsWith("org.vafer.dependency.")) {
-						return "my." + pOldName;
+					if (pOldName.startsWith("org/vafer/dependency/")) {
+						return "my/" + pOldName;
 					}
 					return pOldName;
 				}        		
@@ -88,8 +88,8 @@ public class RenamingTestCase extends TestCase {
         new ClassReader(getClass().getClassLoader().getResourceAsStream("java/util/HashMap.class"))
         	.accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
 				public String getNewNameFor(final String pOldName) {
-					if (pOldName.startsWith("java.util.HashMap")) {
-						return "my." + pOldName;
+					if (pOldName.startsWith("java/util/HashMap")) {
+						return "my/" + pOldName;
 					}
 					return pOldName;
 				}        		
@@ -223,13 +223,13 @@ public class RenamingTestCase extends TestCase {
 				        final ClassWriter renamedCw = new ClassWriter(true, false);
 				        new ClassReader(classStream).accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
 							public String getNewNameFor(final String pOldName) {
-								if (pOldName.startsWith(FileOutputStream.class.getName())) {
+								if (pOldName.startsWith(FileOutputStream.class.getName().replace('.', '/'))) {
 									//System.out.println("rewriting FOS" + name);
-									return FileOutputStreamProxy.class.getName();
+									return FileOutputStreamProxy.class.getName().replace('.', '/');
 								}
-								if (pOldName.startsWith(FileInputStream.class.getName())) {
+								if (pOldName.startsWith(FileInputStream.class.getName().replace('.', '/'))) {
 									//System.out.println("rewriting FIS" + name);
-									return FileInputStreamProxy.class.getName();
+									return FileInputStreamProxy.class.getName().replace('.', '/');
 								}
 								return pOldName;
 							}        		

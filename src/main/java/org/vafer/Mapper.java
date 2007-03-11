@@ -11,6 +11,7 @@ public class Mapper {
 		map = new HashMap();
 		map.put("a", "m/a");
 		map.put("b", "m/b");		
+		map.put("b", "m/b");		
 	}
 	
 	public final static String resolve( final String pResourceName ) {

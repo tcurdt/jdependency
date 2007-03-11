@@ -17,7 +17,9 @@ package org.vafer.dependency.utils;
 
 
 
+
 public interface ResourceRenamer {
 
-    String getNewNameFor( String pOldName );
+	String getNewNameFor( String pOldName );
+
 }

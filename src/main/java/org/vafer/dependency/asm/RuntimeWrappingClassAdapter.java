@@ -13,16 +13,19 @@ import org.vafer.dependency.Console;
 public final class RuntimeWrappingClassAdapter extends ClassAdapter implements Opcodes {
 		
 		private final Console console;
+		
+		private final String mapper;
 
 		private String current;
 	
-		public RuntimeWrappingClassAdapter( final ClassVisitor cv ) {
-			this(cv, null);
+		public RuntimeWrappingClassAdapter( final ClassVisitor cv, final String pMapperClassName ) {
+			this(cv, pMapperClassName, null);
 		}
 
-		public RuntimeWrappingClassAdapter( final ClassVisitor cv, final Console pConsole ) {
+		public RuntimeWrappingClassAdapter( final ClassVisitor cv, final String pMapper, final Console pConsole ) {
 			super(cv);
 			console = pConsole;
+			mapper = pMapper;
 		}
 	
 		public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -46,8 +49,7 @@ public final class RuntimeWrappingClassAdapter extends ClassAdapter implements O
 				super(pMv);
 				mv = pMv;
 			}
-	
-			
+				
 			// static java.lang.Class java.lang.Class.forName(java.lang.String)
 			// static java.lang.Class java.lang.Class.forName(java.lang.String, boolean, java.lang.ClassLoader)
 			// static java.net.URL java.lang.ClassLoader.getSystemResource(java.lang.String)
@@ -73,24 +75,11 @@ public final class RuntimeWrappingClassAdapter extends ClassAdapter implements O
 					if (console != null) {
 						console.println("rewriting call " + opcode + " " + current + " " + owner + "." + name + " " + desc);
 					}
-					mv.visitMethodInsn(INVOKESTATIC, "org/vafer/Mapper", "resolve", "(Ljava/lang/String;)Ljava/lang/String;");
+					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolve", "(Ljava/lang/String;)Ljava/lang/String;");
 
 				}
 	
 				mv.visitMethodInsn(opcode, owner, name, desc);
 			}
 		}
-
-//	public byte[] transform( final byte[] pClazzBytes ) {
-//        try {
-//            
-//            final ClassReader r = new ClassReader(pClazzBytes);
-//            final ClassWriter w = new ClassWriter(true);
-//            r.accept(new WrappingClassAdapter(w), false);
-//            return w.toByteArray();
-//            
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }	}
 }
