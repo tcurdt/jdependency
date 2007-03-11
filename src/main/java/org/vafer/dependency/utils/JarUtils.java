@@ -166,7 +166,7 @@ public final class JarUtils {
 				if (mappingEntry == null) {
 					return pOldName;
 				}
-				
+
 				return mappingEntry.name;
 			}        	
         };
@@ -179,7 +179,7 @@ public final class JarUtils {
         	final Map localMapping = new HashMap();
         	final String localMapperName = jar.getNewNameFor(mapperName);
 
-            final JarInputStream inputStream = pJars[i].getInputStream();
+            final JarInputStream inputStream = jar.getInputStream();
         	while (true) {
                 final JarEntry entry = inputStream.getNextJarEntry();
                 

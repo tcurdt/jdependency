@@ -219,8 +219,6 @@ public class RenamingTestCase extends TestCase {
 
 			protected Class findClass(final String name) throws ClassNotFoundException {
 
-				//System.out.println("findClass " + name);
-				
 				if (name.startsWith("java.")) {
 					return super.findClass(name);
 				}
@@ -235,13 +233,11 @@ public class RenamingTestCase extends TestCase {
 				        final ClassWriter renamedCw = new ClassWriter(true, false);
 				        new ClassReader(classStream).accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
 							public String getNewNameFor(final String pOldName) {
-								if (pOldName.startsWith(FileOutputStream.class.getName().replace('.', '/'))) {
-									//System.out.println("rewriting FOS" + name);
-									return FileOutputStreamProxy.class.getName().replace('.', '/');
+								if (pOldName.startsWith(FileOutputStream.class.getName().replace('.', '/') + ".class")) {
+									return FileOutputStreamProxy.class.getName().replace('.', '/') + ".class";
 								}
 								if (pOldName.startsWith(FileInputStream.class.getName().replace('.', '/'))) {
-									//System.out.println("rewriting FIS" + name);
-									return FileInputStreamProxy.class.getName().replace('.', '/');
+									return FileInputStreamProxy.class.getName().replace('.', '/') + ".class";
 								}
 								return pOldName;
 							}        		
