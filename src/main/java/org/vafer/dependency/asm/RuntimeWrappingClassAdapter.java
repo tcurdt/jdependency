@@ -1,3 +1,18 @@
+/*
+ * Copyright 2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.vafer.dependency.asm;
 
 import java.util.HashSet;
@@ -59,21 +74,23 @@ public final class RuntimeWrappingClassAdapter extends ClassAdapter implements O
 			// java.net.URL java.lang.ClassLoader.getResource(java.lang.String)
 			// java.io.InputStream java.lang.ClassLoader.getResourceAsStream(java.lang.String)
 			
-			private final Set methods = new HashSet() {{
-				add("forName");
-				add("loadClass");
-				add("getSystemResource");
-				add("getSystemResourceAsStream");
-				add("getResource");
-				add("getSystemResources");
-				add("getResourceAsStream");
-			}};
+			private final Set methods = new HashSet() {
+				private static final long serialVersionUID = 1L;
+				{
+					add("forName");
+					add("loadClass");
+					add("getSystemResource");
+					add("getSystemResourceAsStream");
+					add("getResource");
+					add("getSystemResources");
+					add("getResourceAsStream");
+				}};
 	
 			public void visitMethodInsn(int opcode, String owner, String name, String desc) {
 	
 				if (methods.contains(name)) {
 					if (console != null) {
-						console.println("rewriting call " + opcode + " " + current + " " + owner + "." + name + " " + desc);
+						console.println("rewriting call " + current + " " + owner + "." + name + " " + desc);
 					}
 					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolve", "(Ljava/lang/String;)Ljava/lang/String;");
 

@@ -55,7 +55,7 @@ public abstract class DependencyVisitor extends DelegatingVisitor implements Cla
 			return null;
 		}
 		
-		return visitDependency(name.replace('/', '.')).replace('.', '/');
+		return visitDependency(name);
 	}
 	
 	private String translateDescription( final String descr ) {
@@ -91,6 +91,7 @@ public abstract class DependencyVisitor extends DelegatingVisitor implements Cla
 		
 		return result.toString();
 	}
+
 	
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 

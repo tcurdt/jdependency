@@ -1,34 +1,32 @@
+/*
+ * Copyright 2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.vafer.dependency;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 
 import junit.framework.TestCase;
 
+import org.vafer.dependency.utils.JarFileProcessor;
+import org.vafer.dependency.utils.JarProcessor;
 import org.vafer.dependency.utils.JarUtils;
-import org.vafer.dependency.utils.ResourceMatcher;
-import org.vafer.dependency.utils.ResourceRenamer;
+import org.vafer.dependency.utils.JarUtils.DuplicateHandler;
 
 public class JarCombiningTestCase extends TestCase {
-
-	private final class JarResourceRenamer implements ResourceRenamer {
-		private final File file;
-		
-		public JarResourceRenamer( final File pFile ) {
-			file = pFile;
-		}
-		
-		public String getNewNameFor( final String pOldName ) {
-			if (pOldName.startsWith("java")) {
-				return pOldName;
-			}
-			return getPrefixFrom(file) + "/" + pOldName;
-		}
-		
-		public String getPrefixFrom( final File pFile ) {
-			return pFile.getName().substring(0, 4);
-		}
-	}
 	
 	public void testMergeWithRelocate() throws Exception {
 		
@@ -37,36 +35,58 @@ public class JarCombiningTestCase extends TestCase {
 
 		assertNotNull(jar1jar);
 		assertNotNull(jar2jar);
-		
-		final ResourceMatcher matcher = new ResourceMatcher() {
-			public boolean keepResourceWithName(String pOldName) {
-				return true;
-			}
+				
+		final JarProcessor[] jars = new JarProcessor[] {
+				new JarFileProcessor(new File(jar1jar.toURI())),
+				new JarFileProcessor(new File(jar2jar.toURI()))
 		};
 
-		JarUtils.combineJars(
-				new File[] {
-					new File(jar1jar.toURI()),
-					new File(jar2jar.toURI())
-				},
-				new ResourceMatcher[] {
-					matcher,
-					matcher
-				},
-				new ResourceRenamer[] {
-					new JarResourceRenamer(new File(jar1jar.toURI())),
-					new JarResourceRenamer(new File(jar2jar.toURI()))
-				},
-				new File("out.jar"),
-				new Console() {
-					public void println(String pString) {
-						System.out.println(pString);
-					}
-				}
-		);
+		final DuplicateHandler handler = new DuplicateHandler() {
+			public JarProcessor handleDuplicate(String pName, JarProcessor[] jars) {
+				return jars[0];
+			}			
+		};
+		
+		final FileOutputStream out = new FileOutputStream("out1.jar");
+		
+		boolean result = JarUtils.processJars(jars, handler, out, new Console() {
+			public void println(String pString) {
+				System.out.println(pString);
+			}			
+		});
+		
+		assertTrue(result);
+		
 	}
 
 	public void testMergeWithoutRelocate() throws Exception {
+
+		final URL jar1jar = this.getClass().getClassLoader().getResource("jar1.jar");		
+		final URL jar2jar = this.getClass().getClassLoader().getResource("jar2.jar");
+
+		assertNotNull(jar1jar);
+		assertNotNull(jar2jar);
+				
+		final JarProcessor[] jars = new JarProcessor[] {
+				new JarFileProcessor(new File(jar1jar.toURI()), false),
+				new JarFileProcessor(new File(jar2jar.toURI()), false)
+		};
+
+		final FileOutputStream out = new FileOutputStream("out2.jar");
+
+		final DuplicateHandler handler = new DuplicateHandler() {
+			public JarProcessor handleDuplicate(String pName, JarProcessor[] jars) {
+				return jars[0];
+			}			
+		};
+		
+		boolean result = JarUtils.processJars(jars, handler, out, new Console() {
+			public void println(String pString) {
+				System.out.println(pString);
+			}			
+		});
+		
+		assertFalse(result);
 		
 	}
 

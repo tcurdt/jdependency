@@ -13,21 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vafer.dependency.asm;
+package org.vafer.dependency.utils;
 
-import java.util.HashSet;
-import java.util.Set;
-
-public final class CollectingDependencyVisitor extends DependencyVisitor {
-
-	final Set classes = new HashSet();
-
-	public Set getDependencies() {
-		return classes;
-	}
-
-	protected String visitDependency( final String pClassName ) {
-		classes.add(pClassName.replace('/', '.'));
-		return pClassName;
-	}
+public class AllResouceMatcher implements ResourceMatcher {
+	public boolean keepResourceWithName(String pOldName) {
+		return true;
+	}		
 }
