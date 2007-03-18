@@ -21,7 +21,6 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 
-import org.vafer.dependency.utils.JarFileProcessor;
 import org.vafer.dependency.utils.JarProcessor;
 import org.vafer.dependency.utils.JarUtils;
 import org.vafer.dependency.utils.JarUtils.DuplicateHandler;
@@ -37,8 +36,8 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar2jar);
 				
 		final JarProcessor[] jars = new JarProcessor[] {
-				new JarFileProcessor(new File(jar1jar.toURI())),
-				new JarFileProcessor(new File(jar2jar.toURI()))
+				new JarProcessor(new File(jar1jar.toURI())),
+				new JarProcessor(new File(jar2jar.toURI()))
 		};
 
 		final DuplicateHandler handler = new DuplicateHandler() {
@@ -68,8 +67,8 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar2jar);
 				
 		final JarProcessor[] jars = new JarProcessor[] {
-				new JarFileProcessor(new File(jar1jar.toURI()), false),
-				new JarFileProcessor(new File(jar2jar.toURI()), false)
+				new JarProcessor(new File(jar1jar.toURI())).setRelocate(true),
+				new JarProcessor(new File(jar2jar.toURI())).setRelocate(true)
 		};
 
 		final FileOutputStream out = new FileOutputStream("out2.jar");

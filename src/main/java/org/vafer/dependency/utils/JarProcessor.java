@@ -15,10 +15,61 @@
  */
 package org.vafer.dependency.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.jar.JarInputStream;
 
-public interface JarProcessor extends ResourceRenamer, ResourceMatcher {
-	String getPrefix();
-	JarInputStream getInputStream() throws IOException;
+
+public final class JarProcessor implements ResourceRenamer, ResourceMatcher {
+
+	private final InputStream inputStream;
+	private final String name;
+	private final String prefix;
+
+	private ResourceMatcher matcher = new AllResouceMatcher();
+	private ResourceRenamer renamer = new NoResourceRenamer();
+	private boolean relocate;
+
+	public JarProcessor( final File pFile ) throws FileNotFoundException {
+		this(new FileInputStream(pFile), pFile.getName());
+	}
+
+	public JarProcessor( final InputStream pInputStream, final String pName ) {
+		inputStream = pInputStream;
+		name = pName;
+		prefix = name.substring(0,4) + "/"; 
+	}
+
+	public JarProcessor setRelocate( final boolean pRelocate ) {
+		relocate = pRelocate;
+		return this;
+	}
+	
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public String getNewNameFor(String pOldName) {
+		if (relocate) {
+			return getPrefix() + renamer.getNewNameFor(pOldName);				
+		}
+		return renamer.getNewNameFor(pOldName);
+	}
+
+	public boolean keepResourceWithName(String pOldName) {
+		return matcher.keepResourceWithName(pOldName);
+	}
+
+	public JarInputStream getInputStream() throws IOException {
+		return new JarInputStream(inputStream);
+	}
+
+
+	public String toString() {
+		return name.toString();
+	}
+
 }
