@@ -20,17 +20,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.vafer.dependency.resources.Version;
 
 
-public class JarProcessor implements ResourceHandler {
+public class Jar {
 
 	private final File file;
 
-	public JarProcessor( final File pFile ) throws FileNotFoundException {
+	public Jar( final File pFile ) throws FileNotFoundException {
 		file = pFile;
 	}
 
@@ -40,10 +41,6 @@ public class JarProcessor implements ResourceHandler {
 	
 	public JarInputStream getInputStream() throws IOException {
 		return new JarInputStream(new FileInputStream(file));
-	}
-
-	public String toString() {
-		return file.toString();
 	}
 
 	public String getNewNameFor(String name) {
@@ -58,8 +55,19 @@ public class JarProcessor implements ResourceHandler {
 		return versions[0];
 	}
 
-	public void copy(String name, InputStream is, OutputStream os) throws IOException {
+	public void onStart(JarOutputStream os) throws IOException {
+	}
+
+	public void onResource(String name, InputStream is, JarOutputStream os) throws IOException {
 		IOUtils.copy(is, os);
 	}
+
+	public void onStop(JarOutputStream os) throws IOException {
+	}
+
+	public String toString() {
+		return file.toString();
+	}
+
 
 }

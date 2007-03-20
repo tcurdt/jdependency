@@ -16,7 +16,7 @@
 package org.vafer.dependency.asm;
 
 import org.objectweb.asm.ClassVisitor;
-import org.vafer.dependency.utils.ResourceRenamer;
+import org.vafer.dependency.resources.ResourceRenamer;
 
 public final class RenamingVisitor extends DependencyVisitor {
 

@@ -34,7 +34,7 @@ public class ResourceLookupTestCase extends TestCase {
         final ClassReader r = new ClassReader(is);
         final ClassWriter w = new ClassWriter(true);
 
-        final RuntimeWrappingClassAdapter t = new RuntimeWrappingClassAdapter(w, "org/vafer/Mapper", new Console() {
+        final RuntimeWrappingClassAdapter t = new RuntimeWrappingClassAdapter(w, "org/vafer/dependency/classes/Mapper", new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
 			}        	
@@ -42,7 +42,8 @@ public class ResourceLookupTestCase extends TestCase {
         
         r.accept(t, false);
         
-        new BytecodeClassLoader(this.getClass().getClassLoader()).loadClass("org.vafer.Mapper");
+        // just make sure the classloader sees the class
+        new BytecodeClassLoader(this.getClass().getClassLoader()).loadClass("org.vafer.dependency.classes.Mapper");
         
         return new BytecodeClassLoader(this.getClass().getClassLoader()).loadClass(w.toByteArray());        
 	}

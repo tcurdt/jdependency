@@ -32,9 +32,11 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.vafer.dependency.Console;
-import org.vafer.dependency.MapperDump;
 import org.vafer.dependency.asm.RenamingVisitor;
 import org.vafer.dependency.asm.RuntimeWrappingClassAdapter;
+import org.vafer.dependency.resources.MapperDump;
+import org.vafer.dependency.resources.ResourceRenamer;
+import org.vafer.dependency.resources.Version;
 
 
 public final class JarUtils {
@@ -62,32 +64,14 @@ public final class JarUtils {
 		}
 	}
 	
-//	private static boolean bytesAreEqual( byte[] a, byte[] b ) {
-//		if (a == b) {
-//			return true;
-//		}
-//		
-//		if (a.length != b.length) {
-//			return false;
-//		}
-//		
-//		for (int i = 0; i < a.length; i++) {
-//			if (a[i] != b[i]) {
-//				return false;
-//			}
-//		}
-//		
-//		return true;
-//	}
-	
-	private static Map getMapping( final JarProcessor[] pJars, final Console pConsole ) throws IOException, NoSuchAlgorithmException {
+	private static Map getMapping( final Jar[] pJars, final Console pConsole ) throws IOException, NoSuchAlgorithmException {
         
 		final MessageDigest digest = MessageDigest.getInstance("MD5");
         
         final Map mapping = new HashMap(pJars.length*50);
         
         for (int i = 0; i < pJars.length; i++) {
-        	final JarProcessor jar = pJars[i];
+        	final Jar jar = pJars[i];
 
         	final JarInputStream inputStream = jar.getInputStream();
 
@@ -133,11 +117,11 @@ public final class JarUtils {
 	}
 	
 	
-	public static void processJars( final JarProcessor[] pJars, final FileOutputStream pOutput, final Console pConsole ) throws IOException, NoSuchAlgorithmException {
+	public static void processJars( final Jar[] pJars, final FileOutputStream pOutput, final Console pConsole ) throws IOException, NoSuchAlgorithmException {
 
         final Map mapping = getMapping(pJars, pConsole);
                 
-        final JarOutputStream outputJar = new JarOutputStream(pOutput);
+        final JarOutputStream outputStream = new JarOutputStream(pOutput);
 
         if(pConsole != null) {
 			pConsole.println("building new jar with " + mapping.size() + " resources");
@@ -159,8 +143,10 @@ public final class JarUtils {
         
         
         for (int i = 0; i < pJars.length; i++) {
-        	final JarProcessor jar = pJars[i];
+        	final Jar jar = pJars[i];
 
+        	jar.onStart(outputStream);
+        	
         	final Map localMapping = new HashMap();
         	final String localMapperName = jar.getNewNameFor(mapperName);
 
@@ -202,7 +188,7 @@ public final class JarUtils {
                 if (versions.length > 1) {
                 	final Version finalVersion = jar.pickVersion(versions);
                 	
-            		if (finalVersion.jar != jar) {
+            		if (finalVersion.getJar() != jar) {
 
             			if (pConsole != null) {
                             pConsole.println("ignoring duplicate resource " + oldName + " from " + jar);
@@ -224,9 +210,9 @@ public final class JarUtils {
                         pConsole.println("keeping original resource " + oldName);
                     }
 
-                    outputJar.putNextEntry(new JarEntry(oldName));
+                    outputStream.putNextEntry(new JarEntry(oldName));
                     
-                    IOUtils.copy(inputStream, outputJar);
+                    IOUtils.copy(inputStream, outputStream);
                     continue;
                 }
 
@@ -236,7 +222,7 @@ public final class JarUtils {
                 
                 localMapping.put(oldName, newName);
                                 
-                outputJar.putNextEntry(new JarEntry(newName));
+                outputStream.putNextEntry(new JarEntry(newName));
 
                 if (oldName.endsWith(".class")) {
                     final byte[] oldClassBytes = IOUtils.toByteArray(inputStream);
@@ -246,9 +232,9 @@ public final class JarUtils {
                     r.accept(new RenamingVisitor(new RuntimeWrappingClassAdapter(w, localMapperName, pConsole), renamer), false);
 
                     final byte[] newClassBytes = w.toByteArray();
-                    IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputJar);
+                    IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputStream);
                 } else {
-                    IOUtils.copy(inputStream, outputJar);                                                
+                    IOUtils.copy(inputStream, outputStream);                                                
                 }
             }
             
@@ -258,19 +244,22 @@ public final class JarUtils {
                     pConsole.println("creating runtime mapper " + localMapperName + " handling " + localMapping.size() + " resources");
                 }
             	
-            	outputJar.putNextEntry(new JarEntry(localMapperName));
+            	outputStream.putNextEntry(new JarEntry(localMapperName));
                 try {
 					final byte[] clazzBytes = MapperDump.dump(localMapperName, localMapping);
-                    IOUtils.copy(new ByteArrayInputStream(clazzBytes), outputJar);					
+                    IOUtils.copy(new ByteArrayInputStream(clazzBytes), outputStream);					
 				} catch (Exception e) {
 					throw new IOException("could not generate mapper class " + e);
 				}            	
             }            
             
-            inputStream.close();
+            IOUtils.closeQuietly(inputStream);
+
+        	jar.onStop(outputStream);
+
         }
         
-        outputJar.close();
+        IOUtils.closeQuietly(outputStream);
 	}
 	
 }

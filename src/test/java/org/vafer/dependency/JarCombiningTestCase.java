@@ -21,7 +21,7 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 
-import org.vafer.dependency.utils.JarProcessor;
+import org.vafer.dependency.utils.Jar;
 import org.vafer.dependency.utils.JarUtils;
 
 public class JarCombiningTestCase extends TestCase {
@@ -34,13 +34,13 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar1jar);
 		assertNotNull(jar2jar);
 				
-		final JarProcessor[] jars = new JarProcessor[] {
-				new JarProcessor(new File(jar1jar.toURI())) {
+		final Jar[] jars = new Jar[] {
+				new Jar(new File(jar1jar.toURI())) {
 					public String getNewNameFor(String name) {
 						return "jar1/" + name;
 					}					
 				},
-				new JarProcessor(new File(jar2jar.toURI())) {
+				new Jar(new File(jar2jar.toURI())) {
 					public String getNewNameFor(String name) {
 						return "jar2/" + name;
 					}					
@@ -64,9 +64,9 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar1jar);
 		assertNotNull(jar2jar);
 				
-		final JarProcessor[] jars = new JarProcessor[] {
-				new JarProcessor(new File(jar1jar.toURI())),
-				new JarProcessor(new File(jar2jar.toURI()))
+		final Jar[] jars = new Jar[] {
+				new Jar(new File(jar1jar.toURI())),
+				new Jar(new File(jar2jar.toURI()))
 		};
 
 		final FileOutputStream out = new FileOutputStream("out2.jar");
