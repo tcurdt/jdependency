@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 import org.vafer.dependency.utils.JarProcessor;
 import org.vafer.dependency.utils.JarUtils;
-import org.vafer.dependency.utils.JarUtils.DuplicateHandler;
 
 public class JarCombiningTestCase extends TestCase {
 	
@@ -36,26 +35,25 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar2jar);
 				
 		final JarProcessor[] jars = new JarProcessor[] {
-				new JarProcessor(new File(jar1jar.toURI())),
-				new JarProcessor(new File(jar2jar.toURI()))
-		};
-
-		final DuplicateHandler handler = new DuplicateHandler() {
-			public JarProcessor handleDuplicate(String pName, JarProcessor[] jars) {
-				return jars[0];
-			}			
+				new JarProcessor(new File(jar1jar.toURI())) {
+					public String getNewNameFor(String name) {
+						return "jar1/" + name;
+					}					
+				},
+				new JarProcessor(new File(jar2jar.toURI())) {
+					public String getNewNameFor(String name) {
+						return "jar2/" + name;
+					}					
+				}
 		};
 		
 		final FileOutputStream out = new FileOutputStream("out1.jar");
 		
-		boolean result = JarUtils.processJars(jars, handler, out, new Console() {
+		JarUtils.processJars(jars, out, new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
 			}			
 		});
-		
-		assertTrue(result);
-		
 	}
 
 	public void testMergeWithoutRelocate() throws Exception {
@@ -67,26 +65,18 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar2jar);
 				
 		final JarProcessor[] jars = new JarProcessor[] {
-				new JarProcessor(new File(jar1jar.toURI())).setRelocate(true),
-				new JarProcessor(new File(jar2jar.toURI())).setRelocate(true)
+				new JarProcessor(new File(jar1jar.toURI())),
+				new JarProcessor(new File(jar2jar.toURI()))
 		};
 
 		final FileOutputStream out = new FileOutputStream("out2.jar");
 
-		final DuplicateHandler handler = new DuplicateHandler() {
-			public JarProcessor handleDuplicate(String pName, JarProcessor[] jars) {
-				return jars[0];
-			}			
-		};
 		
-		boolean result = JarUtils.processJars(jars, handler, out, new Console() {
+		JarUtils.processJars(jars, out, new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
 			}			
 		});
-		
-		assertFalse(result);
-		
 	}
 
 }

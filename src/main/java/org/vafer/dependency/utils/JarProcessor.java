@@ -20,56 +20,46 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.jar.JarInputStream;
 
+import org.apache.commons.io.IOUtils;
 
-public final class JarProcessor implements ResourceRenamer, ResourceMatcher {
 
-	private final InputStream inputStream;
-	private final String name;
-	private final String prefix;
+public class JarProcessor implements ResourceHandler {
 
-	private ResourceMatcher matcher = new AllResouceMatcher();
-	private ResourceRenamer renamer = new NoResourceRenamer();
-	private boolean relocate;
+	private final File file;
 
 	public JarProcessor( final File pFile ) throws FileNotFoundException {
-		this(new FileInputStream(pFile), pFile.getName());
+		file = pFile;
 	}
 
-	public JarProcessor( final InputStream pInputStream, final String pName ) {
-		inputStream = pInputStream;
-		name = pName;
-		prefix = name.substring(0,4) + "/"; 
-	}
-
-	public JarProcessor setRelocate( final boolean pRelocate ) {
-		relocate = pRelocate;
-		return this;
+	public File getFile() {
+		return file;
 	}
 	
-	public String getPrefix() {
-		return prefix;
-	}
-
-	public String getNewNameFor(String pOldName) {
-		if (relocate) {
-			return getPrefix() + renamer.getNewNameFor(pOldName);				
-		}
-		return renamer.getNewNameFor(pOldName);
-	}
-
-	public boolean keepResourceWithName(String pOldName) {
-		return matcher.keepResourceWithName(pOldName);
-	}
-
 	public JarInputStream getInputStream() throws IOException {
-		return new JarInputStream(inputStream);
+		return new JarInputStream(new FileInputStream(file));
 	}
-
 
 	public String toString() {
-		return name.toString();
+		return file.toString();
+	}
+
+	public String getNewNameFor(String name) {
+		return name;
+	}
+
+	public boolean keepResource(String name) {
+		return true;
+	}
+
+	public Version pickVersion(Version[] versions) {
+		return versions[0];
+	}
+
+	public void copy(String name, InputStream is, OutputStream os) throws IOException {
+		IOUtils.copy(is, os);
 	}
 
 }

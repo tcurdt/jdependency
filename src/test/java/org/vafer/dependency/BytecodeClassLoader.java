@@ -33,7 +33,15 @@ public final class BytecodeClassLoader extends ClassLoader {
 //        }
 //    }
     
-    public Class loadClass( final byte[] bytecode ) {
+    public BytecodeClassLoader() {
+		super();
+	}
+
+	public BytecodeClassLoader(ClassLoader parent) {
+		super(parent);
+	}
+
+	public Class loadClass( final byte[] bytecode ) {
 //        final NameClassAdapter nameClassAdapter = new NameClassAdapter();
 //        new ClassReader(bytecode).accept(nameClassAdapter, false);
 //        final String name = nameClassAdapter.getName().replace('/', '.');        

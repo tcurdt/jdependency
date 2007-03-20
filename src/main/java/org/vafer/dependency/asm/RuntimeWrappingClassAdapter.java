@@ -89,9 +89,9 @@ public final class RuntimeWrappingClassAdapter extends ClassAdapter implements O
 			public void visitMethodInsn(int opcode, String owner, String name, String desc) {
 	
 				if (methods.contains(name)) {
-					if (console != null) {
-						console.println("rewriting call " + current + " " + owner + "." + name + " " + desc);
-					}
+//					if (console != null) {
+//						console.println("rewriting call " + current + " " + owner + "." + name + " " + desc);
+//					}
 					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolve", "(Ljava/lang/String;)Ljava/lang/String;");
 
 				}

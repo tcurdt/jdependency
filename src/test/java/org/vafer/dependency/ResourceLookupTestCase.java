@@ -42,7 +42,9 @@ public class ResourceLookupTestCase extends TestCase {
         
         r.accept(t, false);
         
-        return new BytecodeClassLoader().loadClass(w.toByteArray());        
+        new BytecodeClassLoader(this.getClass().getClassLoader()).loadClass("org.vafer.Mapper");
+        
+        return new BytecodeClassLoader(this.getClass().getClassLoader()).loadClass(w.toByteArray());        
 	}
 	
 	
