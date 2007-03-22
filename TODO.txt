@@ -1,6 +1,0 @@
-o rewrite access to resources
-o rewrite access to classes via reflection (if possible)
-o make stripping configurable
-  - pattern matching of classes/resources forced to be kept
-  - pattern matching of classes/resources forced to be stripped
-o output jar naming via pattern

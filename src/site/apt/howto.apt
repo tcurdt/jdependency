@@ -41,7 +41,8 @@ remove.removeAll( jarTransitiveDependencies );
  it simple and stupid) approach that still provides a good "compression"
  ratio if you want to shrink your jar to only the classes you need.
  With the dependency library you can also easily inline dependencies
- by renaming classes and while adjusting the references.
+ by renaming classes and while adjusting the references. It even be
+ used to preserve transparent access to your renamed resources.
 
 +--------------------
 ClassWriter writer = new ClassWriter(true, false);
@@ -58,14 +59,16 @@ new ClassReader(cl.getResourceAsStream("java/util/HashMap.class")).accept(
 
  Using the JarUtils it's easy to filer and rename and create
  a single jar that only includes what you define and with the
- name you provide.
+ name you provide. The maven minijar plugin is a good example
+ what can be done with it.
 
 +--------------------
-JarUtils.combineJars(
- new File[] { new File("a.jar"), new File("b.jar") },
- new ResourceMatcher[] { }
- new ResourceMatcher[] { }
- new ResourceRenamer[] { },
- new File("output.jar")
-);
+JarUtils.processJars(
+ new Jar[] { new Jar(new File("a.jar")) },
+ new FileOutputStream(new File("out.jar")),
+ new Console() {
+	public void println(String pString) {
+	    System.out.println(pString);
+	}  
+ });
 +--------------------

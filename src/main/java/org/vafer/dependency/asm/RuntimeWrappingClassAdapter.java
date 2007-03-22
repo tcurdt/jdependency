@@ -27,10 +27,8 @@ import org.vafer.dependency.Console;
 
 public final class RuntimeWrappingClassAdapter extends ClassAdapter implements Opcodes {
 		
-		private final Console console;
-		
 		private final String mapper;
-
+		private final Console console;
 		private String current;
 	
 		public RuntimeWrappingClassAdapter( final ClassVisitor cv, final String pMapperClassName ) {
@@ -65,37 +63,49 @@ public final class RuntimeWrappingClassAdapter extends ClassAdapter implements O
 				mv = pMv;
 			}
 				
-			// static java.lang.Class java.lang.Class.forName(java.lang.String)
-			// static java.lang.Class java.lang.Class.forName(java.lang.String, boolean, java.lang.ClassLoader)
-			// static java.net.URL java.lang.ClassLoader.getSystemResource(java.lang.String)
-			// static java.io.InputStream java.lang.ClassLoader.getSystemResourceAsStream(java.lang.String)
+			// static java.lang.Class       java.lang.Class.forName(java.lang.String)
+			// static java.lang.Class       java.lang.Class.forName(java.lang.String, boolean, java.lang.ClassLoader)
+			// static java.net.URL          java.lang.ClassLoader.getSystemResource(java.lang.String)
+			// static java.io.InputStream   java.lang.ClassLoader.getSystemResourceAsStream(java.lang.String)
 			// static java.util.Enumeration java.lang.ClassLoader.getSystemResources(java.lang.String)
-			// java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String)
-			// java.net.URL java.lang.ClassLoader.getResource(java.lang.String)
-			// java.io.InputStream java.lang.ClassLoader.getResourceAsStream(java.lang.String)
+			// java.lang.Class              java.lang.ClassLoader.loadClass(java.lang.String)
+			// java.net.URL                 java.lang.ClassLoader.getResource(java.lang.String)
+			// java.io.InputStream          java.lang.ClassLoader.getResourceAsStream(java.lang.String)
 			
-			private final Set methods = new HashSet() {
+			private final Set methodsClass = new HashSet() {
 				private static final long serialVersionUID = 1L;
 				{
 					add("forName");
+				}
+			};
+
+			private final Set methodsClassLoader = new HashSet() {
+				private static final long serialVersionUID = 1L;
+				{
 					add("loadClass");
 					add("getSystemResource");
 					add("getSystemResourceAsStream");
 					add("getResource");
 					add("getSystemResources");
 					add("getResourceAsStream");
-				}};
+				}
+			};
 	
 			public void visitMethodInsn(int opcode, String owner, String name, String desc) {
-	
-				if (methods.contains(name)) {
-//					if (console != null) {
-//						console.println("rewriting call " + current + " " + owner + "." + name + " " + desc);
-//					}
-					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolve", "(Ljava/lang/String;)Ljava/lang/String;");
+				
+				if (
+						("java/lang/Class".equals(owner) && methodsClass.contains(name)) ||
+				        ("java/lang/ClassLoader".equals(owner) && methodsClassLoader.contains(name))
+				   ) {
 
+					if (console != null) {
+						console.println("wrapping " + owner + " in " + current);
+					}
+					
+					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolve", "(Ljava/lang/String;)Ljava/lang/String;");
+					
 				}
-	
+
 				mv.visitMethodInsn(opcode, owner, name, desc);
 			}
 		}
