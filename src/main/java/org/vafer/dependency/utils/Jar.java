@@ -19,50 +19,72 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
-
-import org.apache.commons.io.IOUtils;
-import org.vafer.dependency.resources.Version;
 
 
 public class Jar {
 
 	private final File file;
+	private final boolean relocate;
 
-	public Jar( final File pFile ) throws FileNotFoundException {
+	public Jar( final File pFile, final boolean pRelocate ) throws FileNotFoundException {
 		file = pFile;
+		relocate = pRelocate;
 	}
 
+    /**
+     * Converts a String into name that can be used as java package name
+     *
+     * @param pName input String to create a java package name from
+     * @return java package name derived from input String
+     */
+    private String convertToValidPackageName( final String pName )
+    {
+        final char[] chars = pName.toCharArray();
+        final StringBuffer sb = new StringBuffer();
+
+        if ( chars.length > 0 )
+        {
+            final char c = chars[0];
+            if ( Character.isJavaIdentifierStart( c ) )
+            {
+                sb.append( c );
+            }
+            else
+            {
+                sb.append( "C" );
+            }
+        }
+
+        for ( int i = 1; i < chars.length; i++ )
+        {
+            final char c = chars[i];
+            if ( Character.isJavaIdentifierPart( c ) )
+            {
+                sb.append( c );
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public String getRelocatePrefix() {
+		return convertToValidPackageName( getFile().getName() ) + '/';    	
+    }
+	
+	public String getPrefix() {
+		if (relocate) {
+			return getRelocatePrefix();
+		}
+		return "";
+	}
+	
 	public File getFile() {
 		return file;
 	}
 	
 	public JarInputStream getInputStream() throws IOException {
 		return new JarInputStream(new FileInputStream(file));
-	}
-
-	public String getNewNameFor(String name) {
-		return name;
-	}
-
-	public boolean keepResource(String name) {
-		return true;
-	}
-
-	public Version pickVersion(Version[] versions) {
-		return versions[0];
-	}
-
-	public void onStart(JarOutputStream os) throws IOException {
-	}
-
-	public void onResource(String name, InputStream is, JarOutputStream os) throws IOException {
-		IOUtils.copy(is, os);
-	}
-
-	public void onStop(JarOutputStream os) throws IOException {
 	}
 
 	public String toString() {

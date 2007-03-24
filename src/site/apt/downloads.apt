@@ -2,11 +2,17 @@ Downloads
 
  The official releases are available through the maven2 repository on repo1.maven.org.
 
-* Version 0.4
+* Version 0.5
 
   The current trunk and not yet released
 
-* Version 0.4, 22.03.2006
+* Version 0.4, 24.03.2006
+
+  {{{http://repo1.maven.org/maven2/org/vafer/dependency/0.4/dependency-0.4.jar}dependency-0.4 jar (binaries)}} \
+  {{{http://repo1.maven.org/maven2/org/vafer/dependency/0.4/dependency-0.4-sources.jar}dependency-0.4 jar (sources)}} \
+  {{{http://repo1.maven.org/maven2/org/vafer/dependency/0.4/dependency-0.4.pom}dependency-0.4 pom}}
+
+* Version 0.3, 22.03.2006
 
   {{{http://repo1.maven.org/maven2/org/vafer/dependency/0.3/dependency-0.3.jar}dependency-0.3 jar (binaries)}} \
   {{{http://repo1.maven.org/maven2/org/vafer/dependency/0.3/dependency-0.3-sources.jar}dependency-0.3 jar (sources)}} \

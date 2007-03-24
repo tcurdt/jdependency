@@ -99,7 +99,7 @@ public final class RuntimeWrappingClassAdapter extends ClassAdapter implements O
 				   ) {
 
 					if (console != null) {
-						console.println("wrapping " + owner + " in " + current);
+						console.println("Wrapping " + name + " in " + current);
 					}
 					
 					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolve", "(Ljava/lang/String;)Ljava/lang/String;");

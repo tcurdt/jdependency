@@ -64,7 +64,8 @@ new ClassReader(cl.getResourceAsStream("java/util/HashMap.class")).accept(
 
 +--------------------
 JarUtils.processJars(
- new Jar[] { new Jar(new File("a.jar")) },
+ new Jar[] { new Jar(new File("a.jar"), false) },
+ new DefaultResourceHandler(),
  new FileOutputStream(new File("out.jar")),
  new Console() {
 	public void println(String pString) {

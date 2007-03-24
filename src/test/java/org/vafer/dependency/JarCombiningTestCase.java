@@ -17,10 +17,13 @@ package org.vafer.dependency;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 
 import junit.framework.TestCase;
 
+import org.vafer.dependency.resources.DefaultResourceHandler;
+import org.vafer.dependency.resources.Version;
 import org.vafer.dependency.utils.Jar;
 import org.vafer.dependency.utils.JarUtils;
 
@@ -35,21 +38,24 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar2jar);
 				
 		final Jar[] jars = new Jar[] {
-				new Jar(new File(jar1jar.toURI())) {
-					public String getNewNameFor(String name) {
-						return "jar1/" + name;
+				new Jar(new File(jar1jar.toURI()), true ) {
+					public String getRelocatePrefix() {
+						return "jar1/";
 					}					
 				},
-				new Jar(new File(jar2jar.toURI())) {
-					public String getNewNameFor(String name) {
-						return "jar2/" + name;
+				new Jar(new File(jar2jar.toURI()), true ) {
+					public String getRelocatePrefix() {
+						return "jar2/";
 					}					
 				}
 		};
 		
-		final FileOutputStream out = new FileOutputStream("out1.jar");
+		final File temp = File.createTempFile("jci", "jar");
+		temp.deleteOnExit();
+
+		final FileOutputStream out = new FileOutputStream(temp);
 		
-		JarUtils.processJars(jars, out, new Console() {
+		JarUtils.processJars(jars, new DefaultResourceHandler(), out, new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
 			}			
@@ -65,18 +71,37 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar2jar);
 				
 		final Jar[] jars = new Jar[] {
-				new Jar(new File(jar1jar.toURI())),
-				new Jar(new File(jar2jar.toURI()))
+				new Jar(new File(jar1jar.toURI()), false),
+				new Jar(new File(jar2jar.toURI()), false)
 		};
 
-		final FileOutputStream out = new FileOutputStream("out2.jar");
+		final File temp = File.createTempFile("jci", "jar");
+		temp.deleteOnExit();
+		
+		final FileOutputStream out = new FileOutputStream(temp);
 
 		
-		JarUtils.processJars(jars, out, new Console() {
-			public void println(String pString) {
-				System.out.println(pString);
-			}			
-		});
+		JarUtils.processJars(
+				jars,
+				new DefaultResourceHandler() {
+
+					public InputStream onResource(Jar jar, String oldName, String newName, Version[] versions, InputStream inputStream) {
+						if ( jar != versions[0].getJar() )
+						{
+							// only process the first version of it
+							return null;
+						}
+						
+						return inputStream;
+					}
+					
+				},
+				out,
+				new Console() {
+					public void println(String pString) {
+						System.out.println(pString);
+				}			
+			});
 	}
 
 }
