@@ -19,82 +19,79 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class Clazz
-    implements Comparable
-{
+public class Clazz implements Comparable {
 
-    private final Set dependencies = new HashSet();
+	private final Set dependencies = new HashSet();
 
-    private final Set references = new HashSet();
+	private final Set references = new HashSet();
 
-    private final String name;
+	private final String name;
+	
+	private final ClazzpathUnit unit;
 
-    public Clazz( final String pName )
-    {
-        name = pName;
-    }
+//	public Clazz( final String pName ) {
+//		unit = null;
+//		name = pName;
+//	}
 
-    public void addDependency( final Clazz pClazz )
-    {
-        pClazz.references.add( this );
-        dependencies.add( pClazz );
-    }
+	public Clazz( final ClazzpathUnit pUnit, final String pName ) {
+		unit = pUnit;
+		name = pName;
+	}
 
-    public Set getReferences()
-    {
-        return references;
-    }
+	public void addDependency( final Clazz pClazz ) {
+		pClazz.references.add(this);
+		dependencies.add(pClazz);
+	}
 
-    public Set getDependencies()
-    {
-        return dependencies;
-    }
+	public ClazzpathUnit getClazzpathUnit() {
+		return unit;
+	}
+	
+	public Set getReferences() {
+		return references;
+	}
 
-    public Set getTransitiveDependencies()
-    {
-        final Set all = new HashSet();
-        findTransitiveDependencies( all );
-        return all;
-    }
+	public Set getDependencies() {
+		return dependencies;
+	}
 
-    void findTransitiveDependencies( final Set pAll )
-    {
+	public Set getTransitiveDependencies() {
+		final Set all = new HashSet();
+		findTransitiveDependencies(all);
+		return all;
+	}
 
-        for ( final Iterator it = dependencies.iterator(); it.hasNext(); )
-        {
-            final Clazz clazz = (Clazz) it.next();
+	void findTransitiveDependencies(final Set pAll) {
 
-            if ( !pAll.contains( clazz ) )
-            {
-                pAll.add( clazz );
-                clazz.findTransitiveDependencies( pAll );
-            }
-        }
-    }
+		for (final Iterator it = dependencies.iterator(); it.hasNext();) {
+			final Clazz clazz = (Clazz) it.next();
 
-    public boolean equals( Object pO )
-    {
-        if ( pO.getClass() != Clazz.class )
-        {
-            return false;
-        }
-        final Clazz c = (Clazz) pO;
-        return name.equals( c.name );
-    }
+			if (!pAll.contains(clazz)) {
+				pAll.add(clazz);
+				clazz.findTransitiveDependencies(pAll);
+			}
+		}
+	}
 
-    public int hashCode()
-    {
-        return name.hashCode();
-    }
+	public boolean equals(Object pO) {
+		if (pO.getClass() != Clazz.class) {
+			return false;
+		}
+		final Clazz c = (Clazz) pO;
+		return name.equals(c.name);
+	}
 
-    public int compareTo( Object pO )
-    {
-        return name.compareTo( ( (Clazz) pO ).name );
-    }
+	public int hashCode() {
+		return name.hashCode();
+	}
 
-    public String toString()
-    {
-        return name;
-    }
+	public int compareTo(Object pO) {
+		return name.compareTo(((Clazz) pO).name);
+	}
+
+	public String toString() {
+		return name;
+	}
 
 }
