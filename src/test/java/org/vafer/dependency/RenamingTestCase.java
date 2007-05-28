@@ -37,7 +37,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.vafer.dependency.asm.DelegatingVisitor;
 import org.vafer.dependency.asm.RenamingVisitor;
-import org.vafer.dependency.resources.ResourceRenamer;
+import org.vafer.dependency.relocation.ResourceRenamer;
 
 public class RenamingTestCase extends TestCase {
 

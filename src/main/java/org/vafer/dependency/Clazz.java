@@ -29,10 +29,10 @@ public class Clazz implements Comparable {
 	
 	private final ClazzpathUnit unit;
 
-//	public Clazz( final String pName ) {
-//		unit = null;
-//		name = pName;
-//	}
+	public Clazz( final String pName ) {
+		unit = null;
+		name = pName;
+	}
 
 	public Clazz( final ClazzpathUnit pUnit, final String pName ) {
 		unit = pUnit;

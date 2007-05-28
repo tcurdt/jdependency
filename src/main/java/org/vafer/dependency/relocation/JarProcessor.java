@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vafer.dependency.utils;
+package org.vafer.dependency.relocation;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -36,13 +36,9 @@ import org.objectweb.asm.ClassWriter;
 import org.vafer.dependency.Console;
 import org.vafer.dependency.asm.RenamingVisitor;
 import org.vafer.dependency.asm.RuntimeWrappingClassAdapter;
-import org.vafer.dependency.resources.MapperDump;
-import org.vafer.dependency.resources.ResourceHandler;
-import org.vafer.dependency.resources.ResourceRenamer;
-import org.vafer.dependency.resources.Version;
 
 
-public final class JarUtils {
+public final class JarProcessor {
 
 	private final static String mapperName = "org/vafer/RuntimeMapper.class";
 

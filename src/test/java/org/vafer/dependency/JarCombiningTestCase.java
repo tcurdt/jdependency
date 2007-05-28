@@ -17,17 +17,38 @@ package org.vafer.dependency;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.jar.JarOutputStream;
 
 import junit.framework.TestCase;
 
-import org.vafer.dependency.resources.DefaultResourceHandler;
-import org.vafer.dependency.resources.Version;
-import org.vafer.dependency.utils.Jar;
-import org.vafer.dependency.utils.JarUtils;
+import org.vafer.dependency.relocation.Jar;
+import org.vafer.dependency.relocation.JarProcessor;
+import org.vafer.dependency.relocation.ResourceHandler;
+import org.vafer.dependency.relocation.Version;
 
 public class JarCombiningTestCase extends TestCase {
+	
+	private static class DefaultResourceHandler implements ResourceHandler {
+
+		public void onStartProcessing(JarOutputStream pOutput) throws IOException {
+		}
+
+		public void onStartJar(Jar pJar, JarOutputStream pOutput) throws IOException {
+		}
+
+		public InputStream onResource(Jar pJar, String oldName, String newName, Version[] versions, InputStream inputStream) throws IOException {
+			return inputStream;
+		}
+
+		public void onStopJar(Jar pJar, JarOutputStream pOutput) throws IOException {
+		}
+
+		public void onStopProcessing(JarOutputStream pOutput) throws IOException {
+		}		
+	}
 	
 	public void testMergeWithRelocate() throws Exception {
 		
@@ -38,16 +59,8 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar2jar);
 				
 		final Jar[] jars = new Jar[] {
-				new Jar(new File(jar1jar.toURI()), true ) {
-					public String getRelocatePrefix() {
-						return "jar1/";
-					}					
-				},
-				new Jar(new File(jar2jar.toURI()), true ) {
-					public String getRelocatePrefix() {
-						return "jar2/";
-					}					
-				}
+				new Jar(new File(jar1jar.toURI()), "jar1"),
+				new Jar(new File(jar2jar.toURI()), "jar2")
 		};
 		
 		final File temp = File.createTempFile("jci", "jar");
@@ -55,7 +68,7 @@ public class JarCombiningTestCase extends TestCase {
 
 		final FileOutputStream out = new FileOutputStream(temp);
 		
-		JarUtils.processJars(jars, new DefaultResourceHandler(), out, new Console() {
+		JarProcessor.processJars(jars, new DefaultResourceHandler(), out, new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
 			}			
@@ -71,8 +84,8 @@ public class JarCombiningTestCase extends TestCase {
 		assertNotNull(jar2jar);
 				
 		final Jar[] jars = new Jar[] {
-				new Jar(new File(jar1jar.toURI()), false),
-				new Jar(new File(jar2jar.toURI()), false)
+				new Jar(new File(jar1jar.toURI())),
+				new Jar(new File(jar2jar.toURI()))
 		};
 
 		final File temp = File.createTempFile("jci", "jar");
@@ -81,7 +94,7 @@ public class JarCombiningTestCase extends TestCase {
 		final FileOutputStream out = new FileOutputStream(temp);
 
 		
-		JarUtils.processJars(
+		JarProcessor.processJars(
 				jars,
 				new DefaultResourceHandler() {
 

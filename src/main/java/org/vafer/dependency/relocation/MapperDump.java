@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vafer.dependency.resources;
+package org.vafer.dependency.relocation;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class MapperDump implements Opcodes {
+public final class MapperDump implements Opcodes {
 
 	public static byte[] dump( final String pClassName, final String pPrefix ) throws Exception {
 

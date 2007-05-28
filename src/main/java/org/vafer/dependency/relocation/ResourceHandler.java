@@ -1,10 +1,9 @@
-package org.vafer.dependency.resources;
+package org.vafer.dependency.relocation;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.JarOutputStream;
 
-import org.vafer.dependency.utils.Jar;
 
 /*
  * Copyright 2005 The Apache Software Foundation.

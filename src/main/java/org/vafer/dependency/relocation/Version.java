@@ -1,9 +1,8 @@
 /**
  * 
  */
-package org.vafer.dependency.resources;
+package org.vafer.dependency.relocation;
 
-import org.vafer.dependency.utils.Jar;
 
 public final class Version {
 	private final Jar jar;

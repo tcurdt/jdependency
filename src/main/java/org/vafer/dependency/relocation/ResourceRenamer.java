@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vafer.dependency.resources;
+package org.vafer.dependency.relocation;
 
 public interface ResourceRenamer {
 

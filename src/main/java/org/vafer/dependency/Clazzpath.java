@@ -46,14 +46,10 @@ public final class Clazzpath {
 	}
 
 	public boolean removeClazzpathUnit( final ClazzpathUnit pUnit ) {
+		// FIXME: remove classes and adjust missing		
 		return units.remove(pUnit);
 	}
 
-//	public ClazzpathUnit addClazzpathUnit( final File pUnitLocation ) throws IOException {
-//		return addClazzpathUnit(pUnitLocation, null);
-//	}
-
-	
 	public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId, final ClashHandler pClashHandler ) throws IOException {
 
 		final Map unitClazzes = new HashMap();
