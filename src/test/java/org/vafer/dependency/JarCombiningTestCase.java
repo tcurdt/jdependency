@@ -16,14 +16,23 @@
 package org.vafer.dependency;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.IOUtils;
+import org.vafer.dependency.classes.Main;
+import org.vafer.dependency.classes.Reference;
 import org.vafer.dependency.relocation.Jar;
 import org.vafer.dependency.relocation.JarProcessor;
 import org.vafer.dependency.relocation.ResourceHandler;
@@ -40,6 +49,11 @@ public class JarCombiningTestCase extends TestCase {
 		}
 
 		public InputStream onResource(Jar pJar, String oldName, String newName, Version[] versions, InputStream inputStream) throws IOException {
+			if ( pJar != versions[0].getJar() ) {
+				// only process the first version of it
+				return null;
+			}
+
 			return inputStream;
 		}
 
@@ -50,71 +64,150 @@ public class JarCombiningTestCase extends TestCase {
 		}		
 	}
 	
+	private File createJar( final String[] pResources ) throws IOException {
+
+		final File temp = File.createTempFile("jci", "jar");
+		temp.deleteOnExit();
+		
+		final JarOutputStream output = new JarOutputStream(new FileOutputStream(temp));
+		
+		for (int i = 0; i < pResources.length; i++) {
+			final JarEntry entry = new JarEntry(pResources[i]);
+			
+			final InputStream data = this.getClass().getClassLoader().getResourceAsStream(pResources[i]);
+			
+			if (data == null) {
+				throw new IOException("Could not find resource " + pResources[i]);
+			}
+			
+			output.putNextEntry(entry);
+			
+			IOUtils.copy(data, output);
+			
+			data.close();
+		}
+
+		output.close();
+		
+		return temp;
+	}
+
+	private Set listJar( final File pFile ) throws IOException {
+		final JarInputStream input = new JarInputStream(new FileInputStream(pFile));
+		final Set files = new HashSet();
+
+		while(true) {
+			final JarEntry entry = input.getNextJarEntry();
+			
+			if (entry == null) {
+				break;
+			}
+			
+			files.add(entry.getName());
+		}
+
+		input.close();
+		
+		return files;
+	}
+
+	private String classToResource( final String name ) {
+		final String resource = name.replace('.', '/') + ".class";
+		return resource;
+	}
+	
+	private class ShieldingClassLoader extends URLClassLoader {
+
+		public ShieldingClassLoader(URL[] urls) {
+			super(urls, null, null);
+		}
+
+	}
+	
 	public void testMergeWithRelocate() throws Exception {
 		
-		final URL jar1jar = this.getClass().getClassLoader().getResource("jar1.jar");		
-		final URL jar2jar = this.getClass().getClassLoader().getResource("jar2.jar");
-
+		final File jar1jar = createJar( new String[] { classToResource(Main.class.getName()) } );
+		final File jar2jar = createJar( new String[] { classToResource(Reference.class.getName()) } );
+		
 		assertNotNull(jar1jar);
 		assertNotNull(jar2jar);
+
+		assertTrue(jar1jar.exists());
+		assertTrue(jar2jar.exists());
 				
 		final Jar[] jars = new Jar[] {
-				new Jar(new File(jar1jar.toURI()), "jar1"),
-				new Jar(new File(jar2jar.toURI()), "jar2")
+				new Jar(jar1jar),
+				new Jar(jar2jar, "jar2")
 		};
 		
 		final File temp = File.createTempFile("jci", "jar");
 		temp.deleteOnExit();
 
-		final FileOutputStream out = new FileOutputStream(temp);
+		final FileOutputStream output = new FileOutputStream(temp);
 		
-		JarProcessor.processJars(jars, new DefaultResourceHandler(), out, new Console() {
+		final JarProcessor processor = new JarProcessor(new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
-			}			
+			}						
 		});
+		
+		processor.processJars(jars, new DefaultResourceHandler(), output);
+		
+		final Set files = listJar(temp);
+		
+		assertTrue(files.contains(classToResource(Main.class.getName())));
+		assertTrue(files.contains("jar2/" + classToResource(Reference.class.getName())));
+		assertTrue(files.contains("org/vafer/dependency/RuntimeMapper.class"));
+		assertEquals(3, files.size()); // 2 + 1 mapper
+		
+		final URLClassLoader cl = new ShieldingClassLoader(new URL[] { temp.toURL() });
+		final Class clazz = cl.loadClass(Main.class.getName());
+		
+		final Runnable run = (Runnable) clazz.newInstance();
+		run.run();
 	}
 
 	public void testMergeWithoutRelocate() throws Exception {
 
-		final URL jar1jar = this.getClass().getClassLoader().getResource("jar1.jar");		
-		final URL jar2jar = this.getClass().getClassLoader().getResource("jar2.jar");
-
+		final File jar1jar = createJar( new String[] { classToResource(Main.class.getName()) } );
+		final File jar2jar = createJar( new String[] { classToResource(Reference.class.getName()) } );
+		
 		assertNotNull(jar1jar);
 		assertNotNull(jar2jar);
+
+		assertTrue(jar1jar.exists());
+		assertTrue(jar2jar.exists());
 				
 		final Jar[] jars = new Jar[] {
-				new Jar(new File(jar1jar.toURI())),
-				new Jar(new File(jar2jar.toURI()))
+				new Jar(jar1jar),
+				new Jar(jar2jar)
 		};
 
 		final File temp = File.createTempFile("jci", "jar");
 		temp.deleteOnExit();
 		
-		final FileOutputStream out = new FileOutputStream(temp);
-
+		final FileOutputStream output = new FileOutputStream(temp);
 		
-		JarProcessor.processJars(
-				jars,
-				new DefaultResourceHandler() {
+		final JarProcessor processor = new JarProcessor(new Console() {
+			public void println(String pString) {
+				System.out.println(pString);
+			}						
+		});
+		
+		processor.processJars(jars, new DefaultResourceHandler(), output);
+		
+		final Set files = listJar(temp);
+		
+		assertTrue(files.contains(classToResource(Main.class.getName())));
+		assertTrue(files.contains(classToResource(Reference.class.getName())));
+		assertFalse(files.contains("org/vafer/dependency/RuntimeMapper.class"));
+		assertEquals(2, files.size());
 
-					public InputStream onResource(Jar jar, String oldName, String newName, Version[] versions, InputStream inputStream) {
-						if ( jar != versions[0].getJar() )
-						{
-							// only process the first version of it
-							return null;
-						}
-						
-						return inputStream;
-					}
-					
-				},
-				out,
-				new Console() {
-					public void println(String pString) {
-						System.out.println(pString);
-				}			
-			});
+		final URLClassLoader cl = new ShieldingClassLoader(new URL[] { temp.toURL() });
+		final Class clazz = cl.loadClass(Main.class.getName());
+
+		final Runnable run = (Runnable) clazz.newInstance();
+		run.run();
 	}
 
 }

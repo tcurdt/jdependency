@@ -40,8 +40,6 @@ import org.vafer.dependency.asm.RuntimeWrappingClassAdapter;
 
 public final class JarProcessor {
 
-	private final static String mapperName = "org/vafer/RuntimeMapper.class";
-
 	private static final class MappingEntry {
 		private final String oldName;
 		private final String newName;
@@ -72,11 +70,29 @@ public final class JarProcessor {
 			return newName;
 		}
 		
+		public boolean isMappingRequired() {
+			return !oldName.equals(newName);
+		}
+		
 		public String toString() {
 			return oldName;
 		}
 	}
 
+	
+	private final Console console;
+	
+	public JarProcessor() {
+		this(new Console() {
+			public void println(String pString) {
+			}			
+		});
+	}
+	
+	public JarProcessor( final Console pConsole ) {
+		console = pConsole;
+	}
+	
 	private static byte[] calculateDigest( final MessageDigest digest, final InputStream inputStream ) throws IOException {
         digest.reset();
         final DigestInputStream digestInputStream = new DigestInputStream(inputStream, digest);                
@@ -85,7 +101,7 @@ public final class JarProcessor {
 	}
 	
 	
-	private static Map getMapping( final Jar[] pJars, final Console pConsole ) throws IOException, NoSuchAlgorithmException {
+	private Map getMapping( final Jar[] pJars ) throws IOException, NoSuchAlgorithmException {
         
 		final MessageDigest digest = MessageDigest.getInstance("MD5");
         
@@ -125,28 +141,30 @@ public final class JarProcessor {
 	}
 	
 	
-	public static void processJars( final Jar[] pJars, final ResourceHandler pHandler, final FileOutputStream pOutput, final Console pConsole ) throws IOException, NoSuchAlgorithmException {
+	public void processJars( final Jar[] pJars, final ResourceHandler pHandler, final FileOutputStream pOutput ) throws IOException, NoSuchAlgorithmException {
 
-        final Map byOldName = getMapping(pJars, pConsole);
+        final Map resourcesByName = getMapping(pJars);
+        final Map finalMapping = new HashMap();
                 
         final JarOutputStream outputStream = new JarOutputStream(pOutput);
 
-        if(pConsole != null) {
-			pConsole.println("Building new jar with mappings:");
-			
-			for (Iterator it = byOldName.values().iterator(); it.hasNext();) {
-				final MappingEntry mappingEntry = (MappingEntry) it.next();
-				
-				pConsole.println(" " + mappingEntry.getOldName() + " -> " + mappingEntry.getNewName() + " [" + mappingEntry.versions.length + "]");				
+        console.println("Building new jar with mappings:");
+        boolean mappingRequired = false;
+		for (Iterator it = resourcesByName.values().iterator(); it.hasNext();) {
+			final MappingEntry mappingEntry = (MappingEntry) it.next();			
+			console.println(" " + mappingEntry.getOldName() + " -> " + mappingEntry.getNewName() + " [" + mappingEntry.versions.length + "]");
+			if (mappingEntry.isMappingRequired()) {
+				mappingRequired = true;
 			}
 		}
+		final String localMapperName = "org/vafer/dependency/RuntimeMapper";
 
         pHandler.onStartProcessing(outputStream);
         
         final ResourceRenamer renamer = new ResourceRenamer() {
-			public String getNewNameFor(String pResourceName) {
+			public String getNewNameFor( String pResourceName ) {
 				
-				final MappingEntry mappingEntry = (MappingEntry) byOldName.get(pResourceName);
+				final MappingEntry mappingEntry = (MappingEntry) resourcesByName.get(pResourceName);
 
 				if (mappingEntry == null) {
 					return pResourceName;
@@ -163,8 +181,6 @@ public final class JarProcessor {
         	
             final JarInputStream inputStream = jar.getInputStream();
 
-            final String localMapperName = jar.getPrefix() + mapperName;
-        	
             while (true) {
                 final JarEntry entry = inputStream.getNextJarEntry();
                 
@@ -177,14 +193,15 @@ public final class JarProcessor {
                 	IOUtils.copy(inputStream, new NullOutputStream());
                     continue;
                 }
-                
-                final String oldName = entry.getName();
-                final String newName = jar.getPrefix() + oldName;
-            	
 
-                final MappingEntry m = (MappingEntry) byOldName.get(oldName);
+                final MappingEntry mapping = (MappingEntry) resourcesByName.get(entry.getName());
+                final String oldName = mapping.getOldName();
+                final String newName = mapping.getNewName();
+                final Version[] versions = mapping.getVersions();
                 
-                final InputStream newInputStream = pHandler.onResource(jar, oldName, newName, m.getVersions(), inputStream);
+                finalMapping.put(oldName, newName);
+                
+                final InputStream newInputStream = pHandler.onResource(jar, oldName, newName, versions, inputStream);
                 
                 if (newInputStream == null) {
                 	// remove the resource
@@ -194,12 +211,13 @@ public final class JarProcessor {
 
                 outputStream.putNextEntry(new JarEntry(newName));                    
 
-                if (newName.endsWith(".class")) {
+                if (newName.endsWith(".class") && mappingRequired) {
                     final byte[] oldClassBytes = IOUtils.toByteArray(newInputStream);
 
                     final ClassReader r = new ClassReader(oldClassBytes);
                     final ClassWriter w = new ClassWriter(true);
-                    r.accept(new RenamingVisitor(new RuntimeWrappingClassAdapter(w, localMapperName, pConsole), renamer), false);
+                    
+                    r.accept(new RenamingVisitor(new RuntimeWrappingClassAdapter(w, localMapperName), renamer), false);                    	
 
                     final byte[] newClassBytes = w.toByteArray();
                     IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputStream);
@@ -209,24 +227,6 @@ public final class JarProcessor {
                 IOUtils.copy(newInputStream, outputStream);                                                
             }
 
-        	final String prefix = jar.getPrefix();
-        	if ("".equals(prefix)) {
-        		// not relocated
-        		continue;
-        	}
-        
-        	
-        	if (pConsole != null) {
-                pConsole.println("Creating runtime mapper " + localMapperName + " handling prefix " + prefix);
-            }
-            	
-            outputStream.putNextEntry(new JarEntry(localMapperName));
-            try {
-				final byte[] clazzBytes = MapperDump.dump(localMapperName, jar.getPrefix());
-                IOUtils.copy(new ByteArrayInputStream(clazzBytes), outputStream);					
-			} catch (Exception e) {
-				throw new IOException("Could not generate mapper class " + e);
-			}            	
             
             IOUtils.closeQuietly(inputStream);
 
@@ -235,6 +235,18 @@ public final class JarProcessor {
         }
 
         pHandler.onStopProcessing(outputStream);
+
+        if (mappingRequired) {
+	        console.println("Creating runtime mapper " + localMapperName);
+	    	
+	        outputStream.putNextEntry(new JarEntry(localMapperName + ".class"));
+	        try {
+				final byte[] clazzBytes = MapperDump.dump(localMapperName, finalMapping);
+	            IOUtils.copy(new ByteArrayInputStream(clazzBytes), outputStream);					
+			} catch (Exception e) {
+				throw new IOException("Could not generate mapper class " + e);
+			}
+        }
         
         IOUtils.closeQuietly(outputStream);
 	}

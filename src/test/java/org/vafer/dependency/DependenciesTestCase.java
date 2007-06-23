@@ -21,73 +21,62 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.vafer.dependency.classes.Class1;
-import org.vafer.dependency.classes.Class2;
-import org.vafer.dependency.classes.Class3;
-import org.vafer.dependency.classes.Class4;
 import org.vafer.dependency.utils.DependencyUtils;
 
-public class DependenciesTestCase extends TestCase {
+public final class DependenciesTestCase extends TestCase {
 
-	public void testClass1() throws Exception {
-		final Set dependencies = DependencyUtils.getDependenciesOfClass(Class1.class);
+	public void testClassObject() throws Exception {
+		final Set dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
 		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-				Class1.class.getName(),
-				"java.lang.Object"
-				}));
-		assertEquals(expectedDependencies, dependencies);
-	}
-
-	public void testClass2() throws Exception {
-		final Set dependencies = DependencyUtils.getDependenciesOfClass(Class2.class);
-		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-				Class2.class.getName(),
 				"java.lang.String",
-				"java.lang.Object"
+				"java.lang.IllegalArgumentException",
+				"java.lang.CloneNotSupportedException",
+				"java.lang.Class",
+				"java.lang.InterruptedException",
+				"java.lang.Integer",
+				"java.lang.Object",
+				"java.lang.StringBuilder",
+				"java.lang.Throwable"
 				}));
 		assertEquals(expectedDependencies, dependencies);
 	}
 
-	public void testClass3() throws Exception {
-		final Set dependencies = DependencyUtils.getDependenciesOfClass(Class3.class);
+	public void testClassString() throws Exception {
+		final Set dependencies = DependencyUtils.getDependenciesOfClass(String.class);
 		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-				Class3.class.getName(),
+				"java.lang.Deprecated",
+				"java.util.regex.Pattern",
+				"java.util.Formatter",
+				"java.lang.Character",
+				"java.lang.Object",
+				"java.lang.Comparable",
+				"java.lang.NullPointerException",
+				"java.lang.String$CaseInsensitiveComparator",
+				"java.lang.ConditionalSpecialCasing",
+				"java.lang.System",
+				"java.lang.StringIndexOutOfBoundsException",
+				"java.lang.IllegalArgumentException",
+				"java.lang.IndexOutOfBoundsException",
+				"java.io.ObjectStreamField",
+				"java.lang.StringCoding",
+				"java.lang.AbstractStringBuilder",
+				"java.io.Serializable",
+				"java.lang.Float",
+				"java.util.Comparator",
+				"java.util.regex.Matcher",
 				"java.lang.String",
-				"java.lang.Object"
+				"java.io.UnsupportedEncodingException",
+				"java.lang.StringBuilder",
+				"java.lang.Long",
+				"java.lang.Double",
+				"java.util.Locale",
+				"java.lang.Integer",
+				"java.lang.StringBuffer",
+				"java.lang.Math",
+				"java.lang.CharSequence",
+				"java.lang.String$1"
 				}));
 		assertEquals(expectedDependencies, dependencies);
 	}
 
-	public void testClass4() throws Exception {
-		final Set dependencies = DependencyUtils.getDependenciesOfClass(Class4.class);
-		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-				Class4.class.getName(),
-				"java.util.HashMap",
-				"java.util.Map",
-				"java.lang.String",
-				"java.lang.Object"
-				}));
-		assertEquals(expectedDependencies, dependencies);
-	}
-
-//	public void testClassObject() throws Exception {
-//		final Set dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
-//		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-//				}));
-//		assertEquals(expectedDependencies, dependencies);
-//	}
-//
-//	public void testClassString() throws Exception {
-//		final Set dependencies = DependencyUtils.getDependenciesOfClass(String.class);
-//		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-//				}));
-//		assertEquals(expectedDependencies, dependencies);
-//	}
-//
-//	public void testClassHashMap() throws Exception {
-//		final Set dependencies = DependencyUtils.getDependenciesOfClass(HashMap.class);
-//		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-//				}));
-//		assertEquals(expectedDependencies, dependencies);
-//	}
 }

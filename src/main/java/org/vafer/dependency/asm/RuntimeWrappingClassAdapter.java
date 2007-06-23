@@ -72,17 +72,27 @@ public final class RuntimeWrappingClassAdapter extends ClassAdapter implements O
 			// java.net.URL                 java.lang.ClassLoader.getResource(java.lang.String)
 			// java.io.InputStream          java.lang.ClassLoader.getResourceAsStream(java.lang.String)
 			
-			private final Set methodsClass = new HashSet() {
+			private final Set resolveClassMethodsClass = new HashSet() {
 				private static final long serialVersionUID = 1L;
 				{
 					add("forName");
 				}
 			};
+			private final Set resolveResouceMethodsClass = new HashSet() {
+				private static final long serialVersionUID = 1L;
+				{
+				}
+			};
 
-			private final Set methodsClassLoader = new HashSet() {
+			private final Set resolveClassMethodsClassLoader = new HashSet() {
 				private static final long serialVersionUID = 1L;
 				{
 					add("loadClass");
+				}
+			};
+			private final Set resolveResourceMethodsClassLoader = new HashSet() {
+				private static final long serialVersionUID = 1L;
+				{
 					add("getSystemResource");
 					add("getSystemResourceAsStream");
 					add("getResource");
@@ -90,19 +100,29 @@ public final class RuntimeWrappingClassAdapter extends ClassAdapter implements O
 					add("getResourceAsStream");
 				}
 			};
-	
+
+			
 			public void visitMethodInsn(int opcode, String owner, String name, String desc) {
 				
-				if (
-						("java/lang/Class".equals(owner) && methodsClass.contains(name)) ||
-				        ("java/lang/ClassLoader".equals(owner) && methodsClassLoader.contains(name))
-				   ) {
+				if (("java/lang/Class".equals(owner) && resolveResouceMethodsClass.contains(name)) ||
+				    ("java/lang/ClassLoader".equals(owner) && resolveResourceMethodsClassLoader.contains(name))) {
 
 					if (console != null) {
-						console.println("Wrapping " + name + " in " + current);
+						console.println("Wrapping resource access " + name + " in " + current);
 					}
 					
-					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolve", "(Ljava/lang/String;)Ljava/lang/String;");
+					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolveResource", "(Ljava/lang/String;)Ljava/lang/String;");
+					
+				} else
+
+				if (("java/lang/Class".equals(owner) && resolveClassMethodsClass.contains(name)) ||
+					("java/lang/ClassLoader".equals(owner) && resolveClassMethodsClassLoader.contains(name))) {
+
+					if (console != null) {
+						console.println("Wrapping class access " + name + " in " + current);
+					}
+					
+					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolveClass", "(Ljava/lang/String;)Ljava/lang/String;");
 					
 				}
 

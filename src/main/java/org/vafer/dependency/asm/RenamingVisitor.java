@@ -33,6 +33,10 @@ public final class RenamingVisitor extends DependencyVisitor {
 		final String newResourceName = renamer.getNewNameFor(oldResourceName);
 		final String newName = newResourceName.substring(0, newResourceName.length() - ".class".length());		
 
+		if (!pOldName.equals(newName)) {
+			System.out.println("   " + pOldName + " => " + newName);
+		}
+		
 		return newName;
 	}
 

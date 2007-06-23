@@ -39,35 +39,58 @@ import org.vafer.dependency.asm.DelegatingVisitor;
 import org.vafer.dependency.asm.RenamingVisitor;
 import org.vafer.dependency.relocation.ResourceRenamer;
 
-public class RenamingTestCase extends TestCase {
+public final class RelocationTestCase extends TestCase {
 
+	private final static String name = RelocationTestCase.class.getName();
+	private final static String resource = RelocationTestCase.class.getName().replace('.', '/') + ".class";
+	
+	private static final class BytecodeClassLoader extends ClassLoader {
+
+	    public BytecodeClassLoader() {
+			super();
+		}
+
+		public BytecodeClassLoader(ClassLoader parent) {
+			super(parent);
+		}
+
+		public Class loadClass( final byte[] bytecode ) {
+
+			final Class clazz = defineClass(null, bytecode, 0, bytecode.length);
+	        
+	        return clazz;
+	    }
+	}
+
+	
+	
 	public void testClass1Load() throws Exception {
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		
         final ClassWriter originalCw = new ClassWriter(true, false);
-        new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream(resource))
         	.accept(new CheckClassAdapter(originalCw), false);
         final Class originalClass = cl.loadClass(originalCw.toByteArray());
         
-        assertEquals("org.vafer.dependency.classes.Class1", originalClass.getName());
+        assertEquals(name, originalClass.getName());
 	}
 
 	public void testClass1Delegating() throws Exception {
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		
         final ClassWriter originalCw = new ClassWriter(true, false);
-        new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream(resource))
     	.accept(new DelegatingVisitor(new CheckClassAdapter(originalCw)), false);
         final Class originalClass = cl.loadClass(originalCw.toByteArray());
         
-        assertEquals("org.vafer.dependency.classes.Class1", originalClass.getName());
+        assertEquals(name, originalClass.getName());
 	}
 
 	public void testClass1NamePassThrough() throws Exception {
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		
         final ClassWriter originalCw = new ClassWriter(true, false);
-        new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream(resource))
     	.accept(new RenamingVisitor(new CheckClassAdapter(originalCw), new ResourceRenamer() {
 			public String getNewNameFor(final String pOldName) {
 				return pOldName;
@@ -75,14 +98,14 @@ public class RenamingTestCase extends TestCase {
     	}), false);
         final Class originalClass = cl.loadClass(originalCw.toByteArray());
         
-        assertEquals("org.vafer.dependency.classes.Class1", originalClass.getName());
+        assertEquals(name, originalClass.getName());
 	}
 	
     public void testClass1Rename() throws Exception {
     	final BytecodeClassLoader cl = new BytecodeClassLoader();
     	
         final ClassWriter renamedCw = new ClassWriter(true, false);
-        new ClassReader(getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/classes/Class1.class"))
+        new ClassReader(getClass().getClassLoader().getResourceAsStream(resource))
         	.accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
 				public String getNewNameFor(final String pOldName) {
 					if (pOldName.startsWith("org/vafer/dependency/")) {
@@ -93,7 +116,7 @@ public class RenamingTestCase extends TestCase {
         	}), false);
         final Class renamedClass = cl.loadClass(renamedCw.toByteArray());
 
-        assertEquals("my.org.vafer.dependency.classes.Class1", renamedClass.getName());
+        assertEquals("my." + name, renamedClass.getName());
 	}
 
     public void testHashMapRename() throws Exception {
@@ -112,6 +135,7 @@ public class RenamingTestCase extends TestCase {
         final Class renamedClass = cl.loadClass(renamedCw.toByteArray());
 
         assertEquals("my.java.util.HashMap", renamedClass.getName());
+        
 	}
 
     
