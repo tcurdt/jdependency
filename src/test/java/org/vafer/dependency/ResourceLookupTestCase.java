@@ -52,7 +52,7 @@ public class ResourceLookupTestCase extends TestCase {
 		
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		final Class c = cl.loadClass(generatedClassBytes);
-		final Method m = c.getMethod("resolve", new Class[] { String.class });
+		final Method m = c.getMethod("resolveResource", new Class[] { String.class });
 		final Object r = m.invoke(null, new Object[] { "resource" });
 		
 		assertEquals("prefix/resource", r);
