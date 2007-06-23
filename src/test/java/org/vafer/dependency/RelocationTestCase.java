@@ -41,8 +41,11 @@ import org.vafer.dependency.relocation.ResourceRenamer;
 
 public final class RelocationTestCase extends TestCase {
 
-	private final static String name = RelocationTestCase.class.getName();
-	private final static String resource = RelocationTestCase.class.getName().replace('.', '/') + ".class";
+	public final static class Test {		
+	}
+	
+	private final static String name = Test.class.getName();
+	private final static String resource = Test.class.getName().replace('.', '/') + ".class";
 	
 	private static final class BytecodeClassLoader extends ClassLoader {
 
