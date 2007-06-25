@@ -1,4 +1,4 @@
-package org.vafer.dependency.relocation;
+package org.vafer.dependency.runtime;
 
 import java.util.HashMap;
 

@@ -33,14 +33,18 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.commons.RemappingClassAdapter;
+import org.objectweb.asm.util.CheckClassAdapter;
 import org.vafer.dependency.Console;
-import org.vafer.dependency.asm.RenamingVisitor;
-import org.vafer.dependency.asm.RuntimeWrappingClassAdapter;
+import org.vafer.dependency.runtime.MapperRuntime;
+import org.vafer.dependency.runtime.RegistryRuntime;
 
 
-public final class JarProcessor {
+public final class Processor {
 
 	private static final class MappingEntry {
+
 		private final String oldName;
 		private final String newName;
 		private Version[] versions;
@@ -82,14 +86,14 @@ public final class JarProcessor {
 	
 	private final Console console;
 	
-	public JarProcessor() {
+	public Processor() {
 		this(new Console() {
 			public void println(String pString) {
 			}			
 		});
 	}
 	
-	public JarProcessor( final Console pConsole ) {
+	public Processor( final Console pConsole ) {
 		console = pConsole;
 	}
 	
@@ -141,7 +145,7 @@ public final class JarProcessor {
 	}
 	
 	
-	public void processJars( final Jar[] pJars, final ResourceHandler pHandler, final FileOutputStream pOutput ) throws IOException, NoSuchAlgorithmException {
+	public void processJars( final Jar[] pJars, final JarHandler pHandler, final FileOutputStream pOutput ) throws IOException, NoSuchAlgorithmException {
 
         final Map resourcesByName = getMapping(pJars);
         final Map finalMapping = new HashMap();
@@ -149,31 +153,31 @@ public final class JarProcessor {
         final JarOutputStream outputStream = new JarOutputStream(pOutput);
 
         console.println("Building new jar with mappings:");
-        boolean mappingRequired = false;
 		for (Iterator it = resourcesByName.values().iterator(); it.hasNext();) {
 			final MappingEntry mappingEntry = (MappingEntry) it.next();			
 			console.println(" " + mappingEntry.getOldName() + " -> " + mappingEntry.getNewName() + " [" + mappingEntry.versions.length + "]");
-			if (mappingEntry.isMappingRequired()) {
-				mappingRequired = true;
-			}
+
+			finalMapping.put(mappingEntry.getOldName(), mappingEntry.getNewName());
 		}
-		final String localMapperName = "org/vafer/dependency/RuntimeMapper";
+
+		final MapperRuntime runtime = new RegistryRuntime(finalMapping, console);
 
         pHandler.onStartProcessing(outputStream);
         
-        final ResourceRenamer renamer = new ResourceRenamer() {
-			public String getNewNameFor( String pResourceName ) {
-				
-				final MappingEntry mappingEntry = (MappingEntry) resourcesByName.get(pResourceName);
+        final Remapper remapper = new Remapper() {
+        	public String map( String pInternalClassName ) {
+
+        		final String resourceName = pInternalClassName + ".class";
+        		final MappingEntry mappingEntry = (MappingEntry) resourcesByName.get(resourceName);
 
 				if (mappingEntry == null) {
-					return pResourceName;
+					return pInternalClassName;
 				}
 
-				return mappingEntry.newName;
-			}        	
+				return mappingEntry.newName.substring(0, mappingEntry.newName.length() - 6);
+        	}
         };
-
+        
         for (int i = 0; i < pJars.length; i++) {
         	final Jar jar = pJars[i];
 
@@ -211,13 +215,13 @@ public final class JarProcessor {
 
                 outputStream.putNextEntry(new JarEntry(newName));                    
 
-                if (newName.endsWith(".class") && mappingRequired) {
+                if (newName.endsWith(".class")) {
                     final byte[] oldClassBytes = IOUtils.toByteArray(newInputStream);
 
                     final ClassReader r = new ClassReader(oldClassBytes);
-                    final ClassWriter w = new ClassWriter(true);
+                    final ClassWriter w = new ClassWriter(0);
                     
-                    r.accept(new RenamingVisitor(new RuntimeWrappingClassAdapter(w, localMapperName), renamer), false);                    	
+                    r.accept(new RemappingClassAdapter(runtime.getClassAdapter(new CheckClassAdapter(w)), remapper), 0);                    	
 
                     final byte[] newClassBytes = w.toByteArray();
                     IOUtils.copy(new ByteArrayInputStream(newClassBytes), outputStream);
@@ -236,17 +240,7 @@ public final class JarProcessor {
 
         pHandler.onStopProcessing(outputStream);
 
-        if (mappingRequired) {
-	        console.println("Creating runtime mapper " + localMapperName);
-	    	
-	        outputStream.putNextEntry(new JarEntry(localMapperName + ".class"));
-	        try {
-				final byte[] clazzBytes = MapperDump.dump(localMapperName, finalMapping);
-	            IOUtils.copy(new ByteArrayInputStream(clazzBytes), outputStream);					
-			} catch (Exception e) {
-				throw new IOException("Could not generate mapper class " + e);
-			}
-        }
+        runtime.addRuntime(outputStream);
         
         IOUtils.closeQuietly(outputStream);
 	}

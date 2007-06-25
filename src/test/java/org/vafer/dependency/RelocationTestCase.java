@@ -34,10 +34,9 @@ import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.util.CheckClassAdapter;
-import org.vafer.dependency.asm.DelegatingVisitor;
-import org.vafer.dependency.asm.RenamingVisitor;
-import org.vafer.dependency.relocation.ResourceRenamer;
 
 public final class RelocationTestCase extends TestCase {
 
@@ -70,20 +69,9 @@ public final class RelocationTestCase extends TestCase {
 	public void testClass1Load() throws Exception {
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		
-        final ClassWriter originalCw = new ClassWriter(true, false);
+        final ClassWriter originalCw = new ClassWriter(0);
         new ClassReader(getClass().getClassLoader().getResourceAsStream(resource))
-        	.accept(new CheckClassAdapter(originalCw), false);
-        final Class originalClass = cl.loadClass(originalCw.toByteArray());
-        
-        assertEquals(name, originalClass.getName());
-	}
-
-	public void testClass1Delegating() throws Exception {
-		final BytecodeClassLoader cl = new BytecodeClassLoader();
-		
-        final ClassWriter originalCw = new ClassWriter(true, false);
-        new ClassReader(getClass().getClassLoader().getResourceAsStream(resource))
-    	.accept(new DelegatingVisitor(new CheckClassAdapter(originalCw)), false);
+        	.accept(new CheckClassAdapter(originalCw), 0);
         final Class originalClass = cl.loadClass(originalCw.toByteArray());
         
         assertEquals(name, originalClass.getName());
@@ -92,13 +80,13 @@ public final class RelocationTestCase extends TestCase {
 	public void testClass1NamePassThrough() throws Exception {
 		final BytecodeClassLoader cl = new BytecodeClassLoader();
 		
-        final ClassWriter originalCw = new ClassWriter(true, false);
+        final ClassWriter originalCw = new ClassWriter(0);
         new ClassReader(getClass().getClassLoader().getResourceAsStream(resource))
-    	.accept(new RenamingVisitor(new CheckClassAdapter(originalCw), new ResourceRenamer() {
-			public String getNewNameFor(final String pOldName) {
-				return pOldName;
-			}        		
-    	}), false);
+    	.accept(new RemappingClassAdapter(new CheckClassAdapter(originalCw), new Remapper() {
+    		public String map( final String pOldName ) {
+    			return pOldName;
+    		}
+    	}), 0);
         final Class originalClass = cl.loadClass(originalCw.toByteArray());
         
         assertEquals(name, originalClass.getName());
@@ -107,16 +95,16 @@ public final class RelocationTestCase extends TestCase {
     public void testClass1Rename() throws Exception {
     	final BytecodeClassLoader cl = new BytecodeClassLoader();
     	
-        final ClassWriter renamedCw = new ClassWriter(true, false);
+        final ClassWriter renamedCw = new ClassWriter(0);
         new ClassReader(getClass().getClassLoader().getResourceAsStream(resource))
-        	.accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
-				public String getNewNameFor(final String pOldName) {
+        	.accept(new RemappingClassAdapter(new CheckClassAdapter(renamedCw), new Remapper() {
+	    		public String map( final String pOldName ) {
 					if (pOldName.startsWith("org/vafer/dependency/")) {
 						return "my/" + pOldName;
 					}
 					return pOldName;
-				}        		
-        	}), false);
+	    		}
+        	}), 0);
         final Class renamedClass = cl.loadClass(renamedCw.toByteArray());
 
         assertEquals("my." + name, renamedClass.getName());
@@ -125,16 +113,16 @@ public final class RelocationTestCase extends TestCase {
     public void testHashMapRename() throws Exception {
     	final BytecodeClassLoader cl = new BytecodeClassLoader();
     	
-        final ClassWriter renamedCw = new ClassWriter(true, false);
+        final ClassWriter renamedCw = new ClassWriter(0);
         new ClassReader(getClass().getClassLoader().getResourceAsStream("java/util/HashMap.class"))
-        	.accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
-				public String getNewNameFor(final String pOldName) {
+        	.accept(new RemappingClassAdapter(new CheckClassAdapter(renamedCw), new Remapper() {
+	    		public String map( final String pOldName ) {
 					if (pOldName.startsWith("java/util/HashMap")) {
 						return "my/" + pOldName;
 					}
 					return pOldName;
-				}        		
-        	}), false);
+	    		}
+        	}), 0);
         final Class renamedClass = cl.loadClass(renamedCw.toByteArray());
 
         assertEquals("my.java.util.HashMap", renamedClass.getName());
@@ -257,18 +245,19 @@ public final class RelocationTestCase extends TestCase {
 					final byte[] classBytes;
 
 					if (name.startsWith("")) {
-				        final ClassWriter renamedCw = new ClassWriter(true, false);
-				        new ClassReader(classStream).accept(new RenamingVisitor(new CheckClassAdapter(renamedCw), new ResourceRenamer() {
-							public String getNewNameFor(final String pOldName) {
-								if (pOldName.startsWith(FileOutputStream.class.getName().replace('.', '/') + ".class")) {
-									return FileOutputStreamProxy.class.getName().replace('.', '/') + ".class";
+				        final ClassWriter renamedCw = new ClassWriter(0);
+				        new ClassReader(classStream).accept(new RemappingClassAdapter(new CheckClassAdapter(renamedCw), new Remapper() {
+				        	public String map(final String pOldName) {
+				        		
+								if (pOldName.startsWith(FileOutputStream.class.getName().replace('.', '/'))) {
+									return FileOutputStreamProxy.class.getName().replace('.', '/');
 								}
 								if (pOldName.startsWith(FileInputStream.class.getName().replace('.', '/'))) {
-									return FileInputStreamProxy.class.getName().replace('.', '/') + ".class";
+									return FileInputStreamProxy.class.getName().replace('.', '/');
 								}
 								return pOldName;
 							}        		
-			        	}), false);
+			        	}), 0);
 
 			        	classBytes = renamedCw.toByteArray();
 						

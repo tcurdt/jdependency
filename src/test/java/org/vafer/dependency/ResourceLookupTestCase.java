@@ -21,7 +21,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.vafer.dependency.relocation.MapperDump;
+import org.vafer.dependency.runtime.MapperDump;
 
 public class ResourceLookupTestCase extends TestCase {
 

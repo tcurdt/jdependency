@@ -44,7 +44,6 @@ public final class DependenciesTestCase extends TestCase {
 	public void testClassString() throws Exception {
 		final Set dependencies = DependencyUtils.getDependenciesOfClass(String.class);
 		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-				"java.lang.Deprecated",
 				"java.util.regex.Pattern",
 				"java.util.Formatter",
 				"java.lang.Character",

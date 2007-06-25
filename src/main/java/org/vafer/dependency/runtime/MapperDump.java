@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vafer.dependency.relocation;
+package org.vafer.dependency.runtime;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public final class MapperDump implements Opcodes {
 
 	public static byte[] dump( final String pClassName, final Map pMapping ) throws Exception {
 
-		ClassWriter cw = new ClassWriter(true);
+		ClassWriter cw = new ClassWriter(0);
 		FieldVisitor fv;
 		MethodVisitor mv;
 

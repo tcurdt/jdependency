@@ -1,3 +1,10 @@
+package org.vafer.dependency.relocation;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.jar.JarOutputStream;
+
+
 /*
  * Copyright 2005 The Apache Software Foundation.
  * 
@@ -13,21 +20,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vafer.dependency.asm;
 
-import java.util.HashSet;
-import java.util.Set;
+public interface JarHandler
+{
+	void onStartProcessing( JarOutputStream pOutput ) throws IOException;
 
-public final class CollectingDependencyVisitor extends DependencyVisitor {
+	void onStartJar( Jar pJar, JarOutputStream pOutput ) throws IOException;
 
-	final Set classes = new HashSet();
+    InputStream onResource( Jar pJar, String oldName, String newName, Version[] versions, InputStream inputStream ) throws IOException;
 
-	public Set getDependencies() {
-		return classes;
-	}
+	void onStopJar( Jar pJar, JarOutputStream pOutput ) throws IOException;
 
-	protected String visitDependency( final String pClassName ) {
-		classes.add(pClassName.replace('/', '.'));
-		return pClassName;
-	}
+	void onStopProcessing( JarOutputStream pOutput ) throws IOException;
 }

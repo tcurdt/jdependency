@@ -25,17 +25,17 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.vafer.dependency.Console;
 
-public final class RuntimeWrappingClassAdapter extends ClassAdapter implements Opcodes {
+public final class RuntimeClassAdapter extends ClassAdapter implements Opcodes {
 		
 		private final String mapper;
 		private final Console console;
 		private String current;
 	
-		public RuntimeWrappingClassAdapter( final ClassVisitor cv, final String pMapperClassName ) {
+		public RuntimeClassAdapter( final ClassVisitor cv, final String pMapperClassName ) {
 			this(cv, pMapperClassName, null);
 		}
 
-		public RuntimeWrappingClassAdapter( final ClassVisitor cv, final String pMapper, final Console pConsole ) {
+		public RuntimeClassAdapter( final ClassVisitor cv, final String pMapper, final Console pConsole ) {
 			super(cv);
 			console = pConsole;
 			mapper = pMapper;

@@ -34,13 +34,13 @@ import org.apache.commons.io.IOUtils;
 import org.vafer.dependency.classes.Main;
 import org.vafer.dependency.classes.Reference;
 import org.vafer.dependency.relocation.Jar;
-import org.vafer.dependency.relocation.JarProcessor;
-import org.vafer.dependency.relocation.ResourceHandler;
+import org.vafer.dependency.relocation.Processor;
+import org.vafer.dependency.relocation.JarHandler;
 import org.vafer.dependency.relocation.Version;
 
 public class JarCombiningTestCase extends TestCase {
 	
-	private static class DefaultResourceHandler implements ResourceHandler {
+	private static class DefaultResourceHandler implements JarHandler {
 
 		public void onStartProcessing(JarOutputStream pOutput) throws IOException {
 		}
@@ -145,7 +145,7 @@ public class JarCombiningTestCase extends TestCase {
 
 		final FileOutputStream output = new FileOutputStream(temp);
 		
-		final JarProcessor processor = new JarProcessor(new Console() {
+		final Processor processor = new Processor(new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
 			}						
@@ -188,7 +188,7 @@ public class JarCombiningTestCase extends TestCase {
 		
 		final FileOutputStream output = new FileOutputStream(temp);
 		
-		final JarProcessor processor = new JarProcessor(new Console() {
+		final Processor processor = new Processor(new Console() {
 			public void println(String pString) {
 				System.out.println(pString);
 			}						

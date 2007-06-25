@@ -26,7 +26,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.objectweb.asm.ClassReader;
-import org.vafer.dependency.asm.CollectingDependencyVisitor;
+import org.vafer.dependency.asm.DependencyCollectingClassAdapter;
 
 public final class Clazzpath {
 
@@ -90,8 +90,8 @@ public final class Clazzpath {
 				clazzes.put(clazzName, clazz);
 				unitClazzes.put(clazzName, clazz);
 
-				final CollectingDependencyVisitor v = new CollectingDependencyVisitor();
-				new ClassReader(inputStream).accept(v, false);
+				final DependencyCollectingClassAdapter v = new DependencyCollectingClassAdapter();
+				new ClassReader(inputStream).accept(v, 0);
 				final Set depNames = v.getDependencies();
 
 				for (final Iterator it = depNames.iterator(); it.hasNext();) {

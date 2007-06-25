@@ -25,7 +25,7 @@ import java.util.jar.JarInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
-import org.vafer.dependency.asm.CollectingDependencyVisitor;
+import org.vafer.dependency.asm.DependencyCollectingClassAdapter;
 
 public final class DependencyUtils {
 
@@ -50,8 +50,8 @@ public final class DependencyUtils {
 	            final String name = entry.getName();
 	            
 	            if (name.endsWith(".class")) {
-	                final CollectingDependencyVisitor v = new CollectingDependencyVisitor();
-	                new ClassReader( inputStream ).accept( v, false );
+	                final DependencyCollectingClassAdapter v = new DependencyCollectingClassAdapter();
+	                new ClassReader( inputStream ).accept( v, 0 );
 	                dependencies.addAll(v.getDependencies());
 	            } else {
 	                IOUtils.copy(inputStream, nullStream);                                                
@@ -65,8 +65,8 @@ public final class DependencyUtils {
 	}
 
 	public static Set getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
-        final CollectingDependencyVisitor v = new CollectingDependencyVisitor();
-        new ClassReader( pInputStream ).accept( v, false );
+        final DependencyCollectingClassAdapter v = new DependencyCollectingClassAdapter();
+        new ClassReader( pInputStream ).accept( v, 0 );
         final Set depNames = v.getDependencies();
         return depNames;
 	}
