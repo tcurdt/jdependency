@@ -1,10 +1,3 @@
-package org.vafer.dependency.relocation;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.jar.JarOutputStream;
-
-
 /*
  * Copyright 2005 The Apache Software Foundation.
  * 
@@ -21,15 +14,25 @@ import java.util.jar.JarOutputStream;
  * limitations under the License.
  */
 
+package org.vafer.jar.handler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.jar.JarEntry;
+
+import org.vafer.jar.Jar;
+
+
+
 public interface JarHandler
 {
-	void onStartProcessing( JarOutputStream pOutput ) throws IOException;
+	void onStartProcessing() throws IOException;
 
-	void onStartJar( Jar pJar, JarOutputStream pOutput ) throws IOException;
+	void onStartJar( Jar pJar ) throws IOException;
 
-    InputStream onResource( Jar pJar, String oldName, String newName, Version[] versions, InputStream inputStream ) throws IOException;
+    void onResource( JarEntry pEntry, InputStream pInput ) throws IOException;
 
-	void onStopJar( Jar pJar, JarOutputStream pOutput ) throws IOException;
+	void onStopJar( Jar pJar ) throws IOException;
 
-	void onStopProcessing( JarOutputStream pOutput ) throws IOException;
+	void onStopProcessing() throws IOException;
 }

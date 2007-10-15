@@ -1,4 +1,4 @@
-package org.vafer.dependency.runtime;
+package org.vafer.dependency.resources.runtime;
 
 import java.util.HashMap;
 

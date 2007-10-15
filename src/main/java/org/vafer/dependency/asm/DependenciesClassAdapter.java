@@ -22,7 +22,7 @@ import org.objectweb.asm.commons.EmptyVisitor;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 
-public final class DependencyCollectingClassAdapter extends RemappingClassAdapter {
+public final class DependenciesClassAdapter extends RemappingClassAdapter {
 
 	private static class CollectingRemapper extends Remapper {
 		final Set classes = new HashSet();
@@ -33,7 +33,7 @@ public final class DependencyCollectingClassAdapter extends RemappingClassAdapte
 		}		
 	}
 	
-	public DependencyCollectingClassAdapter() {
+	public DependenciesClassAdapter() {
 		super(new EmptyVisitor(), new CollectingRemapper());	
 	}
 

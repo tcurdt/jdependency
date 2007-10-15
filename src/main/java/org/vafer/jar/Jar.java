@@ -13,44 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vafer.dependency.relocation;
+package org.vafer.jar;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.jar.JarInputStream;
+
+import org.apache.commons.io.IOUtils;
 
 
 public class Jar {
 
 	private final File file;
-	private final String prefix;
+	private final String name;
+
+	public Jar( final InputStream pInput, final String pName ) throws IOException {
+		file = File.createTempFile("jar", ".jar");
+		IOUtils.copy(pInput, new FileOutputStream(file));
+		name = pName;
+	}
 
 	public Jar( final File pFile ) throws FileNotFoundException {
-		this(pFile, null);
-	}
-	
-	public Jar( final File pFile, final String pPrefix ) throws FileNotFoundException {
 		file = pFile;
-
-		if (pPrefix != null) {
-			prefix = pPrefix + "/";
-		} else {
-			prefix = "";
-		}
+		name = pFile.toString();
 	}
 
-	public String getPrefix() {
-		return prefix;
-	}
-	
 	public JarInputStream getInputStream() throws IOException {
 		return new JarInputStream(new FileInputStream(file));
 	}
 
+	public String getName() {
+		return name;
+	}
+	
 	public String toString() {
-		return file.toString();
+		return name;
 	}
 
 

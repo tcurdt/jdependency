@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class Clazz implements Comparable {
+public final class Clazz implements Comparable {
 
 	private final Set dependencies = new HashSet();
 

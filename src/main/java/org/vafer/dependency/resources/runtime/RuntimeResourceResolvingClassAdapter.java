@@ -1,19 +1,7 @@
-/*
- * Copyright 2005 The Apache Software Foundation.
+/**
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
-package org.vafer.dependency.asm;
+package org.vafer.dependency.resources.runtime;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,24 +11,17 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.vafer.dependency.Console;
 
-public final class RuntimeClassAdapter extends ClassAdapter implements Opcodes {
+final class RuntimeResourceResolvingClassAdapter extends ClassAdapter implements Opcodes {
 		
 		private final String mapper;
-		private final Console console;
 		private String current;
 	
-		public RuntimeClassAdapter( final ClassVisitor cv, final String pMapperClassName ) {
-			this(cv, pMapperClassName, null);
+		public RuntimeResourceResolvingClassAdapter( final ClassVisitor cv, final String pMapperClassName ) {
+			super(cv);
+			mapper = pMapperClassName;
 		}
 
-		public RuntimeClassAdapter( final ClassVisitor cv, final String pMapper, final Console pConsole ) {
-			super(cv);
-			console = pConsole;
-			mapper = pMapper;
-		}
-	
 		public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 			super.visit(version, access, name, signature, superName, interfaces);
 	
@@ -101,28 +82,50 @@ public final class RuntimeClassAdapter extends ClassAdapter implements Opcodes {
 				}
 			};
 
+			private void inject( MethodVisitor mv, String method ) {
+
+				// "old"				
+				mv.visitTypeInsn(NEW, "java/lang/StringBuffer");
+				// "old", stringbuffer
+				mv.visitInsn(DUP);
+				// "old", stringbuffer, stringbuffer
+				mv.visitLdcInsn("prefix");
+				// "old", stringbuffer, stringbuffer, "prefix"
+				mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuffer", "<init>", "(Ljava/lang/String;)V");
+				// "old", stringbuffer
+				mv.visitInsn(DUP2);
+				// "old", stringbuffer, "old", stringbuffer
+                mv.visitInsn(POP);
+				// "old", stringbuffer, "old"
+				mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuffer", "append", "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+				// "old", stringbuffer
+				mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuffer", "toString", "()Ljava/lang/String;");				
+				// "old", "prefixold"
+				mv.visitMethodInsn(INVOKESTATIC, mapper, method, "(Ljava/lang/String;)Ljava/lang/String;");
+				// "old", "prefixnew"
+				mv.visitInsn(SWAP);
+				// "prefixnew", "old"
+				mv.visitInsn(POP);
+				// "prefixnew"
+			}
 			
 			public void visitMethodInsn(int opcode, String owner, String name, String desc) {
 				
 				if (("java/lang/Class".equals(owner) && resolveResouceMethodsClass.contains(name)) ||
 				    ("java/lang/ClassLoader".equals(owner) && resolveResourceMethodsClassLoader.contains(name))) {
 
-					if (console != null) {
-						console.println("Wrapping resource access " + name + " in " + current);
-					}
+					System.out.println("Wrapping resource access " + name + " in " + current);
 					
-					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolveResource", "(Ljava/lang/String;)Ljava/lang/String;");
-					
+					inject(mv, "resolveResource");
+										
 				} else
 
 				if (("java/lang/Class".equals(owner) && resolveClassMethodsClass.contains(name)) ||
 					("java/lang/ClassLoader".equals(owner) && resolveClassMethodsClassLoader.contains(name))) {
 
-					if (console != null) {
-						console.println("Wrapping class access " + name + " in " + current);
-					}
-					
-					mv.visitMethodInsn(INVOKESTATIC, mapper, "resolveClass", "(Ljava/lang/String;)Ljava/lang/String;");
+					System.out.println("Wrapping class access " + name + " in " + current);
+
+					inject(mv, "resolveClass");
 					
 				}
 
