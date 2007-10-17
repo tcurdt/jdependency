@@ -33,7 +33,8 @@ final class BuildtimeResourceResolvingClassAdapter extends RemappingClassAdapter
 	protected MethodVisitor createRemappingMethodAdapter( int access, String newDesc, MethodVisitor mv ) {
 		final MethodVisitor rmv = super.createRemappingMethodAdapter( access, newDesc, mv );
 
-		return new MethodNode() {
+    // TODO make sure you aren't analyzing an abstract methods (no code)
+		return new MethodNode(access, null, newDesc, null, null) {
 			public void visitEnd() {
 				final Analyzer an = new Analyzer(new SourceInterpreter());
 				try {
