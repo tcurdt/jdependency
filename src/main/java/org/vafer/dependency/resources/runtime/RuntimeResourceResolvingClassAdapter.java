@@ -11,15 +11,18 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.vafer.dependency.asm.Remapper;
+import org.vafer.dependency.resources.ResolverUtils;
 
 final class RuntimeResourceResolvingClassAdapter extends ClassAdapter implements Opcodes {
 		
-		private final String mapper;
+		private final String runimeClass = "org/vafer/dependency/resources/runtime/Mapper";
+		private final Remapper mapper;
 		private String current;
 	
-		public RuntimeResourceResolvingClassAdapter( final ClassVisitor cv, final String pMapperClassName ) {
+		public RuntimeResourceResolvingClassAdapter( final ClassVisitor cv, final Remapper pMapper ) {
 			super(cv);
-			mapper = pMapperClassName;
+			mapper = pMapper;
 		}
 
 		public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -44,43 +47,6 @@ final class RuntimeResourceResolvingClassAdapter extends ClassAdapter implements
 				mv = pMv;
 			}
 				
-			// static java.lang.Class       java.lang.Class.forName(java.lang.String)
-			// static java.lang.Class       java.lang.Class.forName(java.lang.String, boolean, java.lang.ClassLoader)
-			// static java.net.URL          java.lang.ClassLoader.getSystemResource(java.lang.String)
-			// static java.io.InputStream   java.lang.ClassLoader.getSystemResourceAsStream(java.lang.String)
-			// static java.util.Enumeration java.lang.ClassLoader.getSystemResources(java.lang.String)
-			// java.lang.Class              java.lang.ClassLoader.loadClass(java.lang.String)
-			// java.net.URL                 java.lang.ClassLoader.getResource(java.lang.String)
-			// java.io.InputStream          java.lang.ClassLoader.getResourceAsStream(java.lang.String)
-			
-			private final Set resolveClassMethodsClass = new HashSet() {
-				private static final long serialVersionUID = 1L;
-				{
-					add("forName");
-				}
-			};
-			private final Set resolveResouceMethodsClass = new HashSet() {
-				private static final long serialVersionUID = 1L;
-				{
-				}
-			};
-
-			private final Set resolveClassMethodsClassLoader = new HashSet() {
-				private static final long serialVersionUID = 1L;
-				{
-					add("loadClass");
-				}
-			};
-			private final Set resolveResourceMethodsClassLoader = new HashSet() {
-				private static final long serialVersionUID = 1L;
-				{
-					add("getSystemResource");
-					add("getSystemResourceAsStream");
-					add("getResource");
-					add("getSystemResources");
-					add("getResourceAsStream");
-				}
-			};
 
 			private void inject( MethodVisitor mv, String method ) {
 
@@ -89,7 +55,7 @@ final class RuntimeResourceResolvingClassAdapter extends ClassAdapter implements
 				// "old", stringbuffer
 				mv.visitInsn(DUP);
 				// "old", stringbuffer, stringbuffer
-				mv.visitLdcInsn("prefix");
+				mv.visitLdcInsn(mapper.map(""));
 				// "old", stringbuffer, stringbuffer, "prefix"
 				mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuffer", "<init>", "(Ljava/lang/String;)V");
 				// "old", stringbuffer
@@ -101,7 +67,7 @@ final class RuntimeResourceResolvingClassAdapter extends ClassAdapter implements
 				// "old", stringbuffer
 				mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuffer", "toString", "()Ljava/lang/String;");				
 				// "old", "prefixold"
-				mv.visitMethodInsn(INVOKESTATIC, mapper, method, "(Ljava/lang/String;)Ljava/lang/String;");
+				mv.visitMethodInsn(INVOKESTATIC, runimeClass, method, "(Ljava/lang/String;)Ljava/lang/String;");
 				// "old", "prefixnew"
 				mv.visitInsn(SWAP);
 				// "prefixnew", "old"
@@ -111,17 +77,13 @@ final class RuntimeResourceResolvingClassAdapter extends ClassAdapter implements
 			
 			public void visitMethodInsn(int opcode, String owner, String name, String desc) {
 				
-				if (("java/lang/Class".equals(owner) && resolveResouceMethodsClass.contains(name)) ||
-				    ("java/lang/ClassLoader".equals(owner) && resolveResourceMethodsClassLoader.contains(name))) {
+				if (ResolverUtils.needsResourceResolving(owner, name)) {
 
 					System.out.println("Wrapping resource access " + name + " in " + current);
 					
 					inject(mv, "resolveResource");
 										
-				} else
-
-				if (("java/lang/Class".equals(owner) && resolveClassMethodsClass.contains(name)) ||
-					("java/lang/ClassLoader".equals(owner) && resolveClassMethodsClassLoader.contains(name))) {
+				} else if (ResolverUtils.needsClassResolving(owner, name)) {
 
 					System.out.println("Wrapping class access " + name + " in " + current);
 

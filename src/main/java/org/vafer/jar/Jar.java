@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.jar.JarInputStream;
 
 import org.apache.commons.io.IOUtils;
 
@@ -39,11 +38,11 @@ public class Jar {
 
 	public Jar( final File pFile ) throws FileNotFoundException {
 		file = pFile;
-		name = pFile.toString();
+		name = pFile.getName();
 	}
 
-	public JarInputStream getInputStream() throws IOException {
-		return new JarInputStream(new FileInputStream(file));
+	public InputStream getInputStream() throws IOException {
+		return new FileInputStream(file);
 	}
 
 	public String getName() {

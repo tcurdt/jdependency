@@ -15,11 +15,9 @@
  */
 package org.vafer.dependency.resources;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +25,8 @@ import java.util.Map;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.util.CheckClassAdapter;
-import org.objectweb.asm.util.TraceClassVisitor;
+import org.vafer.dependency.asm.Remapper;
 import org.vafer.dependency.resources.buildtime.BuildtimeResourceResolver;
 import org.vafer.dependency.resources.runtime.MapperDump;
 import org.vafer.dependency.resources.runtime.RuntimeResourceResolver;
@@ -37,7 +34,6 @@ import org.vafer.jar.AbstractJarTestCase;
 import org.vafer.jar.Jar;
 import org.vafer.jar.JarProcessor;
 import org.vafer.jar.handler.JarHandler;
-import org.vafer.jar.handler.JarHandlerTestCase;
 import org.vafer.jar.handler.OutputJarHandler;
 import org.vafer.jar.handler.RenamingJarHandler;
 
@@ -64,7 +60,7 @@ public class ResourceLookupTestCase extends AbstractJarTestCase {
 	public void testStaticResourceResolver() throws Exception {
 
 		final File jar1 = createJar(this.getClass(),
-				new String[] { classToResource(JarHandlerTestCase.class.getName()) }
+				new String[] { classToResource(Lookup.class.getName()) }
 		);
 
 		final File output = File.createTempFile("output", "jar");
@@ -84,7 +80,7 @@ public class ResourceLookupTestCase extends AbstractJarTestCase {
 	public void testRuntimeResourceResolver() throws Exception {
 
 		final File jar1 = createJar(this.getClass(),
-				new String[] { classToResource(JarHandlerTestCase.class.getName()) }
+				new String[] { classToResource(Lookup.class.getName()) }
 		);
 
 		final File output = File.createTempFile("output", "jar");
@@ -104,40 +100,40 @@ public class ResourceLookupTestCase extends AbstractJarTestCase {
 	
 	public void testRuntimeRewriting() throws Exception {
 
-		{
-			final InputStream original = Lookup.class.getClassLoader().getResourceAsStream(classToResource(Lookup.class.getName()));
-			assertNotNull(original);		
+//		{
+//			final InputStream original = Lookup.class.getClassLoader().getResourceAsStream(classToResource(Lookup.class.getName()));
+//			assertNotNull(original);		
 //			new ClassReader(original).accept(new TraceClassVisitor(new PrintWriter(System.out)),0);
-		}
+//		}
 
-		{
-			final InputStream original = Lookup.class.getClassLoader().getResourceAsStream(classToResource(Lookup.class.getName()));
-			assertNotNull(original);		
+		final InputStream original = Lookup.class.getClassLoader().getResourceAsStream(classToResource(Lookup.class.getName()));
+		assertNotNull(original);		
 
-			final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        
-			final Remapper remapper =
-				new Remapper() {
-					public String map( final String name ) {
-						return "prefix/" + name;
-					}
-			};
+		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+    
+		final Remapper remapper =
+			new Remapper() {
+				public String map( final String name ) {
+					return "prefix/" + name;
+				}
+		};
 
-			ClassAdapter adapter = new CheckClassAdapter(cw);
+		ClassAdapter adapter = new CheckClassAdapter(cw);
 
-			adapter = new RuntimeResourceResolver().getClassAdapter(cw, remapper);
+		adapter = new RuntimeResourceResolver().getClassAdapter(cw, remapper);
 
-			new ClassReader(original).accept(adapter,0);
-			
-			final byte[] classBytes = cw.toByteArray();
-			final InputStream rewritten = new ByteArrayInputStream(classBytes);
-			new ClassReader(rewritten).accept(new TraceClassVisitor(new PrintWriter(System.out)),0);
+		new ClassReader(original).accept(adapter,0);
+		
+		final byte[] classBytes = cw.toByteArray();
+//		final InputStream rewritten = new ByteArrayInputStream(classBytes);
+//		new ClassReader(rewritten).accept(new TraceClassVisitor(new PrintWriter(System.out)),0);
 
-			final BytecodeClassLoader cl = new BytecodeClassLoader();
-			final Class c = cl.loadClass(classBytes);
-			final Method m = c.getMethod("find", null);
-			final Object r = m.invoke(c.newInstance(), new Object[] { });
-		}		
+		final BytecodeClassLoader cl = new BytecodeClassLoader();
+		final Class c = cl.loadClass(classBytes);
+		final Method m = c.getMethod("find", null);
+		final Object r = m.invoke(c.newInstance(), new Object[] { });
+		
+		assertNotNull(r);
 	}
 	
 	public void testResolveBehaviour() throws Exception {

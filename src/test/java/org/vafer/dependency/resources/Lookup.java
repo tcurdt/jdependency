@@ -3,8 +3,13 @@
  */
 package org.vafer.dependency.resources;
 
+import java.io.InputStream;
+import java.net.URL;
+
 public class Lookup {
-	public void find() {
-		this.getClass().getClassLoader().getResourceAsStream("org/vafer/dependency/resources/Lookup.class");
+	public InputStream find() {
+		URL url = getClass().getResource("something");
+		
+		return this.getClass().getResourceAsStream(this.getClass().getName());
 	}
 }

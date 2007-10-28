@@ -9,7 +9,6 @@ import java.util.Set;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
@@ -20,6 +19,8 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.SourceInterpreter;
 import org.objectweb.asm.tree.analysis.SourceValue;
+import org.vafer.dependency.asm.Remapper;
+import org.vafer.dependency.resources.ResolverUtils;
 
 final class BuildtimeResourceResolvingClassAdapter extends RemappingClassAdapter implements Opcodes {
 
@@ -43,27 +44,23 @@ final class BuildtimeResourceResolvingClassAdapter extends RemappingClassAdapter
 					// from the analyzed method.
 
 					for (int i = 0; i < frames.length; i++) {
-						//final Frame frame = frames[i];
+						final Frame frame = frames[i];
+						
 						final AbstractInsnNode insn = instructions.get(i);
 
 						if (insn.getOpcode() == Opcodes.INVOKEVIRTUAL) {
 							final MethodInsnNode minsn = (MethodInsnNode) insn;
 
-							if (minsn.name.equals( "getResource" ) && minsn.owner.equals( "java/lang/Class" )) {
-								// now check where params come from (top of the stack)
-								final SourceValue value = (SourceValue) frames[i].getStack(0);
-								final Set sources = value.insns;  // instructions that produced this value
-								for ( Iterator it = sources.iterator(); it.hasNext(); ) {
-									final AbstractInsnNode source = (AbstractInsnNode) it.next();
-									if (source.getOpcode() == Opcodes.LDC) {
-										final LdcInsnNode constant = (LdcInsnNode) source;
-										// can change constant.cst value here
-										System.out.println("resource constant:" + constant.cst);
-									} else {
-										// can log something about value that came not from the constant
-										System.out.println("resource source:" + source);
-									}
-								}
+							final String owner = minsn.owner;
+							final String name = minsn.name;
+							
+							if (ResolverUtils.needsResourceResolving(owner, name)) {
+
+								changeResource(frame, owner, name);
+								
+							} else if (ResolverUtils.needsClassResolving(owner, name)) {
+								
+								changeResource(frame, owner, name);
 							}
 						}
 					}
@@ -74,5 +71,30 @@ final class BuildtimeResourceResolvingClassAdapter extends RemappingClassAdapter
 				}
 			}
 		};
-	}		
+	}
+	
+	private void changeResource( Frame frame, String owner, String name ) {
+		// now check where params come from (top of the stack)
+		final SourceValue value = (SourceValue) frame.getStack(1);
+		final Set sources = value.insns;  // instructions that produced this value
+		for ( Iterator it = sources.iterator(); it.hasNext(); ) {
+			final AbstractInsnNode source = (AbstractInsnNode) it.next();
+			if (source.getOpcode() == Opcodes.LDC) {
+				final LdcInsnNode constant = (LdcInsnNode) source;
+				// can change constant.cst value here
+				
+				final String oldValue = (String) constant.cst;
+				final String newValue = mapper.map(oldValue);
+				constant.cst = newValue;
+				
+				System.out.println("Changing " + owner + "." + name + " " + oldValue + "->" + newValue);
+
+			} else {
+				// can log something about value that came not from the constant
+				System.out.println("ERROR: resource source:" + source);
+			}
+		}
+		
+	}
+	
 }

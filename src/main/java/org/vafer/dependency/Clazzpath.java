@@ -140,7 +140,7 @@ public final class Clazzpath {
 		}
 		return all;
 	}
-
+	
 	public Clazz getClazz(final String pClazzName) {
 		return (Clazz) clazzes.get(pClazzName);
 	}

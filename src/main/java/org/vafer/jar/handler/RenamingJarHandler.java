@@ -8,9 +8,9 @@ import java.util.jar.JarEntry;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.util.CheckClassAdapter;
+import org.vafer.dependency.asm.Remapper;
 import org.vafer.dependency.resources.ResourceResolver;
 import org.vafer.jar.Jar;
 
@@ -88,12 +88,12 @@ public class RenamingJarHandler extends DelegatingJarHandler {
 			};
 		
 		ClassAdapter adapter = new CheckClassAdapter(writer);
-		
-		if (resolver != null) {
+				
+        adapter = new RemappingClassAdapter(adapter, remapper);
+
+        if (resolver != null) {
 			adapter = resolver.getClassAdapter(adapter, remapper);			
 		}
-		
-        adapter = new RemappingClassAdapter(adapter, remapper);
 		
         new ClassReader(input).accept(adapter,0);
 

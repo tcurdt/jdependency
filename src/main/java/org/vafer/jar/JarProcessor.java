@@ -35,7 +35,7 @@ public final class JarProcessor {
         	
         	pHandler.onStartJar(jar);
         	
-            final JarInputStream inputStream = jar.getInputStream();
+            final JarInputStream inputStream = new JarInputStream(jar.getInputStream());
 
             while (true) {
                 final JarEntry entry = inputStream.getNextJarEntry();
