@@ -1,25 +1,9 @@
 package org.vafer.minijar.ant;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-
-import fr.jayasoft.ivy.Artifact;
-import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.IvyNode;
-import fr.jayasoft.ivy.ModuleRevisionId;
-import fr.jayasoft.ivy.ant.IvyBuildList;
-import fr.jayasoft.ivy.filter.FilterHelper;
-import fr.jayasoft.ivy.report.ArtifactDownloadReport;
-import fr.jayasoft.ivy.report.ResolveReport;
+import org.apache.ivy.ant.IvyBuildList;
 
 public final class MiniJarAntTask extends IvyBuildList {
-
+/*
 	private String organization;
 	private String module;
 	private String revision;
@@ -100,5 +84,5 @@ public final class MiniJarAntTask extends IvyBuildList {
 	
 	public void execute() throws BuildException {
 	}
-
+*/
 }
