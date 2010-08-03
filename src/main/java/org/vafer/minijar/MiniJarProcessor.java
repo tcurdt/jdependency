@@ -1,23 +1,8 @@
 package org.vafer.minijar;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.jar.JarEntry;
-
-import org.vafer.dependency.Clazz;
-import org.vafer.dependency.Clazzpath;
-import org.vafer.dependency.ClazzpathUnit;
-import org.vafer.jar.Jar;
-import org.vafer.jar.handler.FilteringJarHandler.JarEntryFilter;
-import org.vafer.jar.handler.RenamingJarHandler.Mapper;
-import org.vafer.jar.merging.JarMerger;
-import org.vafer.jar.merging.MergeStrategy;
-import org.vafer.jar.merging.PickFirstStrategy;
 
 public final class MiniJarProcessor {
-	
+	/*
 	public interface Console {
 		void info( String message );
 		void error( String error );
@@ -174,4 +159,5 @@ public final class MiniJarProcessor {
 
     	return sb.toString();
 	}
+	*/
 }
