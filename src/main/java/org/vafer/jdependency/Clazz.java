@@ -16,55 +16,68 @@
 package org.vafer.jdependency;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public final class Clazz implements Comparable {
 
-	private final Set dependencies = new HashSet();
-	private final Set references = new HashSet();
+	private final Set<Clazz> dependencies = new HashSet();
+	private final Set<Clazz> references = new HashSet();
+	private final Set<ClazzpathUnit> units = new HashSet();
 
 	private final String name;	
-	private final ClazzpathUnit unit;
 
 	public Clazz( final String pName ) {
-		unit = null;
 		name = pName;
 	}
 
-	public Clazz( final ClazzpathUnit pUnit, final String pName ) {
-		unit = pUnit;
-		name = pName;
+	public String getName() {
+		return name;
 	}
+	
+	
+	public void addClazzpathUnit( final ClazzpathUnit pUnit ) {
+		units.add(pUnit);
+	}
+
+	public void removeClazzpathUnit( final ClazzpathUnit pUnit ) {
+		units.remove(pUnit);
+	}
+	
+	public Set getClazzpathUnits() {
+		return units;
+	}
+
 
 	public void addDependency( final Clazz pClazz ) {
 		pClazz.references.add(this);
 		dependencies.add(pClazz);
 	}
 
-	public ClazzpathUnit getClazzpathUnit() {
-		return unit;
+	public void removeDependency( final Clazz pClazz ) {
+		pClazz.references.remove(this);
+		dependencies.remove(pClazz);		
 	}
+	
+	public Set getDependencies() {
+		return dependencies;
+	}
+
+
 	
 	public Set getReferences() {
 		return references;
 	}
 
-	public Set getDependencies() {
-		return dependencies;
-	}
-
+	
 	public Set getTransitiveDependencies() {
 		final Set all = new HashSet();
 		findTransitiveDependencies(all);
 		return all;
 	}
 
-	void findTransitiveDependencies(final Set pAll) {
+	void findTransitiveDependencies( final Set pAll ) {
 
-		for (final Iterator it = dependencies.iterator(); it.hasNext();) {
-			final Clazz clazz = (Clazz) it.next();
-
+		for (Clazz clazz : dependencies) {
 			if (!pAll.contains(clazz)) {
 				pAll.add(clazz);
 				clazz.findTransitiveDependencies(pAll);
@@ -72,7 +85,7 @@ public final class Clazz implements Comparable {
 		}
 	}
 
-	public boolean equals(Object pO) {
+	public boolean equals( final Object pO ) {
 		if (pO.getClass() != Clazz.class) {
 			return false;
 		}
@@ -84,7 +97,7 @@ public final class Clazz implements Comparable {
 		return name.hashCode();
 	}
 
-	public int compareTo(Object pO) {
+	public int compareTo( final Object pO ) {
 		return name.compareTo(((Clazz) pO).name);
 	}
 

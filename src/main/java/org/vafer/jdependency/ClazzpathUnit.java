@@ -16,19 +16,17 @@
 package org.vafer.jdependency;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 public final class ClazzpathUnit {
 
-	private final Map clazzes;
-
-	private final Map dependencies;
-
 	private final String id;
 
-	ClazzpathUnit(final String pId, final Map pClazzes, final Map pDependencies) {
+	private final Map<String, Clazz> clazzes;
+	private final Map<String, Clazz> dependencies;
+
+	ClazzpathUnit( final String pId, final Map pClazzes, final Map pDependencies ) {
 		id = pId;
 		clazzes = pClazzes;
 		dependencies = pDependencies;
@@ -36,21 +34,19 @@ public final class ClazzpathUnit {
 
 	public Set getClazzes() {
 		final Set all = new HashSet();
-		for (final Iterator it = clazzes.values().iterator(); it.hasNext();) {
-			final Clazz clazz = (Clazz) it.next();
+		for (Clazz clazz : clazzes.values()) {
 			all.add(clazz);
 		}
 		return all;
 	}
 
-	public Clazz getClazz(final String pClazzName) {
+	public Clazz getClazz( final String pClazzName ) {
 		return (Clazz) clazzes.get(pClazzName);
 	}
 
 	public Set getDependencies() {
 		final Set all = new HashSet();
-		for (final Iterator it = dependencies.values().iterator(); it.hasNext();) {
-			final Clazz clazz = (Clazz) it.next();
+		for (Clazz clazz : dependencies.values()) {
 			all.add(clazz);
 		}
 		return all;
@@ -58,8 +54,7 @@ public final class ClazzpathUnit {
 
 	public Set getTransitiveDependencies() {
 		final Set all = new HashSet();
-		for (final Iterator it = clazzes.values().iterator(); it.hasNext();) {
-			final Clazz clazz = (Clazz) it.next();
+		for (Clazz clazz : clazzes.values()) {
 			clazz.findTransitiveDependencies(all);
 		}
 		return all;

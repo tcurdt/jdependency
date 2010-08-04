@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -30,21 +29,25 @@ import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class Clazzpath {
 
-	public interface ClashHandler {
-		
-		void handleClash( final Clazz pClazz );
-		
-	}
-	
-	private final Set units = new HashSet();
-	private final Map missing = new HashMap();
-	private final Map clazzes = new HashMap();
+	private final Set<ClazzpathUnit> units = new HashSet();
+	private final Map<String, Clazz> missing = new HashMap();
+	private final Map<String, Clazz> clazzes = new HashMap();
 
 	public Clazzpath() {
 	}
 
 	public boolean removeClazzpathUnit( final ClazzpathUnit pUnit ) {
-		// FIXME: remove classes and adjust missing		
+		
+		final Set<Clazz> unitClazzes = pUnit.getClazzes();
+
+		for (Clazz clazz : unitClazzes) {
+			clazz.removeClazzpathUnit(pUnit);
+			if (clazz.getClazzpathUnits().size() == 0) {
+				clazzes.remove(clazz.toString());
+				// missing.put(clazz.toString(), clazz);
+			}
+		}
+		
 		return units.remove(pUnit);
 	}
 
@@ -72,38 +75,38 @@ public final class Clazzpath {
 				Clazz clazz = getClazz(clazzName);
 
 				if (clazz == null) {
-					clazz = (Clazz) missing.get(clazzName);
+					clazz = missing.get(clazzName);
 
 					if (clazz != null) {
 						// already marked missing
-						clazz = (Clazz) missing.remove(clazzName);
+						clazz = missing.remove(clazzName);
 					} else {
-						clazz = new Clazz(unit, clazzName);
+						clazz = new Clazz(clazzName);
 					}
-				} else {
-					// classpath clash
 				}
+				
+				clazz.addClazzpathUnit(unit);
 
 				clazzes.put(clazzName, clazz);
 				unitClazzes.put(clazzName, clazz);
 
 				final DependenciesClassAdapter v = new DependenciesClassAdapter();
 				new ClassReader(inputStream).accept(v, 0);
-				final Set depNames = v.getDependencies();
+				final Set<String> depNames = v.getDependencies();
 
-				for (final Iterator it = depNames.iterator(); it.hasNext();) {
-					final String depName = (String) it.next();
+				for (String depName : depNames) {
 
 					Clazz dep = getClazz(depName);
 
 					if (dep == null) {
 						// there is no such clazz yet
-						dep = (Clazz) missing.get(depName);
+						dep = missing.get(depName);
 					}
 
 					if (dep == null) {
 						// it is also not recorded to be missing
-						dep = new Clazz(unit, depName);
+						dep = new Clazz(depName);
+						dep.addClazzpathUnit(unit);
 						missing.put(depName, dep);
 					}
 
@@ -122,21 +125,25 @@ public final class Clazzpath {
 
 	public Set getClazzes() {
 		final Set all = new HashSet();
-		for (final Iterator it = clazzes.values().iterator(); it.hasNext();) {
-			final Clazz clazz = (Clazz) it.next();
+		for (Clazz clazz : clazzes.values()) {
 			all.add(clazz);
 		}
 		return all;
 	}
 
 	public Set getClashedClazzes() {
-		return null;
+		final Set all = new HashSet();
+		for (Clazz clazz : clazzes.values()) {			
+			if (clazz.getClazzpathUnits().size() > 1) {
+				all.add(clazz);
+			}
+		}
+		return all; 
 	}
 
 	public Set getMissingClazzes() {
 		final Set all = new HashSet();
-		for (final Iterator it = missing.values().iterator(); it.hasNext();) {
-			final Clazz clazz = (Clazz) it.next();
+		for (Clazz clazz : missing.values()) {
 			all.add(clazz);
 		}
 		return all;
