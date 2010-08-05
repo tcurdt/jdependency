@@ -40,41 +40,4 @@ public final class DependencyUtilsTestCase extends TestCase {
 				}));
 		assertEquals(expectedDependencies, dependencies);
 	}
-
-	public void testShouldFindDependenciesOfClassString() throws Exception {
-		final Set dependencies = DependencyUtils.getDependenciesOfClass(String.class);
-		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-				"java.util.regex.Pattern",
-				"java.util.Formatter",
-				"java.lang.Character",
-				"java.lang.Object",
-				"java.lang.Comparable",
-				"java.lang.NullPointerException",
-				"java.lang.String$CaseInsensitiveComparator",
-				"java.lang.ConditionalSpecialCasing",
-				"java.lang.System",
-				"java.lang.StringIndexOutOfBoundsException",
-				"java.lang.IllegalArgumentException",
-				"java.lang.IndexOutOfBoundsException",
-				"java.io.ObjectStreamField",
-				"java.lang.StringCoding",
-				"java.lang.AbstractStringBuilder",
-				"java.io.Serializable",
-				"java.lang.Float",
-				"java.util.Comparator",
-				"java.util.regex.Matcher",
-				"java.lang.String",
-				"java.io.UnsupportedEncodingException",
-				"java.lang.StringBuilder",
-				"java.lang.Long",
-				"java.lang.Double",
-				"java.util.Locale",
-				"java.lang.Integer",
-				"java.lang.StringBuffer",
-				"java.lang.Math",
-				"java.lang.CharSequence",
-				"java.lang.String$1"
-				}));
-		assertEquals(expectedDependencies, dependencies);
-	}
 }
