@@ -20,38 +20,38 @@ If feel adventures or want to help out feel free to get the latest code
 
 ### finding classpath clashes
 
-		final Clazzpath cp = new Clazzpath();
-		cp.addClazzpathUnit(jar1, "jar1.jar");
-		cp.addClazzpathUnit(jar2, "jar2.jar");
-		
-		final Set<Clazz> clashed = cp.getClashedClazzes();
-		for(Clazz clazz : clashed) {
-		  System.out.println("class " + clazz + " is contained in " + clazz.getClasspathUnits());
-		}
+    final Clazzpath cp = new Clazzpath();
+    cp.addClazzpathUnit(jar1, "jar1.jar");
+    cp.addClazzpathUnit(jar2, "jar2.jar");
+    
+    final Set<Clazz> clashed = cp.getClashedClazzes();
+    for(Clazz clazz : clashed) {
+      System.out.println("class " + clazz + " is contained in " + clazz.getClasspathUnits());
+    }
 
 ### finding missing classes
 
-		final Clazzpath cp = new Clazzpath();
-		cp.addClazzpathUnit(jar1, "jar1.jar");
+    final Clazzpath cp = new Clazzpath();
+    cp.addClazzpathUnit(jar1, "jar1.jar");
 
-		final Set<Clazz> missing = cp.getMissingClazzes();
-		for(Clazz clazz : missing) {
-		  System.out.println("class " + clazz + " is missing");
-		}
+    final Set<Clazz> missing = cp.getMissingClazzes();
+    for(Clazz clazz : missing) {
+      System.out.println("class " + clazz + " is missing");
+    }
 
 ### finding unused classes
 
-		final Clazzpath cp = new Clazzpath();
-		final ClazzpathUnit artifact = cp.addClazzpathUnit(jar1, "artifact.jar");
-		cp.addClazzpathUnit(jar2, "dependency.jar");
-		
+    final Clazzpath cp = new Clazzpath();
+    final ClazzpathUnit artifact = cp.addClazzpathUnit(jar1, "artifact.jar");
+    cp.addClazzpathUnit(jar2, "dependency.jar");
+    
     final Set<Clazz> removable = cp.getClazzes();
     removable.removeAll(artifact.getClazzes());
     removable.removeAll(artifact.getTransitiveDependencies());
-    
-		for(Clazz clazz : removable) {
-		  System.out.println("class " + clazz + " is not required");
-		}
+
+    for(Clazz clazz : removable) {
+      System.out.println("class " + clazz + " is not required");
+    }
 
 ## Related projects
 
