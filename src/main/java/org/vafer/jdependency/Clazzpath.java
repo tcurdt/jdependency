@@ -91,7 +91,7 @@ public final class Clazzpath {
 				unitClazzes.put(clazzName, clazz);
 
 				final DependenciesClassAdapter v = new DependenciesClassAdapter();
-				new ClassReader(inputStream).accept(v, 0);
+				new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
 				final Set<String> depNames = v.getDependencies();
 
 				for (String depName : depNames) {

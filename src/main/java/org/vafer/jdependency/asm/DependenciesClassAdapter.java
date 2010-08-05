@@ -24,23 +24,23 @@ import org.objectweb.asm.commons.RemappingClassAdapter;
 
 public final class DependenciesClassAdapter extends RemappingClassAdapter {
 
-	private static class CollectingRemapper extends Remapper {
-		final Set classes = new HashSet();
+    final Set classes = new HashSet();
 
-		public String map(String pClassName) {
-			classes.add(pClassName.replace('/', '.'));
-			return pClassName;
-		}		
-	}
-	
-	public DependenciesClassAdapter() {
-		super(new EmptyVisitor(), new CollectingRemapper());	
-	}
+    public DependenciesClassAdapter() {
+        super(new EmptyVisitor(), new CollectingRemapper());    
+    }
+    
+    public Set getDependencies() {
+        return ((CollectingRemapper) super.remapper).classes;
+    }
 
-	
-	final Set classes = new HashSet();
+    private static class CollectingRemapper extends Remapper {
 
-	public Set getDependencies() {
-		return ((CollectingRemapper) super.remapper).classes;
-	}
+        final Set classes = new HashSet();
+
+        public String map(String pClassName) {
+            classes.add(pClassName.replace('/', '.'));
+            return pClassName;
+        }       
+    }   
 }

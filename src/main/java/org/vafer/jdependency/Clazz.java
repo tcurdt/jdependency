@@ -20,89 +20,89 @@ import java.util.Set;
 
 public final class Clazz implements Comparable {
 
-	private final Set<Clazz> dependencies = new HashSet();
-	private final Set<Clazz> references = new HashSet();
-	private final Set<ClazzpathUnit> units = new HashSet();
+    private final Set<Clazz> dependencies = new HashSet();
+    private final Set<Clazz> references = new HashSet();
+    private final Set<ClazzpathUnit> units = new HashSet();
 
-	private final String name;	
+    private final String name;  
 
-	public Clazz( final String pName ) {
-		name = pName;
-	}
+    public Clazz( final String pName ) {
+        name = pName;
+    }
 
-	public String getName() {
-		return name;
-	}
-	
-	
-	public void addClazzpathUnit( final ClazzpathUnit pUnit ) {
-		units.add(pUnit);
-	}
+    public String getName() {
+        return name;
+    }
+    
+    
+    public void addClazzpathUnit( final ClazzpathUnit pUnit ) {
+        units.add(pUnit);
+    }
 
-	public void removeClazzpathUnit( final ClazzpathUnit pUnit ) {
-		units.remove(pUnit);
-	}
-	
-	public Set getClazzpathUnits() {
-		return units;
-	}
-
-
-	public void addDependency( final Clazz pClazz ) {
-		pClazz.references.add(this);
-		dependencies.add(pClazz);
-	}
-
-	public void removeDependency( final Clazz pClazz ) {
-		pClazz.references.remove(this);
-		dependencies.remove(pClazz);		
-	}
-	
-	public Set getDependencies() {
-		return dependencies;
-	}
+    public void removeClazzpathUnit( final ClazzpathUnit pUnit ) {
+        units.remove(pUnit);
+    }
+    
+    public Set getClazzpathUnits() {
+        return units;
+    }
 
 
-	
-	public Set getReferences() {
-		return references;
-	}
+    public void addDependency( final Clazz pClazz ) {
+        pClazz.references.add(this);
+        dependencies.add(pClazz);
+    }
 
-	
-	public Set getTransitiveDependencies() {
-		final Set all = new HashSet();
-		findTransitiveDependencies(all);
-		return all;
-	}
+    public void removeDependency( final Clazz pClazz ) {
+        pClazz.references.remove(this);
+        dependencies.remove(pClazz);        
+    }
+    
+    public Set getDependencies() {
+        return dependencies;
+    }
 
-	void findTransitiveDependencies( final Set pAll ) {
 
-		for (Clazz clazz : dependencies) {
-			if (!pAll.contains(clazz)) {
-				pAll.add(clazz);
-				clazz.findTransitiveDependencies(pAll);
-			}
-		}
-	}
+    
+    public Set getReferences() {
+        return references;
+    }
 
-	public boolean equals( final Object pO ) {
-		if (pO.getClass() != Clazz.class) {
-			return false;
-		}
-		final Clazz c = (Clazz) pO;
-		return name.equals(c.name);
-	}
+    
+    public Set getTransitiveDependencies() {
+        final Set all = new HashSet();
+        findTransitiveDependencies(all);
+        return all;
+    }
 
-	public int hashCode() {
-		return name.hashCode();
-	}
+    void findTransitiveDependencies( final Set pAll ) {
 
-	public int compareTo( final Object pO ) {
-		return name.compareTo(((Clazz) pO).name);
-	}
+        for (Clazz clazz : dependencies) {
+            if (!pAll.contains(clazz)) {
+                pAll.add(clazz);
+                clazz.findTransitiveDependencies(pAll);
+            }
+        }
+    }
 
-	public String toString() {
-		return name;
-	}
+    public boolean equals( final Object pO ) {
+        if (pO.getClass() != Clazz.class) {
+            return false;
+        }
+        final Clazz c = (Clazz) pO;
+        return name.equals(c.name);
+    }
+
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    public int compareTo( final Object pO ) {
+        return name.compareTo(((Clazz) pO).name);
+    }
+
+    public String toString() {
+        return name;
+    }
 
 }
