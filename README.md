@@ -44,11 +44,11 @@ If feel adventures or want to help out feel free to get the latest code
 		final Clazzpath cp = new Clazzpath();
 		final ClazzpathUnit artifact = cp.addClazzpathUnit(jar1, "artifact.jar");
 		cp.addClazzpathUnit(jar2, "dependency.jar");
-
+		
     final Set<Clazz> removable = cp.getClazzes();
     removable.removeAll(artifact.getClazzes());
     removable.removeAll(artifact.getTransitiveDependencies());
-
+    
 		for(Clazz clazz : removable) {
 		  System.out.println("class " + clazz + " is not required");
 		}
