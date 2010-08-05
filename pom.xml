@@ -53,7 +53,6 @@
                   <excludes>
                       <exclude>**/Abstract*</exclude>
                   </excludes>
-                  <testFailureIgnore>true</testFailureIgnore>
                   <skip>false</skip>
               </configuration>
           </plugin>
@@ -153,7 +152,7 @@
               <configuration>
                   <linksource>true</linksource>
                   <links>
-                      <link>http://java.sun.com/javase/6/docs/api</link>
+                      <link>http://java.sun.com/javase/5/docs/api</link>
                   </links>
               </configuration>
           </plugin>
