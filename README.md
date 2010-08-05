@@ -3,8 +3,8 @@
 jdependency is small library that helps you analyze class level dependencies,
 clashes and missing classes.
 
-Check the documentation on how to use it with [javadocs](http://tcurdt.github.com/jdependency/release/0.5/apidocs/) and a source
-[xref](http://tcurdt.github.com/jdependency/release/0.5/xref/) is also available.
+Check the documentation on how to use it with [javadocs](http://tcurdt.github.com/jdependency/release/0.6/apidocs/) and a source
+[xref](http://tcurdt.github.com/jdependency/release/0.6/xref/) is also available.
 
 ## Where to get it
 
