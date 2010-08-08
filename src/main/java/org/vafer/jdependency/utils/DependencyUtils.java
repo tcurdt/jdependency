@@ -29,51 +29,51 @@ import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class DependencyUtils {
 
-	public static Set getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
+    public static Set getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
         final JarInputStream inputStream = new JarInputStream(pInputStream);
         final NullOutputStream nullStream = new NullOutputStream();
         final Set dependencies = new HashSet();
         try {
-	        while (true) {
-	            final JarEntry entry = inputStream.getNextJarEntry();
-	            
-	            if (entry == null) {
-	                break;
-	            }
-	            
-	            if (entry.isDirectory()) {
-	                // ignore directory entries
-	                IOUtils.copy(inputStream, nullStream);
-	                continue;
-	            }
-	            
-	            final String name = entry.getName();
-	            
-	            if (name.endsWith(".class")) {
-	                final DependenciesClassAdapter v = new DependenciesClassAdapter();
-	                new ClassReader( inputStream ).accept( v, 0 );
-	                dependencies.addAll(v.getDependencies());
-	            } else {
-	                IOUtils.copy(inputStream, nullStream);                                                
-	            }
-	        }
+            while (true) {
+                final JarEntry entry = inputStream.getNextJarEntry();
+                
+                if (entry == null) {
+                    break;
+                }
+                
+                if (entry.isDirectory()) {
+                    // ignore directory entries
+                    IOUtils.copy(inputStream, nullStream);
+                    continue;
+                }
+                
+                final String name = entry.getName();
+                
+                if (name.endsWith(".class")) {
+                    final DependenciesClassAdapter v = new DependenciesClassAdapter();
+                    new ClassReader( inputStream ).accept( v, 0 );
+                    dependencies.addAll(v.getDependencies());
+                } else {
+                    IOUtils.copy(inputStream, nullStream);                                                
+                }
+            }
         } finally {
-        	inputStream.close();
+            inputStream.close();
         }
         
         return dependencies;
-	}
+    }
 
-	public static Set getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
+    public static Set getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
         final DependenciesClassAdapter v = new DependenciesClassAdapter();
         new ClassReader( pInputStream ).accept( v, 0 );
         final Set depNames = v.getDependencies();
         return depNames;
-	}
-	
-	public static Set getDependenciesOfClass( final Class pClass ) throws IOException {
-		final String resource = "/" + pClass.getName().replace('.', '/') + ".class";		
-		return getDependenciesOfClass(pClass.getResourceAsStream(resource));
-	}
+    }
+    
+    public static Set getDependenciesOfClass( final Class pClass ) throws IOException {
+        final String resource = "/" + pClass.getName().replace('.', '/') + ".class";        
+        return getDependenciesOfClass(pClass.getResourceAsStream(resource));
+    }
 
 }

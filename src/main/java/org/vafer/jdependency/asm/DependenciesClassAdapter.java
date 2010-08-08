@@ -27,7 +27,7 @@ public final class DependenciesClassAdapter extends RemappingClassAdapter {
     final Set classes = new HashSet();
 
     public DependenciesClassAdapter() {
-        super(new EmptyVisitor(), new CollectingRemapper());    
+        super(new EmptyVisitor(), new CollectingRemapper());
     }
     
     public Set getDependencies() {

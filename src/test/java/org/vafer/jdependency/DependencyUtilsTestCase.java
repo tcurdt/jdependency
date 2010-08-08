@@ -25,19 +25,19 @@ import org.vafer.jdependency.utils.DependencyUtils;
 
 public final class DependencyUtilsTestCase extends TestCase {
 
-	public void testShouldFindDependenciesOfClassObject() throws Exception {
-		final Set dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
-		final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
-				"java.lang.String",
-				"java.lang.IllegalArgumentException",
-				"java.lang.CloneNotSupportedException",
-				"java.lang.Class",
-				"java.lang.InterruptedException",
-				"java.lang.Integer",
-				"java.lang.Object",
-				"java.lang.StringBuilder",
-				"java.lang.Throwable"
-				}));
-		assertEquals(expectedDependencies, dependencies);
-	}
+    public void testShouldFindDependenciesOfClassObject() throws Exception {
+        final Set dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
+        final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
+                "java.lang.String",
+                "java.lang.IllegalArgumentException",
+                "java.lang.CloneNotSupportedException",
+                "java.lang.Class",
+                "java.lang.InterruptedException",
+                "java.lang.Integer",
+                "java.lang.Object",
+                "java.lang.StringBuilder",
+                "java.lang.Throwable"
+                }));
+        assertEquals(expectedDependencies, dependencies);
+    }
 }

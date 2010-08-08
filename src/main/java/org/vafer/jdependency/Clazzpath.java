@@ -29,37 +29,37 @@ import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class Clazzpath {
 
-	private final Set<ClazzpathUnit> units = new HashSet();
-	private final Map<String, Clazz> missing = new HashMap();
-	private final Map<String, Clazz> clazzes = new HashMap();
+    private final Set<ClazzpathUnit> units = new HashSet();
+    private final Map<String, Clazz> missing = new HashMap();
+    private final Map<String, Clazz> clazzes = new HashMap();
 
-	public Clazzpath() {
-	}
+    public Clazzpath() {
+    }
 
-	public boolean removeClazzpathUnit( final ClazzpathUnit pUnit ) {
-		
-		final Set<Clazz> unitClazzes = pUnit.getClazzes();
+    public boolean removeClazzpathUnit( final ClazzpathUnit pUnit ) {
+        
+        final Set<Clazz> unitClazzes = pUnit.getClazzes();
 
-		for (Clazz clazz : unitClazzes) {
-			clazz.removeClazzpathUnit(pUnit);
-			if (clazz.getClazzpathUnits().size() == 0) {
-				clazzes.remove(clazz.toString());
-				// missing.put(clazz.toString(), clazz);
-			}
-		}
-		
-		return units.remove(pUnit);
-	}
+        for (Clazz clazz : unitClazzes) {
+            clazz.removeClazzpathUnit(pUnit);
+            if (clazz.getClazzpathUnits().size() == 0) {
+                clazzes.remove(clazz.toString());
+                // missing.put(clazz.toString(), clazz);
+            }
+        }
+        
+        return units.remove(pUnit);
+    }
 
-	public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
+    public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
 
-		final Map unitClazzes = new HashMap();
-		final Map unitDependencies = new HashMap();
+        final Map unitClazzes = new HashMap();
+        final Map unitDependencies = new HashMap();
 
-		final ClazzpathUnit unit = new ClazzpathUnit(pId, unitClazzes, unitDependencies);
-		
-		final JarInputStream inputStream = new JarInputStream(pInputStream);
-		
+        final ClazzpathUnit unit = new ClazzpathUnit(pId, unitClazzes, unitDependencies);
+        
+        final JarInputStream inputStream = new JarInputStream(pInputStream);
+        
         while (true) {
             final JarEntry entry = inputStream.getNextJarEntry();
             
@@ -67,94 +67,94 @@ public final class Clazzpath {
                 break;
             }
 
-			final String entryName = entry.getName();
-			if (entryName.endsWith(".class")) {
+            final String entryName = entry.getName();
+            if (entryName.endsWith(".class")) {
 
-				final String clazzName = entryName.substring(0, entryName.length() - 6).replace('/', '.');
+                final String clazzName = entryName.substring(0, entryName.length() - 6).replace('/', '.');
 
-				Clazz clazz = getClazz(clazzName);
+                Clazz clazz = getClazz(clazzName);
 
-				if (clazz == null) {
-					clazz = missing.get(clazzName);
+                if (clazz == null) {
+                    clazz = missing.get(clazzName);
 
-					if (clazz != null) {
-						// already marked missing
-						clazz = missing.remove(clazzName);
-					} else {
-						clazz = new Clazz(clazzName);
-					}
-				}
-				
-				clazz.addClazzpathUnit(unit);
+                    if (clazz != null) {
+                        // already marked missing
+                        clazz = missing.remove(clazzName);
+                    } else {
+                        clazz = new Clazz(clazzName);
+                    }
+                }
+                
+                clazz.addClazzpathUnit(unit);
 
-				clazzes.put(clazzName, clazz);
-				unitClazzes.put(clazzName, clazz);
+                clazzes.put(clazzName, clazz);
+                unitClazzes.put(clazzName, clazz);
 
-				final DependenciesClassAdapter v = new DependenciesClassAdapter();
-				new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
-				final Set<String> depNames = v.getDependencies();
+                final DependenciesClassAdapter v = new DependenciesClassAdapter();
+                new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+                final Set<String> depNames = v.getDependencies();
 
-				for (String depName : depNames) {
+                for (String depName : depNames) {
 
-					Clazz dep = getClazz(depName);
+                    Clazz dep = getClazz(depName);
 
-					if (dep == null) {
-						// there is no such clazz yet
-						dep = missing.get(depName);
-					}
+                    if (dep == null) {
+                        // there is no such clazz yet
+                        dep = missing.get(depName);
+                    }
 
-					if (dep == null) {
-						// it is also not recorded to be missing
-						dep = new Clazz(depName);
-						dep.addClazzpathUnit(unit);
-						missing.put(depName, dep);
-					}
+                    if (dep == null) {
+                        // it is also not recorded to be missing
+                        dep = new Clazz(depName);
+                        dep.addClazzpathUnit(unit);
+                        missing.put(depName, dep);
+                    }
 
-					if (dep != clazz) {
-						unitDependencies.put(depName, dep);
-						clazz.addDependency(dep);
-					}
-				}
-			}
-		}
+                    if (dep != clazz) {
+                        unitDependencies.put(depName, dep);
+                        clazz.addDependency(dep);
+                    }
+                }
+            }
+        }
 
-		units.add(unit);
+        units.add(unit);
 
-		return unit;
-	}
+        return unit;
+    }
 
-	public Set getClazzes() {
-		final Set all = new HashSet();
-		for (Clazz clazz : clazzes.values()) {
-			all.add(clazz);
-		}
-		return all;
-	}
+    public Set getClazzes() {
+        final Set all = new HashSet();
+        for (Clazz clazz : clazzes.values()) {
+            all.add(clazz);
+        }
+        return all;
+    }
 
-	public Set getClashedClazzes() {
-		final Set all = new HashSet();
-		for (Clazz clazz : clazzes.values()) {			
-			if (clazz.getClazzpathUnits().size() > 1) {
-				all.add(clazz);
-			}
-		}
-		return all; 
-	}
+    public Set getClashedClazzes() {
+        final Set all = new HashSet();
+        for (Clazz clazz : clazzes.values()) {          
+            if (clazz.getClazzpathUnits().size() > 1) {
+                all.add(clazz);
+            }
+        }
+        return all; 
+    }
 
-	public Set getMissingClazzes() {
-		final Set all = new HashSet();
-		for (Clazz clazz : missing.values()) {
-			all.add(clazz);
-		}
-		return all;
-	}
-	
-	public Clazz getClazz(final String pClazzName) {
-		return (Clazz) clazzes.get(pClazzName);
-	}
+    public Set getMissingClazzes() {
+        final Set all = new HashSet();
+        for (Clazz clazz : missing.values()) {
+            all.add(clazz);
+        }
+        return all;
+    }
+    
+    public Clazz getClazz(final String pClazzName) {
+        return (Clazz) clazzes.get(pClazzName);
+    }
 
-	public ClazzpathUnit[] getUnits() {
-		return (ClazzpathUnit[]) units.toArray(new ClazzpathUnit[units.size()]);
-	}
+    public ClazzpathUnit[] getUnits() {
+        return (ClazzpathUnit[]) units.toArray(new ClazzpathUnit[units.size()]);
+    }
 
 }

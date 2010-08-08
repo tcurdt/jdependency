@@ -21,46 +21,46 @@ import java.util.Set;
 
 public final class ClazzpathUnit {
 
-	private final String id;
+    private final String id;
 
-	private final Map<String, Clazz> clazzes;
-	private final Map<String, Clazz> dependencies;
+    private final Map<String, Clazz> clazzes;
+    private final Map<String, Clazz> dependencies;
 
-	ClazzpathUnit( final String pId, final Map pClazzes, final Map pDependencies ) {
-		id = pId;
-		clazzes = pClazzes;
-		dependencies = pDependencies;
-	}
+    ClazzpathUnit( final String pId, final Map pClazzes, final Map pDependencies ) {
+        id = pId;
+        clazzes = pClazzes;
+        dependencies = pDependencies;
+    }
 
-	public Set getClazzes() {
-		final Set all = new HashSet();
-		for (Clazz clazz : clazzes.values()) {
-			all.add(clazz);
-		}
-		return all;
-	}
+    public Set getClazzes() {
+        final Set all = new HashSet();
+        for (Clazz clazz : clazzes.values()) {
+            all.add(clazz);
+        }
+        return all;
+    }
 
-	public Clazz getClazz( final String pClazzName ) {
-		return (Clazz) clazzes.get(pClazzName);
-	}
+    public Clazz getClazz( final String pClazzName ) {
+        return (Clazz) clazzes.get(pClazzName);
+    }
 
-	public Set getDependencies() {
-		final Set all = new HashSet();
-		for (Clazz clazz : dependencies.values()) {
-			all.add(clazz);
-		}
-		return all;
-	}
+    public Set getDependencies() {
+        final Set all = new HashSet();
+        for (Clazz clazz : dependencies.values()) {
+            all.add(clazz);
+        }
+        return all;
+    }
 
-	public Set getTransitiveDependencies() {
-		final Set all = new HashSet();
-		for (Clazz clazz : clazzes.values()) {
-			clazz.findTransitiveDependencies(all);
-		}
-		return all;
-	}
+    public Set getTransitiveDependencies() {
+        final Set all = new HashSet();
+        for (Clazz clazz : clazzes.values()) {
+            clazz.findTransitiveDependencies(all);
+        }
+        return all;
+    }
 
-	public String toString() {
-		return id;
-	}
+    public String toString() {
+        return id;
+    }
 }

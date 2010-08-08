@@ -24,7 +24,7 @@ public final class Clazz implements Comparable {
     private final Set<Clazz> references = new HashSet();
     private final Set<ClazzpathUnit> units = new HashSet();
 
-    private final String name;  
+    private final String name;
 
     public Clazz( final String pName ) {
         name = pName;
