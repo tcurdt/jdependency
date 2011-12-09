@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The Apache Software Foundation.
+ * Copyright 2010-2011 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,19 @@ import org.objectweb.asm.commons.RemappingClassAdapter;
 
 public final class DependenciesClassAdapter extends RemappingClassAdapter {
 
-    final Set classes = new HashSet();
+    final Set<String> classes = new HashSet<String>();
 
     public DependenciesClassAdapter() {
         super(new EmptyVisitor(), new CollectingRemapper());
     }
     
-    public Set getDependencies() {
+    public Set<String> getDependencies() {
         return ((CollectingRemapper) super.remapper).classes;
     }
 
     private static class CollectingRemapper extends Remapper {
 
-        final Set classes = new HashSet();
+        final Set<String> classes = new HashSet<String>();
 
         public String map(String pClassName) {
             classes.add(pClassName.replace('/', '.'));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The Apache Software Foundation.
+ * Copyright 2010-2011 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,10 @@ import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class DependencyUtils {
 
-    public static Set getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
+    public static Set<String> getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
         final JarInputStream inputStream = new JarInputStream(pInputStream);
         final NullOutputStream nullStream = new NullOutputStream();
-        final Set dependencies = new HashSet();
+        final Set<String> dependencies = new HashSet<String>();
         try {
             while (true) {
                 final JarEntry entry = inputStream.getNextJarEntry();
@@ -64,14 +64,14 @@ public final class DependencyUtils {
         return dependencies;
     }
 
-    public static Set getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
+    public static Set<String> getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
         final DependenciesClassAdapter v = new DependenciesClassAdapter();
         new ClassReader( pInputStream ).accept( v, 0 );
-        final Set depNames = v.getDependencies();
+        final Set<String> depNames = v.getDependencies();
         return depNames;
     }
     
-    public static Set getDependenciesOfClass( final Class pClass ) throws IOException {
+    public static Set<String> getDependenciesOfClass( final Class<?> pClass ) throws IOException {
         final String resource = "/" + pClass.getName().replace('.', '/') + ".class";        
         return getDependenciesOfClass(pClass.getResourceAsStream(resource));
     }

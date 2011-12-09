@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The Apache Software Foundation.
+ * Copyright 2010-2011 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package org.vafer.jdependency;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class Clazz implements Comparable {
+public final class Clazz implements Comparable<Clazz> {
 
-    private final Set<Clazz> dependencies = new HashSet();
-    private final Set<Clazz> references = new HashSet();
-    private final Set<ClazzpathUnit> units = new HashSet();
+    private final Set<Clazz> dependencies = new HashSet<Clazz>();
+    private final Set<Clazz> references = new HashSet<Clazz>();
+    private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
 
     private final String name;
 
@@ -43,7 +43,7 @@ public final class Clazz implements Comparable {
         units.remove(pUnit);
     }
     
-    public Set getClazzpathUnits() {
+    public Set<ClazzpathUnit> getClazzpathUnits() {
         return units;
     }
 
@@ -58,24 +58,24 @@ public final class Clazz implements Comparable {
         dependencies.remove(pClazz);        
     }
     
-    public Set getDependencies() {
+    public Set<Clazz> getDependencies() {
         return dependencies;
     }
 
 
     
-    public Set getReferences() {
+    public Set<Clazz> getReferences() {
         return references;
     }
 
     
-    public Set getTransitiveDependencies() {
-        final Set all = new HashSet();
+    public Set<Clazz> getTransitiveDependencies() {
+        final Set<Clazz> all = new HashSet<Clazz>();
         findTransitiveDependencies(all);
         return all;
     }
 
-    void findTransitiveDependencies( final Set pAll ) {
+    void findTransitiveDependencies( final Set<? super Clazz> pAll ) {
 
         for (Clazz clazz : dependencies) {
             if (!pAll.contains(clazz)) {
@@ -97,7 +97,7 @@ public final class Clazz implements Comparable {
         return name.hashCode();
     }
 
-    public int compareTo( final Object pO ) {
+    public int compareTo( final Clazz pO ) {
         return name.compareTo(((Clazz) pO).name);
     }
 
