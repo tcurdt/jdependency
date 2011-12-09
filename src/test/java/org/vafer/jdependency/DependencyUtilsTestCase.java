@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The Apache Software Foundation.
+ * Copyright 2010-2011 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.vafer.jdependency.utils.DependencyUtils;
 public final class DependencyUtilsTestCase extends TestCase {
 
     public void testShouldFindDependenciesOfClassObject() throws Exception {
-        final Set dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
-        final Set expectedDependencies = new HashSet(Arrays.asList(new String[] {
+        final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
+        final Set<String> expectedDependencies = new HashSet<String>(Arrays.asList(
                 "java.lang.String",
                 "java.lang.IllegalArgumentException",
                 "java.lang.CloneNotSupportedException",
@@ -37,7 +37,7 @@ public final class DependencyUtilsTestCase extends TestCase {
                 "java.lang.Object",
                 "java.lang.StringBuilder",
                 "java.lang.Throwable"
-                }));
+                ));
         assertEquals(expectedDependencies, dependencies);
     }
 }

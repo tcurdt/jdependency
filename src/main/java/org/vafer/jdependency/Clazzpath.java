@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The Apache Software Foundation.
+ * Copyright 2010-2011 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class Clazzpath {
 
-    private final Set<ClazzpathUnit> units = new HashSet();
-    private final Map<String, Clazz> missing = new HashMap();
-    private final Map<String, Clazz> clazzes = new HashMap();
+    private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
+    private final Map<String, Clazz> missing = new HashMap<String, Clazz>();
+    private final Map<String, Clazz> clazzes = new HashMap<String, Clazz>();
 
     public Clazzpath() {
     }
@@ -53,8 +53,8 @@ public final class Clazzpath {
 
     public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
 
-        final Map unitClazzes = new HashMap();
-        final Map unitDependencies = new HashMap();
+        final Map<String, Clazz> unitClazzes = new HashMap<String, Clazz>();
+        final Map<String, Clazz> unitDependencies = new HashMap<String, Clazz>();
 
         final ClazzpathUnit unit = new ClazzpathUnit(pId, unitClazzes, unitDependencies);
         
@@ -123,16 +123,13 @@ public final class Clazzpath {
         return unit;
     }
 
-    public Set getClazzes() {
-        final Set all = new HashSet();
-        for (Clazz clazz : clazzes.values()) {
-            all.add(clazz);
-        }
-        return all;
+    public Set<Clazz> getClazzes() {
+        final Set<Clazz> result = new HashSet<Clazz>(clazzes.values());
+        return result;
     }
 
-    public Set getClashedClazzes() {
-        final Set all = new HashSet();
+    public Set<Clazz> getClashedClazzes() {
+        final Set<Clazz> all = new HashSet<Clazz>();
         for (Clazz clazz : clazzes.values()) {          
             if (clazz.getClazzpathUnits().size() > 1) {
                 all.add(clazz);
@@ -141,20 +138,19 @@ public final class Clazzpath {
         return all; 
     }
 
-    public Set getMissingClazzes() {
-        final Set all = new HashSet();
-        for (Clazz clazz : missing.values()) {
-            all.add(clazz);
-        }
-        return all;
+    public Set<Clazz> getMissingClazzes() {
+        final Set<Clazz> result = new HashSet<Clazz>(missing.values());
+        return result;
     }
     
     public Clazz getClazz(final String pClazzName) {
-        return (Clazz) clazzes.get(pClazzName);
+        final Clazz result = (Clazz) clazzes.get(pClazzName);
+        return result;
     }
 
     public ClazzpathUnit[] getUnits() {
-        return (ClazzpathUnit[]) units.toArray(new ClazzpathUnit[units.size()]);
+        final ClazzpathUnit[] result = units.toArray(new ClazzpathUnit[units.size()]);
+        return result;
     }
 
 }

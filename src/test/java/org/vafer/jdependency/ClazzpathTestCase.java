@@ -65,7 +65,7 @@ public class ClazzpathTestCase extends TestCase {
         
         final Set<Clazz> missing = cp.getMissingClazzes();
 
-        final Set<String> actual = new HashSet();
+        final Set<String> actual = new HashSet<String>();
         for (Clazz clazz : missing) {
             String name = clazz.getName();
             // ignore the rt.jar
@@ -74,10 +74,10 @@ public class ClazzpathTestCase extends TestCase {
             }
         }
 
-        final Set expected = new HashSet(Arrays.asList(new String[] {
+        final Set<String> expected = new HashSet<String>(Arrays.asList(
                 "org.apache.commons.io.output.ProxyOutputStream",
                 "org.apache.commons.io.input.ProxyInputStream"
-                }));
+                ));
                     
         assertEquals(expected, actual);     
     }
