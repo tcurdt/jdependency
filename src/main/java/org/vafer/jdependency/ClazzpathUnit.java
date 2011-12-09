@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The Apache Software Foundation.
+ * Copyright 2010-2011 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,34 +26,29 @@ public final class ClazzpathUnit {
     private final Map<String, Clazz> clazzes;
     private final Map<String, Clazz> dependencies;
 
-    ClazzpathUnit( final String pId, final Map pClazzes, final Map pDependencies ) {
+    ClazzpathUnit( final String pId, final Map<String, Clazz> pClazzes, final Map<String, Clazz> pDependencies ) {
         id = pId;
         clazzes = pClazzes;
         dependencies = pDependencies;
     }
 
-    public Set getClazzes() {
-        final Set all = new HashSet();
-        for (Clazz clazz : clazzes.values()) {
-            all.add(clazz);
-        }
-        return all;
+    public Set<Clazz> getClazzes() {
+        final Set<Clazz> result = new HashSet<Clazz>(clazzes.values());
+        return result;
     }
 
     public Clazz getClazz( final String pClazzName ) {
-        return (Clazz) clazzes.get(pClazzName);
+        final Clazz result = clazzes.get(pClazzName);
+        return result;
     }
 
-    public Set getDependencies() {
-        final Set all = new HashSet();
-        for (Clazz clazz : dependencies.values()) {
-            all.add(clazz);
-        }
-        return all;
+    public Set<Clazz> getDependencies() {
+        final Set<Clazz> result = new HashSet<Clazz>(dependencies.values());
+        return result;
     }
 
-    public Set getTransitiveDependencies() {
-        final Set all = new HashSet();
+    public Set<Clazz> getTransitiveDependencies() {
+        final Set<Clazz> all = new HashSet<Clazz>();
         for (Clazz clazz : clazzes.values()) {
             clazz.findTransitiveDependencies(all);
         }
