@@ -15,16 +15,18 @@
  */
 package org.vafer.jdependency;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.vafer.jdependency.utils.DependencyUtils;
 
-public final class DependencyUtilsTestCase extends TestCase {
+public final class DependencyUtilsTestCase {
 
+    @Test
     public void testShouldFindDependenciesOfClassObject() throws Exception {
         final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
         final Set<String> expectedDependencies = new HashSet<String>(Arrays.asList(
