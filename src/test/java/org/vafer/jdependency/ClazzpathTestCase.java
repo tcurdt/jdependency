@@ -1,15 +1,18 @@
 package org.vafer.jdependency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ClazzpathTestCase extends TestCase {
-    
+public class ClazzpathTestCase {
+    @Test
     public void testShouldAddClasses() throws IOException {
         
         final InputStream jar1 = getClass().getClassLoader().getResourceAsStream("jar1.jar");
@@ -28,6 +31,7 @@ public class ClazzpathTestCase extends TestCase {
         assertEquals(129, cp.getClazzes().size());      
     }
 
+    @Test
     public void testShouldRemoveClasspathUnit() throws IOException {
 
         final InputStream jar1 = getClass().getClassLoader().getResourceAsStream("jar1.jar");
@@ -54,6 +58,7 @@ public class ClazzpathTestCase extends TestCase {
         assertEquals(0, cp.getClazzes().size());
     }
     
+    @Test
     public void testShouldRevealMissingClasses() throws IOException {
 
         final InputStream jar1 = getClass().getClassLoader().getResourceAsStream("jar1-missing.jar");
@@ -82,6 +87,7 @@ public class ClazzpathTestCase extends TestCase {
         assertEquals(expected, actual);     
     }
     
+    @Test
     public void testShouldShowClasspathUnitsResponsibleForClash() throws IOException {
 
         final InputStream jar1 = getClass().getClassLoader().getResourceAsStream("jar1.jar");
@@ -100,6 +106,7 @@ public class ClazzpathTestCase extends TestCase {
         assertEquals(expected, actual);
     }
     
+    @Test
     public void testShouldFindUnusedClasses() throws IOException {
 
         final InputStream jar3using1 = getClass().getClassLoader().getResourceAsStream("jar3using1.jar");
