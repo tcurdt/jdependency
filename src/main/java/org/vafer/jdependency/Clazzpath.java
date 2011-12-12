@@ -15,19 +15,38 @@
  */
 package org.vafer.jdependency;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class Clazzpath {
+    private static abstract class Resource {
+        final String name;
+
+        Resource( String pName ) {
+            super();
+            this.name = pName.substring(0, pName.length() - 6).replace('/', '.');
+        }
+
+        abstract InputStream getInputStream() throws IOException;
+
+        static boolean isValidName( String pName ) {
+            return pName != null && pName.endsWith(".class");
+        }
+    }
 
     private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
     private final Map<String, Clazz> missing = new HashMap<String, Clazz>();
@@ -51,69 +70,150 @@ public final class Clazzpath {
         return units.remove(pUnit);
     }
 
-    public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
+    /**
+     * Add a {@link ClazzpathUnit} to this {@link Clazzpath}.
+     * @param pFile may be a directory or a jar file
+     * @return newly created {@link ClazzpathUnit} with id of pFile.absolutePath
+     * @throws IOException
+     */
+    public final ClazzpathUnit addClazzpathUnit( final File pFile ) throws IOException {
+        return addClazzpathUnit(pFile, pFile.getAbsolutePath());
+    }
 
+    public ClazzpathUnit addClazzpathUnit( final File pFile, final String pId ) throws IOException {
+        if ( pFile.isFile() ) {
+            return addClazzpathUnit( new FileInputStream(pFile), pId);
+        }
+        if (pFile.isDirectory()) {
+            final String prefix =
+                FilenameUtils.separatorsToUnix(FilenameUtils
+                    .normalize(new StringBuilder(pFile.getAbsolutePath())
+                        .append(File.separatorChar).toString()));
+            final boolean recursive = true;
+            @SuppressWarnings("unchecked")
+            final Iterator<File> files = FileUtils.iterateFiles(pFile, new String[] { "class" }, recursive);
+            return addClazzpathUnit( new Iterable<Resource>() {
+
+                public Iterator<Resource> iterator() {
+                    return new Iterator<Clazzpath.Resource>() {
+
+                        public boolean hasNext() {
+                            return files.hasNext();
+                        }
+
+                        public Resource next() {
+                            final File file = files.next();
+                            return new Resource(file.getAbsolutePath().substring(prefix.length())) {
+                                
+                                @Override
+                                InputStream getInputStream() throws IOException {
+                                    return new FileInputStream(file);
+                                }
+                            };
+                        }
+
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+                    };
+                }
+
+            }, pId);
+        }
+        throw new IllegalArgumentException();
+    }
+
+    public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
+        final JarInputStream inputStream = new JarInputStream(pInputStream);
+        final JarEntry[] entryHolder = new JarEntry[1];
+        
+        return addClazzpathUnit(new Iterable<Resource>() {
+
+            public Iterator<Resource> iterator() {
+                return new Iterator<Resource>() {
+
+                    public boolean hasNext() {
+                        try {
+                            do {
+                                entryHolder[0] = inputStream.getNextJarEntry();
+                            } while (entryHolder[0] != null && !Resource.isValidName(entryHolder[0].getName()));
+                        } catch ( IOException e ) {
+                            throw new RuntimeException(e);
+                        }
+                        return entryHolder[0] != null;
+                    }
+
+                    public Resource next() {
+                        return new Resource(entryHolder[0].getName()) {
+
+                            @Override
+                            InputStream getInputStream() {
+                                return inputStream;
+                            }
+                        };
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+
+                };
+            }
+        }, pId);
+    }
+
+    private ClazzpathUnit addClazzpathUnit( final Iterable<Resource> resources, final String pId ) throws IOException {
         final Map<String, Clazz> unitClazzes = new HashMap<String, Clazz>();
         final Map<String, Clazz> unitDependencies = new HashMap<String, Clazz>();
 
         final ClazzpathUnit unit = new ClazzpathUnit(pId, unitClazzes, unitDependencies);
         
-        final JarInputStream inputStream = new JarInputStream(pInputStream);
-        
-        while (true) {
-            final JarEntry entry = inputStream.getNextJarEntry();
-            
-            if (entry == null) {
-                break;
-            }
+        for (Resource resource : resources) {
 
-            final String entryName = entry.getName();
-            if (entryName.endsWith(".class")) {
+            final String clazzName = resource.name;
 
-                final String clazzName = entryName.substring(0, entryName.length() - 6).replace('/', '.');
+            Clazz clazz = getClazz(clazzName);
 
-                Clazz clazz = getClazz(clazzName);
+            if (clazz == null) {
+                clazz = missing.get(clazzName);
 
-                if (clazz == null) {
-                    clazz = missing.get(clazzName);
-
-                    if (clazz != null) {
-                        // already marked missing
-                        clazz = missing.remove(clazzName);
-                    } else {
-                        clazz = new Clazz(clazzName);
-                    }
+                if (clazz != null) {
+                    // already marked missing
+                    clazz = missing.remove(clazzName);
+                } else {
+                    clazz = new Clazz(clazzName);
                 }
-                
-                clazz.addClazzpathUnit(unit);
+            }
+            
+            clazz.addClazzpathUnit(unit);
 
-                clazzes.put(clazzName, clazz);
-                unitClazzes.put(clazzName, clazz);
+            clazzes.put(clazzName, clazz);
+            unitClazzes.put(clazzName, clazz);
 
-                final DependenciesClassAdapter v = new DependenciesClassAdapter();
-                new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
-                final Set<String> depNames = v.getDependencies();
+            final DependenciesClassAdapter v = new DependenciesClassAdapter();
+            // TODO use ClassReader.getClassName() to learn the class name?
+            new ClassReader(resource.getInputStream()).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+            final Set<String> depNames = v.getDependencies();
 
-                for (String depName : depNames) {
+            for (String depName : depNames) {
 
-                    Clazz dep = getClazz(depName);
+                Clazz dep = getClazz(depName);
 
-                    if (dep == null) {
-                        // there is no such clazz yet
-                        dep = missing.get(depName);
-                    }
+                if (dep == null) {
+                    // there is no such clazz yet
+                    dep = missing.get(depName);
+                }
 
-                    if (dep == null) {
-                        // it is also not recorded to be missing
-                        dep = new Clazz(depName);
-                        dep.addClazzpathUnit(unit);
-                        missing.put(depName, dep);
-                    }
+                if (dep == null) {
+                    // it is also not recorded to be missing
+                    dep = new Clazz(depName);
+                    dep.addClazzpathUnit(unit);
+                    missing.put(depName, dep);
+                }
 
-                    if (dep != clazz) {
-                        unitDependencies.put(depName, dep);
-                        clazz.addDependency(dep);
-                    }
+                if (dep != clazz) {
+                    unitDependencies.put(depName, dep);
+                    clazz.addDependency(dep);
                 }
             }
         }
