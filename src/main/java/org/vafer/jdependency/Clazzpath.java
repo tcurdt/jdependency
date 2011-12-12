@@ -191,7 +191,6 @@ public final class Clazzpath {
             unitClazzes.put(clazzName, clazz);
 
             final DependenciesClassAdapter v = new DependenciesClassAdapter();
-            // TODO use ClassReader.getClassName() to learn the class name?
             new ClassReader(resource.getInputStream()).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
             final Set<String> depNames = v.getDependencies();
 
