@@ -4,7 +4,7 @@
   <groupId>com.github.krosenvold</groupId>
   <artifactId>jdependency</artifactId>
   <name>jdependency</name>
-  <version>0.8-SNAPSHOT</version>
+  <version>0.8</version>
   <description>This project provides an API to analyse class dependencies</description>
   <url>http://github.com/krosenvold/jdependency</url>
   <developers>
