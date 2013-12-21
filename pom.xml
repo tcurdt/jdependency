@@ -4,7 +4,7 @@
   <groupId>com.github.krosenvold</groupId>
   <artifactId>jdependency</artifactId>
   <name>jdependency</name>
-  <version>0.8-SNAPSHOT</version>
+  <version>0.8</version>
   <description>This project provides an API to analyse class dependencies</description>
   <url>http://github.com/krosenvold/jdependency</url>
   <developers>
@@ -37,6 +37,7 @@
     <connection>scm:git:git://github.com:krosenvold/jdependency.git</connection>
     <developerConnection>scm:git:git://github.com:krosenvold/jdependency.git</developerConnection>
     <url>http://github.com/krosenvold/jdependency/tree/master</url>
+    <tag>jdependency-0.8</tag>
   </scm>
   <properties>
       <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
@@ -153,7 +154,7 @@
                                       </goals>
                                   </pluginExecutionFilter>
                                   <action>
-                                      <ignore></ignore>
+                                      <ignore />
                                   </action>
                               </pluginExecution>
                           </pluginExecutions>
