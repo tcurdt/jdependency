@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.krosenvold</groupId>
     <artifactId>jdependency</artifactId>
     <name>jdependency</name>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.8</version>
     <description>This project provides an API to analyse class dependencies</description>
     <url>http://github.com/krosenvold/jdependency</url>
     <developers>
@@ -87,16 +86,14 @@
                         </goals>
                         <configuration>
                             <target unless="maven.test.skip">
-                                <mkdir dir="${test.workingDirectory}"/>
+                                <mkdir dir="${test.workingDirectory}" />
                                 <copy todir="${test.workingDirectory}">
-                                    <fileset dir="${basedir}/src/test/resources" includes="*.jar"/>
+                                    <fileset dir="${basedir}/src/test/resources" includes="*.jar" />
                                 </copy>
-                                <unjar dest="${test.workingDirectory}/jar1" src="${test.workingDirectory}/jar1.jar"/>
-                                <unjar dest="${test.workingDirectory}/jar2" src="${test.workingDirectory}/jar2.jar"/>
-                                <unjar dest="${test.workingDirectory}/jar1-missing"
-                                       src="${test.workingDirectory}/jar1-missing.jar"/>
-                                <unjar dest="${test.workingDirectory}/jar3using1"
-                                       src="${test.workingDirectory}/jar3using1.jar"/>
+                                <unjar dest="${test.workingDirectory}/jar1" src="${test.workingDirectory}/jar1.jar" />
+                                <unjar dest="${test.workingDirectory}/jar2" src="${test.workingDirectory}/jar2.jar" />
+                                <unjar dest="${test.workingDirectory}/jar1-missing" src="${test.workingDirectory}/jar1-missing.jar" />
+                                <unjar dest="${test.workingDirectory}/jar3using1" src="${test.workingDirectory}/jar3using1.jar" />
                             </target>
                         </configuration>
                     </execution>
@@ -140,7 +137,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
