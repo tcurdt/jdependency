@@ -1,4 +1,4 @@
-## Version 0.9, unreleased
+## Version 0.9, released 24.04.2014
 
 Upgrade to asm5 for java8 support
 
