@@ -1,4 +1,12 @@
-## Version 0.7, unreleased
+## Version 0.9, unreleased
+
+Upgrade to asm5 for java8 support
+
+## Version 0.8, skipped
+
+Skipped for easier merging of forks
+
+## Version 0.7, released 11.02.2011
 
 Fixed the commons-io groupId
 

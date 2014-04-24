@@ -4,14 +4,14 @@
     <groupId>org.vafer</groupId>
     <artifactId>jdependency</artifactId>
     <name>jdependency</name>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.9</version>
     <description>This project provides an API to analyse class dependencies</description>
-    <url>http://github.com/krosenvold/jdependency</url>
+    <url>http://github.com/tcurdt/jdependency</url>
     <developers>
         <developer>
             <id>tcurdt</id>
             <name>Torsten Curdt</name>
-            <email>tcurdt at apache.org</email>
+            <email>tcurdt@apache.org</email>
             <roles>
                 <role>Lead Developer</role>
             </roles>
@@ -31,10 +31,10 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git@github.com:krosenvold/jdependency.git</connection>
-        <developerConnection>scm:git:git@github.com:krosenvold/jdependency.git</developerConnection>
-        <url>http://github.com/krosenvold/jdependency</url>
-        <tag>jdependency-0.8</tag>
+        <connection>scm:git:git@github.com:tcurdt/jdependency.git</connection>
+        <developerConnection>scm:git:git@github.com:tcurdt/jdependency.git</developerConnection>
+        <url>http://github.com/tcurdt/jdependency</url>
+        <tag>jdependency-0.9</tag>
     </scm>
     <properties>
         <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
