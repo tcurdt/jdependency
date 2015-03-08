@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011 The Apache Software Foundation.
+ * Copyright 2010-2015 The jdependency developers.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

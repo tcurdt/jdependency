@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2011 The Apache Software Foundation.
- * 
+ * Copyright 2010-2015 The jdependency developers.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,31 +36,31 @@ public final class DependencyUtils {
         try {
             while (true) {
                 final JarEntry entry = inputStream.getNextJarEntry();
-                
+
                 if (entry == null) {
                     break;
                 }
-                
+
                 if (entry.isDirectory()) {
                     // ignore directory entries
                     IOUtils.copy(inputStream, nullStream);
                     continue;
                 }
-                
+
                 final String name = entry.getName();
-                
+
                 if (name.endsWith(".class")) {
                     final DependenciesClassAdapter v = new DependenciesClassAdapter();
                     new ClassReader( inputStream ).accept( v, 0 );
                     dependencies.addAll(v.getDependencies());
                 } else {
-                    IOUtils.copy(inputStream, nullStream);                                                
+                    IOUtils.copy(inputStream, nullStream);
                 }
             }
         } finally {
             inputStream.close();
         }
-        
+
         return dependencies;
     }
 
@@ -70,9 +70,9 @@ public final class DependencyUtils {
         final Set<String> depNames = v.getDependencies();
         return depNames;
     }
-    
+
     public static Set<String> getDependenciesOfClass( final Class<?> pClass ) throws IOException {
-        final String resource = "/" + pClass.getName().replace('.', '/') + ".class";        
+        final String resource = "/" + pClass.getName().replace('.', '/') + ".class";
         return getDependenciesOfClass(pClass.getResourceAsStream(resource));
     }
 

@@ -1,3 +1,6 @@
+## Version 1.0, released 08.03.2015
+support for static methods on interfaces
+
 ## Version 0.9, released 24.04.2014
 
 Upgrade to asm5 for java8 support

@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2011 The Apache Software Foundation.
- * 
+ * Copyright 2010-2015 The jdependency developers.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,8 +33,8 @@ public final class Clazz implements Comparable<Clazz> {
     public String getName() {
         return name;
     }
-    
-    
+
+
     public void addClazzpathUnit( final ClazzpathUnit pUnit ) {
         units.add(pUnit);
     }
@@ -42,7 +42,7 @@ public final class Clazz implements Comparable<Clazz> {
     public void removeClazzpathUnit( final ClazzpathUnit pUnit ) {
         units.remove(pUnit);
     }
-    
+
     public Set<ClazzpathUnit> getClazzpathUnits() {
         return units;
     }
@@ -55,20 +55,20 @@ public final class Clazz implements Comparable<Clazz> {
 
     public void removeDependency( final Clazz pClazz ) {
         pClazz.references.remove(this);
-        dependencies.remove(pClazz);        
+        dependencies.remove(pClazz);
     }
-    
+
     public Set<Clazz> getDependencies() {
         return dependencies;
     }
 
 
-    
+
     public Set<Clazz> getReferences() {
         return references;
     }
 
-    
+
     public Set<Clazz> getTransitiveDependencies() {
         final Set<Clazz> all = new HashSet<Clazz>();
         findTransitiveDependencies(all);

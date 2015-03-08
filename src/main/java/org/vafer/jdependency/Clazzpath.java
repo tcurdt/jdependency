@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2011 The Apache Software Foundation.
- * 
+ * Copyright 2010-2015 The jdependency developers.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,7 @@ import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class Clazzpath {
+
     private static abstract class Resource {
         final String name;
 
@@ -56,7 +57,7 @@ public final class Clazzpath {
     }
 
     public boolean removeClazzpathUnit( final ClazzpathUnit pUnit ) {
-        
+
         final Set<Clazz> unitClazzes = pUnit.getClazzes();
 
         for (Clazz clazz : unitClazzes) {
@@ -66,7 +67,7 @@ public final class Clazzpath {
                 // missing.put(clazz.toString(), clazz);
             }
         }
-        
+
         return units.remove(pUnit);
     }
 
@@ -104,7 +105,7 @@ public final class Clazzpath {
                         public Resource next() {
                             final File file = files.next();
                             return new Resource(file.getAbsolutePath().substring(prefix.length())) {
-                                
+
                                 @Override
                                 InputStream getInputStream() throws IOException {
                                     return new FileInputStream(file);
@@ -126,7 +127,7 @@ public final class Clazzpath {
     public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
         final JarInputStream inputStream = new JarInputStream(pInputStream);
         final JarEntry[] entryHolder = new JarEntry[1];
-        
+
         return addClazzpathUnit(new Iterable<Resource>() {
 
             public Iterator<Resource> iterator() {
@@ -167,7 +168,7 @@ public final class Clazzpath {
         final Map<String, Clazz> unitDependencies = new HashMap<String, Clazz>();
 
         final ClazzpathUnit unit = new ClazzpathUnit(pId, unitClazzes, unitDependencies);
-        
+
         for (Resource resource : resources) {
 
             final String clazzName = resource.name;
@@ -184,7 +185,7 @@ public final class Clazzpath {
                     clazz = new Clazz(clazzName);
                 }
             }
-            
+
             clazz.addClazzpathUnit(unit);
 
             clazzes.put(clazzName, clazz);
@@ -229,19 +230,19 @@ public final class Clazzpath {
 
     public Set<Clazz> getClashedClazzes() {
         final Set<Clazz> all = new HashSet<Clazz>();
-        for (Clazz clazz : clazzes.values()) {          
+        for (Clazz clazz : clazzes.values()) {
             if (clazz.getClazzpathUnits().size() > 1) {
                 all.add(clazz);
             }
         }
-        return all; 
+        return all;
     }
 
     public Set<Clazz> getMissingClazzes() {
         final Set<Clazz> result = new HashSet<Clazz>(missing.values());
         return result;
     }
-    
+
     public Clazz getClazz(final String pClazzName) {
         final Clazz result = (Clazz) clazzes.get(pClazzName);
         return result;
