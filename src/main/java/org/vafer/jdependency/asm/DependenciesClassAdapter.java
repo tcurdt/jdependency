@@ -25,6 +25,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
+import org.objectweb.asm.signature.SignatureVisitor;
 
 public final class DependenciesClassAdapter extends RemappingClassAdapter {
 
@@ -42,10 +43,15 @@ public final class DependenciesClassAdapter extends RemappingClassAdapter {
 
         final Set<String> classes = new HashSet<String>();
 
+        @Override
+        protected SignatureVisitor createRemappingSignatureAdapter(SignatureVisitor v) {
+            return new SignatureRemapper(v, this);
+        }
+
         public String map(String pClassName) {
             classes.add(pClassName.replace('/', '.'));
             return pClassName;
-        }       
+        }
     }
 
     static class EmptyVisitor extends ClassVisitor
