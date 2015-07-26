@@ -31,6 +31,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
+import org.vafer.jdependency.utils.DependencyUtils;
 
 public final class Clazzpath {
 
@@ -191,9 +192,11 @@ public final class Clazzpath {
             clazzes.put(clazzName, clazz);
             unitClazzes.put(clazzName, clazz);
 
-            final DependenciesClassAdapter v = new DependenciesClassAdapter();
-            new ClassReader(resource.getInputStream()).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
-            final Set<String> depNames = v.getDependencies();
+//            final DependenciesClassAdapter v = new DependenciesClassAdapter();
+//            new ClassReader(resource.getInputStream()).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+//            final Set<String> depNames = v.getDependencies();
+            
+            final Set<String> depNames = DependencyUtils.getDependenciesOfClass(resource.getInputStream());
 
             for (String depName : depNames) {
 

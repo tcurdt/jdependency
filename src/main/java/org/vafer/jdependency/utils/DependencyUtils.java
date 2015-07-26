@@ -66,7 +66,7 @@ public final class DependencyUtils {
 
     public static Set<String> getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
         final DependenciesClassAdapter v = new DependenciesClassAdapter();
-        new ClassReader( pInputStream ).accept( v, ClassReader.EXPAND_FRAMES );
+        new ClassReader( pInputStream ).accept( v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG );
         final Set<String> depNames = v.getDependencies();
         return depNames;
     }
