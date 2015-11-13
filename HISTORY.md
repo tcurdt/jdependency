@@ -1,3 +1,6 @@
+Fixed file handle leak.
+
+
 ## Version 1.0, released 08.03.2015
 support for static methods on interfaces
 

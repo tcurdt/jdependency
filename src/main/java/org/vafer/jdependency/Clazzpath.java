@@ -15,22 +15,18 @@
  */
 package org.vafer.jdependency;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 public final class Clazzpath {
 
@@ -119,51 +115,55 @@ public final class Clazzpath {
                     };
                 }
 
-            }, pId);
+            }, pId, true);
         }
         throw new IllegalArgumentException();
     }
 
-    public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
+    public ClazzpathUnit addClazzpathUnit(final InputStream pInputStream, final String pId) throws IOException {
         final JarInputStream inputStream = new JarInputStream(pInputStream);
-        final JarEntry[] entryHolder = new JarEntry[1];
+        try {
+            final JarEntry[] entryHolder = new JarEntry[1];
 
-        return addClazzpathUnit(new Iterable<Resource>() {
+            return addClazzpathUnit(new Iterable<Resource>() {
 
-            public Iterator<Resource> iterator() {
-                return new Iterator<Resource>() {
+                public Iterator<Resource> iterator() {
+                    return new Iterator<Resource>() {
 
-                    public boolean hasNext() {
-                        try {
-                            do {
-                                entryHolder[0] = inputStream.getNextJarEntry();
-                            } while (entryHolder[0] != null && !Resource.isValidName(entryHolder[0].getName()));
-                        } catch ( IOException e ) {
-                            throw new RuntimeException(e);
-                        }
-                        return entryHolder[0] != null;
-                    }
-
-                    public Resource next() {
-                        return new Resource(entryHolder[0].getName()) {
-
-                            @Override
-                            InputStream getInputStream() {
-                                return inputStream;
+                        public boolean hasNext() {
+                            try {
+                                do {
+                                    entryHolder[0] = inputStream.getNextJarEntry();
+                                } while (entryHolder[0] != null && !Resource.isValidName(entryHolder[0].getName()));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
                             }
-                        };
-                    }
+                            return entryHolder[0] != null;
+                        }
 
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
+                        public Resource next() {
+                            return new Resource(entryHolder[0].getName()) {
 
-                };
-            }
-        }, pId);
+                                @Override
+                                InputStream getInputStream() {
+                                    return inputStream;
+                                }
+                            };
+                        }
+
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+
+                    };
+                }
+            }, pId, false);
+        } finally {
+            inputStream.close();
+        }
     }
 
-    private ClazzpathUnit addClazzpathUnit( final Iterable<Resource> resources, final String pId ) throws IOException {
+    private ClazzpathUnit addClazzpathUnit(final Iterable<Resource> resources, final String pId, boolean shouldCloseResourceStream) throws IOException {
         final Map<String, Clazz> unitClazzes = new HashMap<String, Clazz>();
         final Map<String, Clazz> unitDependencies = new HashMap<String, Clazz>();
 
@@ -192,7 +192,13 @@ public final class Clazzpath {
             unitClazzes.put(clazzName, clazz);
 
             final DependenciesClassAdapter v = new DependenciesClassAdapter();
-            new ClassReader(resource.getInputStream()).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+            final InputStream inputStream = resource.getInputStream();
+            try {
+                new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+            } finally {
+                if (shouldCloseResourceStream) inputStream.close();
+            }
+
             final Set<String> depNames = v.getDependencies();
 
             for (String depName : depNames) {
