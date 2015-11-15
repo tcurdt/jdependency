@@ -4,7 +4,7 @@
     <groupId>org.vafer</groupId>
     <artifactId>jdependency</artifactId>
     <name>jdependency</name>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <description>This project provides an API to analyse class dependencies</description>
     <url>http://github.com/tcurdt/jdependency</url>
     <developers>
@@ -34,11 +34,11 @@
         <connection>scm:git:git@github.com:tcurdt/jdependency.git</connection>
         <developerConnection>scm:git:git@github.com:tcurdt/jdependency.git</developerConnection>
         <url>http://github.com/tcurdt/jdependency</url>
-        <tag>jdependency-0.9</tag>
+        <tag>jdependency-1.1</tag>
     </scm>
     <properties>
         <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
-        <asm.version>5.0.3</asm.version>
+        <asm.version>5.0.4</asm.version>
         <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
     <prerequisites>

@@ -15,18 +15,22 @@
  */
 package org.vafer.jdependency;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.objectweb.asm.ClassReader;
-import org.vafer.jdependency.asm.DependenciesClassAdapter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.objectweb.asm.ClassReader;
+import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class Clazzpath {
 

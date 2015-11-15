@@ -4,7 +4,7 @@ jdependency is small library that helps you analyze class level dependencies,
 clashes and missing classes.
 
 Check the documentation on how to use it with [javadocs](http://tcurdt.github.com/jdependency/release/1.0/apidocs/) and a source
-[xref](http://tcurdt.github.com/jdependency/release/1.0/xref/) is also available.
+[xref](http://tcurdt.github.com/jdependency/release/1.1/xref/) is also available.
 
 ## Where to get it
 
@@ -23,7 +23,7 @@ If feel adventures or want to help out feel free to get the latest code
     final Clazzpath cp = new Clazzpath();
     cp.addClazzpathUnit(jar1, "jar1.jar");
     cp.addClazzpathUnit(jar2, "jar2.jar");
-    
+
     final Set<Clazz> clashed = cp.getClashedClazzes();
     for(Clazz clazz : clashed) {
       System.out.println("class " + clazz + " is contained in " + clazz.getClasspathUnits());
@@ -44,7 +44,7 @@ If feel adventures or want to help out feel free to get the latest code
     final Clazzpath cp = new Clazzpath();
     final ClazzpathUnit artifact = cp.addClazzpathUnit(jar1, "artifact.jar");
     cp.addClazzpathUnit(jar2, "dependency.jar");
-    
+
     final Set<Clazz> removable = cp.getClazzes();
     removable.removeAll(artifact.getClazzes());
     removable.removeAll(artifact.getTransitiveDependencies());

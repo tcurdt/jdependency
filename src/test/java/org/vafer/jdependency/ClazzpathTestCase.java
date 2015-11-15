@@ -1,12 +1,12 @@
 /*
  * Copyright 2010-2015 The jdependency developers.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,7 +100,7 @@ public class ClazzpathTestCase {
             String defaultResourceId( String resourceName ) {
                 return new File(resourceName).getAbsolutePath();
             }
-            
+
         }});
     }
 
@@ -119,44 +119,44 @@ public class ClazzpathTestCase {
         final Clazzpath cp = new Clazzpath();
         addClazzpathUnit.to(cp, "jar1");
         addClazzpathUnit.to(cp, "jar2");
-        
-        final ClazzpathUnit[] units = cp.getUnits();        
+
+        final ClazzpathUnit[] units = cp.getUnits();
         assertEquals(2, units.length);
-        
-        assertEquals(129, cp.getClazzes().size());      
+
+        assertEquals(129, cp.getClazzes().size());
     }
 
     @Test
     public void testShouldRemoveClasspathUnit() throws IOException {
         assumeTrue(addClazzpathUnit.isApplicable("jar1"));
         assumeTrue(addClazzpathUnit.isApplicable("jar2"));
-        
+
         final Clazzpath cp = new Clazzpath();
 
         final ClazzpathUnit unit1 = addClazzpathUnit.to(cp, "jar1");
-        
-        assertEquals(59, cp.getClazzes().size());       
-        
+
+        assertEquals(59, cp.getClazzes().size());
+
         final ClazzpathUnit unit2 = addClazzpathUnit.to(cp, "jar2");
 
         assertEquals(129, cp.getClazzes().size());
 
         cp.removeClazzpathUnit(unit1);
-        
+
         assertEquals(70, cp.getClazzes().size());
 
         cp.removeClazzpathUnit(unit2);
-        
+
         assertEquals(0, cp.getClazzes().size());
     }
-    
+
     @Test
     public void testShouldRevealMissingClasses() throws IOException {
         assumeTrue(addClazzpathUnit.isApplicable("jar1-missing"));
 
         final Clazzpath cp = new Clazzpath();
         addClazzpathUnit.to(cp, "jar1-missing");
-        
+
         final Set<Clazz> missing = cp.getMissingClazzes();
 
         final Set<String> actual = new HashSet<String>();
@@ -172,10 +172,10 @@ public class ClazzpathTestCase {
                 "org.apache.commons.io.output.ProxyOutputStream",
                 "org.apache.commons.io.input.ProxyInputStream"
                 ));
-                    
-        assertEquals(expected, actual);     
+
+        assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testShouldShowClasspathUnitsResponsibleForClash() throws IOException {
         assumeTrue(addClazzpathUnit.isApplicable("jar1"));
@@ -184,12 +184,12 @@ public class ClazzpathTestCase {
         addClazzpathUnit.to(cp, "jar1");
         addClazzpathUnit.to(cp, "jar1", "jar2");
 
-        final Set<Clazz> actual = cp.getClashedClazzes();       
-        final Set<Clazz> expected = cp.getClazzes(); 
+        final Set<Clazz> actual = cp.getClashedClazzes();
+        final Set<Clazz> expected = cp.getClazzes();
 
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testShouldFindUnusedClasses() throws IOException {
         assumeTrue(addClazzpathUnit.isApplicable("jar3using1"));
@@ -199,15 +199,15 @@ public class ClazzpathTestCase {
         final ClazzpathUnit artifact = addClazzpathUnit.to(cp, "jar3using1");
         addClazzpathUnit.to(cp, "jar1");
 
-        final Set<Clazz> removed = cp.getClazzes();        
+        final Set<Clazz> removed = cp.getClazzes();
         removed.removeAll(artifact.getClazzes());
         removed.removeAll(artifact.getTransitiveDependencies());
-        
+
         assertEquals("" + removed, 56, removed.size());
 
         final Set<Clazz> kept = cp.getClazzes();
         kept.removeAll(removed);
 
-        assertEquals("" + kept, 4, kept.size());        
+        assertEquals("" + kept, 4, kept.size());
     }
 }
