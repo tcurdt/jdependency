@@ -45,7 +45,7 @@ public final class Clazzpath {
         abstract InputStream getInputStream() throws IOException;
 
         static boolean isValidName( String pName ) {
-            return pName != null && pName.endsWith(".class");
+            return pName != null && pName.endsWith(".class") && !pName.contains( "-" );
         }
     }
 
