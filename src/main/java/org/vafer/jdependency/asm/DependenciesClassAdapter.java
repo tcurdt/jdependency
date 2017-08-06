@@ -23,10 +23,10 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.commons.RemappingClassAdapter;
 
-public final class DependenciesClassAdapter extends RemappingClassAdapter {
+public final class DependenciesClassAdapter extends ClassRemapper {
 
     private static final EmptyVisitor ev = new EmptyVisitor();
 

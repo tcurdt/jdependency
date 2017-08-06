@@ -17,6 +17,7 @@ package org.vafer.jdependency;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
@@ -209,5 +210,15 @@ public class ClazzpathTestCase {
         kept.removeAll(removed);
 
         assertEquals("" + kept, 4, kept.size());
+    }
+    
+    @Test
+    public void testWithModuleInfo() throws Exception {
+        assumeTrue(addClazzpathUnit.isApplicable("asm-6.0_BETA"));
+        
+        final Clazzpath cp = new Clazzpath();
+        final ClazzpathUnit artifact = addClazzpathUnit.to(cp, "asm-6.0_BETA");
+        
+        assertNull(artifact.getClazz( "module-info" ));
     }
 }
