@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 The jdependency developers.
+ * Copyright 2010-2017 The jdependency developers.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,14 +211,14 @@ public class ClazzpathTestCase {
 
         assertEquals("" + kept, 4, kept.size());
     }
-    
+
     @Test
     public void testWithModuleInfo() throws Exception {
         assumeTrue(addClazzpathUnit.isApplicable("asm-6.0_BETA"));
-        
+
         final Clazzpath cp = new Clazzpath();
         final ClazzpathUnit artifact = addClazzpathUnit.to(cp, "asm-6.0_BETA");
-        
+
         assertNull(artifact.getClazz( "module-info" ));
     }
 }
