@@ -4,7 +4,7 @@
     <groupId>org.vafer</groupId>
     <artifactId>jdependency</artifactId>
     <name>jdependency</name>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <description>This project provides an API to analyse class dependencies</description>
     <url>http://github.com/tcurdt/jdependency</url>
     <developers>
@@ -34,7 +34,7 @@
         <connection>scm:git:git@github.com:tcurdt/jdependency.git</connection>
         <developerConnection>scm:git:git@github.com:tcurdt/jdependency.git</developerConnection>
         <url>http://github.com/tcurdt/jdependency</url>
-        <tag>jdependency-1.1</tag>
+        <tag>jdependency-1.2</tag>
     </scm>
     <properties>
         <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>

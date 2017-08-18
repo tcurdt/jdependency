@@ -1,3 +1,9 @@
+## Version 1.2, released 20.08.2017
+
+Exclude package-info and module-info
+Upgrade to ASM 6-beta
+Inlined the dependencies
+
 ## Version 1.1, released 15.11.2015
 
 Fixed file handle leak.
