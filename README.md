@@ -18,6 +18,9 @@ If feel adventures or want to help out feel free to get the latest code
 
 ## How to use it
 
+    final File jar1 = ...
+    final File jar2 = ...
+
 ### finding classpath clashes
 
     final Clazzpath cp = new Clazzpath();
