@@ -55,10 +55,9 @@ If feel adventures or want to help out feel free to get the latest code
 
 ## Related projects
 
+* [maven-shade-plugin](http://maven.apache.org/plugins/maven-shade-plugin/)
 * [jarjar](http://code.google.com/p/jarjar/)
 * [proguard](http://proguard.sourceforge.net/)
-* [maven-shade-plugin](http://maven.apache.org/plugins/maven-shade-plugin/)
-* [maven-minijar-plugin](http://mojo.codehaus.org/minijar-maven-plugin/) (discontinued)
 
 ## License
 
