@@ -1,6 +1,8 @@
 ## Version 1.3, unreleased
 
+Upgraded dependencies
 Inlined the dependencies
+Removed prerequisites from POM
 
 ## Version 1.2, released 18.08.2017
 
