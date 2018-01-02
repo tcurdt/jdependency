@@ -1,4 +1,4 @@
-## Version 1.3, unreleased
+## Version 1.3, release 02.01.2018
 
 Upgraded dependencies
 Inlined the dependencies
