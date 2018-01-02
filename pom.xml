@@ -38,7 +38,7 @@
     </scm>
     <properties>
         <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
-        <asm.version>6.0_BETA</asm.version>
+        <asm.version>6.0</asm.version>
         <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
     <build>
@@ -89,7 +89,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <forkMode>never</forkMode>
+                    <forkCount>0</forkCount>
                     <includes>
                         <include>**/*TestCase.java</include>
                     </includes>
