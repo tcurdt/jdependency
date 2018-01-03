@@ -1,3 +1,5 @@
+[![Maven Central](https://img.shields.io/maven-central/v/org.vafer/jdependency.svg?maxAge=2592000)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.vafer%22%20AND%20a%3A%22jdependency%22)
+
 # jdependency - explore your classpath
 
 jdependency is small library that helps you analyze class level dependencies,
