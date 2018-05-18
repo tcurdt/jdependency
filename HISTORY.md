@@ -1,3 +1,7 @@
+## Version 1.4, release 18.05.2018
+
+Upgraded dependencies
+
 ## Version 1.3, release 02.01.2018
 
 Upgraded dependencies
