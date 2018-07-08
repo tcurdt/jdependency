@@ -95,11 +95,11 @@ public final class Clazzpath {
     }
 
     public ClazzpathUnit addClazzpathUnit(final Path pFile, final String pId) throws IOException {
-        if (Files.isRegularFile(pFile) ) {
-            return addClazzpathUnit( Files.newInputStream(pFile), pId);
-        }else if (Files.isDirectory(pFile)) {
+        if (Files.isRegularFile(pFile)) {
+            return addClazzpathUnit(Files.newInputStream(pFile), pId);
+        } else if (Files.isDirectory(pFile)) {
             final String prefix =
-                FilenameUtils.separatorsToUnix(FilenameUtils
+                    FilenameUtils.separatorsToUnix(FilenameUtils
                     .normalize(new StringBuilder(pFile.toAbsolutePath().toString())
                         .append(File.separatorChar).toString()));
 
