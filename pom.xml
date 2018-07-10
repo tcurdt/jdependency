@@ -4,7 +4,7 @@
     <groupId>org.vafer</groupId>
     <artifactId>jdependency</artifactId>
     <name>jdependency</name>
-    <version>1.4</version>
+    <version>1.5</version>
     <description>This project provides an API to analyse class dependencies</description>
     <url>http://github.com/tcurdt/jdependency</url>
     <developers>
@@ -21,6 +21,11 @@
             <id>krosenvold</id>
             <name>Kristian Rosenvold</name>
             <email>krosenvold@apache.org</email>
+        </developer>
+        <developer>
+            <id>cuzfrog</id>
+            <name>Cause Chung</name>
+            <email>cuzfrog@139.com</email>
         </developer>
     </developers>
     <licenses>
@@ -49,8 +54,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.2</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
