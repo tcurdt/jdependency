@@ -21,8 +21,10 @@ import java.util.Set;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.TypePath;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 
@@ -50,53 +52,96 @@ public final class DependenciesClassAdapter extends ClassRemapper {
 
     static class EmptyVisitor extends ClassVisitor {
 
-        private static final AnnotationVisitor av = new AnnotationVisitor(Opcodes.ASM5) {
-
+        private static final AnnotationVisitor av = new AnnotationVisitor(Opcodes.ASM6) {
+            @Override
             public AnnotationVisitor visitAnnotation(String name, String desc) {
                 return this;
             }
 
+            @Override
             public AnnotationVisitor visitArray(String name) {
                 return this;
             }
         };
 
-        private static final MethodVisitor mv = new MethodVisitor( Opcodes.ASM5) {
-
+        private static final MethodVisitor mv = new MethodVisitor( Opcodes.ASM6) {
+            @Override
             public AnnotationVisitor visitAnnotationDefault() {
                 return av;
             }
 
+            @Override
             public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                 return av;
             }
 
+            @Override
             public AnnotationVisitor visitParameterAnnotation(
                 int parameter, String desc, boolean visible) {
                 return av;
             }
+
+            @Override
+            public AnnotationVisitor visitInsnAnnotation( int typeRef, TypePath typePath, String descriptor,
+                                                          boolean visible ) {
+                return av;
+            }
+
+            @Override
+            public AnnotationVisitor visitLocalVariableAnnotation( int typeRef, TypePath typePath, Label[] start,
+                                                                   Label[] end, int[] index, String descriptor,
+                                                                   boolean visible ) {
+                return av;
+            }
+
+            @Override
+            public AnnotationVisitor visitTryCatchAnnotation( int typeRef, TypePath typePath, String descriptor,
+                                                              boolean visible ) {
+                return av;
+            }
+
+            @Override
+            public AnnotationVisitor visitTypeAnnotation( int typeRef, TypePath typePath, String descriptor,
+                                                          boolean visible ) {
+                return av;
+            }
         };
 
-        private static final FieldVisitor fieldVisitor = new FieldVisitor( Opcodes.ASM5 ) {
+        private static final FieldVisitor fieldVisitor = new FieldVisitor( Opcodes.ASM6 ) {
+            @Override
             public AnnotationVisitor visitAnnotation( String desc, boolean visible ) {
+                return av;
+            }
+            @Override
+            public AnnotationVisitor visitTypeAnnotation( int typeRef, TypePath typePath, String descriptor,
+                                                          boolean visible ) {
                 return av;
             }
         };
 
         public EmptyVisitor() {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM6);
         }
 
+        @Override
         public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
             return av;
         }
 
+        @Override
         public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
             return fieldVisitor;
         }
 
+        @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             return mv;
+        }
+
+        @Override
+        public AnnotationVisitor visitTypeAnnotation( int typeRef, TypePath typePath, String descriptor,
+                                                      boolean visible ) {
+            return av;
         }
     }
 }
