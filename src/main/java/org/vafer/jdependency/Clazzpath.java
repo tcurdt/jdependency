@@ -16,10 +16,9 @@
 package org.vafer.jdependency;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,20 +27,22 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 public final class Clazzpath {
 
-    private static final class Resource {
+    private static abstract class Resource {
         final String name;
-        final InputStream inputStream;
 
-        Resource( String pName , final InputStream inputStream) {
+        Resource( String pName ) {
+            super();
             this.name = pName.substring(0, pName.length() - 6).replace('/', '.');
-            this.inputStream = inputStream;
         }
+
+        abstract InputStream getInputStream() throws IOException;
 
         static boolean isValidName( String pName ) {
             return pName != null && pName.endsWith(".class") && !pName.contains( "-" );
@@ -76,54 +77,56 @@ public final class Clazzpath {
      * @return newly created {@link ClazzpathUnit} with id of pFile.absolutePath
      * @throws IOException
      */
-    public ClazzpathUnit addClazzpathUnit(final File pFile) throws IOException {
-        return addClazzpathUnit(pFile.toPath());
+    public final ClazzpathUnit addClazzpathUnit( final File pFile ) throws IOException {
+        return addClazzpathUnit(pFile, pFile.getAbsolutePath());
     }
 
-    /**
-     * Add a {@link ClazzpathUnit} to this {@link Clazzpath}.
-     * @param pFile may be a directory or a jar file
-     * @return newly created {@link ClazzpathUnit} with id of pFile.absolutePath
-     * @throws IOException
-     */
-    public ClazzpathUnit addClazzpathUnit(final Path pFile) throws IOException {
-        return addClazzpathUnit(pFile, pFile.toAbsolutePath().toString());
-    }
-
-    public ClazzpathUnit addClazzpathUnit(final File pFile, final String pId) throws IOException {
-        return addClazzpathUnit(pFile.toPath(), pId);
-    }
-
-    public ClazzpathUnit addClazzpathUnit(final Path pFile, final String pId) throws IOException {
-        if (Files.isRegularFile(pFile)) {
-            return addClazzpathUnit(Files.newInputStream(pFile), pId);
-        } else if (Files.isDirectory(pFile)) {
-            final String prefix =
-                    FilenameUtils.separatorsToUnix(FilenameUtils
-                    .normalize(new StringBuilder(pFile.toAbsolutePath().toString())
-                        .append(File.separatorChar).toString()));
-
-            final Iterable<Resource> resources = Files.walk(pFile)
-                    .filter(Files::isRegularFile)
-                    .filter(p -> FilenameUtils.isExtension(p.toString(), ".class"))
-                    .map(p -> {
-                        try {
-                            final InputStream inputStream = Files.newInputStream(p);
-                            return new Resource(p.toAbsolutePath().toString().substring(prefix.length()), inputStream);
-                        } catch (final IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    })::iterator;
-
-            return addClazzpathUnit(resources, pId, true);
-        } else {
-            throw new IllegalArgumentException(String.format("Path: '%s' is neither a regular file or directory", pFile));
+    public ClazzpathUnit addClazzpathUnit( final File pFile, final String pId ) throws IOException {
+        if ( pFile.isFile() ) {
+            return addClazzpathUnit( new FileInputStream(pFile), pId);
         }
+        if (pFile.isDirectory()) {
+            final String prefix =
+                FilenameUtils.separatorsToUnix(FilenameUtils
+                    .normalize(new StringBuilder(pFile.getAbsolutePath())
+                        .append(File.separatorChar).toString()));
+            final boolean recursive = true;
+            @SuppressWarnings("unchecked")
+            final Iterator<File> files = FileUtils.iterateFiles(pFile, new String[] { "class" }, recursive);
+            return addClazzpathUnit( new Iterable<Resource>() {
+
+                public Iterator<Resource> iterator() {
+                    return new Iterator<Clazzpath.Resource>() {
+
+                        public boolean hasNext() {
+                            return files.hasNext();
+                        }
+
+                        public Resource next() {
+                            final File file = files.next();
+                            return new Resource(file.getAbsolutePath().substring(prefix.length())) {
+
+                                @Override
+                                InputStream getInputStream() throws IOException {
+                                    return new FileInputStream(file);
+                                }
+                            };
+                        }
+
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+                    };
+                }
+
+            }, pId, true);
+        }
+        throw new IllegalArgumentException();
     }
 
     public ClazzpathUnit addClazzpathUnit(final InputStream pInputStream, final String pId) throws IOException {
-
-        try(final JarInputStream inputStream = new JarInputStream(pInputStream)) {
+        final JarInputStream inputStream = new JarInputStream(pInputStream);
+        try {
             final JarEntry[] entryHolder = new JarEntry[1];
 
             return addClazzpathUnit(new Iterable<Resource>() {
@@ -143,7 +146,13 @@ public final class Clazzpath {
                         }
 
                         public Resource next() {
-                            return new Resource(entryHolder[0].getName(), inputStream);
+                            return new Resource(entryHolder[0].getName()) {
+
+                                @Override
+                                InputStream getInputStream() {
+                                    return inputStream;
+                                }
+                            };
                         }
 
                         public void remove() {
@@ -153,12 +162,12 @@ public final class Clazzpath {
                     };
                 }
             }, pId, false);
+        } finally {
+            inputStream.close();
         }
     }
 
-    private ClazzpathUnit addClazzpathUnit(final Iterable<Resource> resources,
-                                           final String pId,
-                                           boolean shouldCloseResourceStream) throws IOException {
+    private ClazzpathUnit addClazzpathUnit(final Iterable<Resource> resources, final String pId, boolean shouldCloseResourceStream) throws IOException {
         final Map<String, Clazz> unitClazzes = new HashMap<String, Clazz>();
         final Map<String, Clazz> unitDependencies = new HashMap<String, Clazz>();
 
@@ -187,7 +196,7 @@ public final class Clazzpath {
             unitClazzes.put(clazzName, clazz);
 
             final DependenciesClassAdapter v = new DependenciesClassAdapter();
-            final InputStream inputStream = resource.inputStream;
+            final InputStream inputStream = resource.getInputStream();
             try {
                 new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
             } finally {
