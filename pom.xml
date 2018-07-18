@@ -25,11 +25,6 @@
       <name>Kristian Rosenvold</name>
       <email>krosenvold@apache.org</email>
     </developer>
-    <developer>
-      <id>cuzfrog</id>
-      <name>Cause Chung</name>
-      <email>cuzfrog@139.com</email>
-    </developer>
   </developers>
   <licenses>
     <license>
@@ -110,6 +105,7 @@
                 <unjar dest="${test.workingDirectory}/jar2" src="${test.workingDirectory}/jar2.jar" />
                 <unjar dest="${test.workingDirectory}/jar1-missing" src="${test.workingDirectory}/jar1-missing.jar" />
                 <unjar dest="${test.workingDirectory}/jar3using1" src="${test.workingDirectory}/jar3using1.jar" />
+                <unjar dest="${test.workingDirectory}/asm-6.0_BETA" src="${test.workingDirectory}/asm-6.0_BETA.jar" />
               </target>
             </configuration>
           </execution>
