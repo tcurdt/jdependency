@@ -1,3 +1,10 @@
+## Version 2.0, release 18.07.2018
+
+Upgraded ASM to support latest java versions
+Upgraded to java8 (hence the version bump to 2.0)
+Use java NIO
+Upgraded dependencies
+
 ## Version 1.4, release 18.05.2018
 
 Upgraded dependencies

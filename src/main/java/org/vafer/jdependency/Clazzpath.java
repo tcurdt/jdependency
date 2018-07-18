@@ -71,12 +71,6 @@ public final class Clazzpath {
         return units.remove(pUnit);
     }
 
-    /**
-     * Add a {@link ClazzpathUnit} to this {@link Clazzpath}.
-     * @param pFile may be a directory or a jar file
-     * @return newly created {@link ClazzpathUnit} with id of pFile.absolutePath
-     * @throws IOException
-     */
     public final ClazzpathUnit addClazzpathUnit( final File pFile ) throws IOException {
         return addClazzpathUnit(pFile, pFile.getAbsolutePath());
     }

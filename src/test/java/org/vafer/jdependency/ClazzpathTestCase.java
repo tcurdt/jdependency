@@ -75,11 +75,14 @@ public class ClazzpathTestCase {
         }}, new Object[] { new AddClazzpathUnit() {
 
             ClazzpathUnit to( Clazzpath toClazzpath, String resourceName, String resourceId ) throws IOException {
-                return toClazzpath.addClazzpathUnit(new File(resourceName + ".jar"), resourceId);
+                final File file = new File(defaultResourceId(resourceName));
+                assumeTrue(file.exists());
+                return toClazzpath.addClazzpathUnit(file, resourceId);
             }
 
             boolean isApplicable( String resourceName ) {
-                return new File(resourceName + ".jar").exists();
+                boolean applicable = new File(defaultResourceId(resourceName)).exists();
+                return applicable;
             }
 
             @Override
@@ -90,11 +93,14 @@ public class ClazzpathTestCase {
         }}, new Object[] { new AddClazzpathUnit() {
 
             ClazzpathUnit to( Clazzpath toClazzpath, String resourceName, String resourceId ) throws IOException {
+                final File file = new File(defaultResourceId(resourceName));
+                assumeTrue(file.exists());
                 return toClazzpath.addClazzpathUnit(new File(resourceName), resourceId);
             }
 
             boolean isApplicable( String resourceName ) {
-                return new File(resourceName).exists();
+                boolean applicable = new File(defaultResourceId(resourceName)).exists();
+                return applicable;
             }
 
             @Override
