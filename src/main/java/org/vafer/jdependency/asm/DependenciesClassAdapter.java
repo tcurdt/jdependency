@@ -28,6 +28,10 @@ import org.objectweb.asm.TypePath;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 
+/**
+ * interal - do not use
+ */
+
 public final class DependenciesClassAdapter extends ClassRemapper {
 
     private static final EmptyVisitor ev = new EmptyVisitor();

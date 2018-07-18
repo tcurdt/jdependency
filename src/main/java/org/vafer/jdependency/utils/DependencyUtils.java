@@ -27,7 +27,10 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
-public final class DependencyUtils {
+/**
+ * interal - do not use
+ */
+final public class DependencyUtils {
 
     public static Set<String> getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
         final JarInputStream inputStream = new JarInputStream(pInputStream);
