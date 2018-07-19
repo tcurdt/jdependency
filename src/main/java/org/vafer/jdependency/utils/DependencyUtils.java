@@ -28,14 +28,16 @@ import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 /**
- * interal - do not use
+ * internal - do not use
  */
 final public class DependencyUtils {
 
     public static Set<String> getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
+
         final JarInputStream inputStream = new JarInputStream(pInputStream);
         final NullOutputStream nullStream = new NullOutputStream();
         final Set<String> dependencies = new HashSet<String>();
+
         try {
             while (true) {
                 final JarEntry entry = inputStream.getNextJarEntry();

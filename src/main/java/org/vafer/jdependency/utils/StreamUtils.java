@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.lang.RuntimeException;
 
 /**
- * interal - do not use
+ * internal - do not use
  */
 
 final public class StreamUtils {
@@ -40,7 +40,7 @@ final public class StreamUtils {
     //     return StreamSupport.stream(iterable.spliterator(), parallel);
     // }
 
-    public static Stream<JarEntry> asStream( JarInputStream pInputStream ) {
+    public static Stream<JarEntry> asStream( final JarInputStream pInputStream ) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
             new Iterator<JarEntry>() {
 

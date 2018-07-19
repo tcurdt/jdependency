@@ -28,6 +28,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.stream.Stream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.lang.IllegalArgumentException;
 import org.objectweb.asm.ClassReader;
 
@@ -44,29 +45,25 @@ public final class Clazzpath {
 
     private static abstract class Resource {
 
+        final private static int ext = ".class".length();
+
         final String name;
 
-        Resource( String pName ) {
+        Resource( final String pName ) {
             super();
 
-            final int len = pName.length();
-
-            // if (len < 6+1) {
-            //     throw new IllegalArgumentException("resource name is too short: [" + pName + "]");
-            // }
+            final int all = pName.length();
 
             // foo/bar/Foo.class -> // foo.bar.Foo
             this.name = pName
-                .substring(0, len - 6)
+                .substring(0, all - ext)
                 .replace('/', '.');
-                // .replace('\\', '.');
-                // .replace(File.separatorChar, '.');
         }
 
         abstract InputStream getInputStream() throws IOException;
     }
 
-    private static boolean isValidResourceName( String pName ) {
+    private static boolean isValidResourceName( final String pName ) {
         return pName != null
             && pName.endsWith(".class")
             && !pName.contains( "-" );
@@ -92,6 +89,17 @@ public final class Clazzpath {
 
         return units.remove(pUnit);
     }
+
+    // java8 convenience method
+    public final ClazzpathUnit addClazzpathUnit( final Path pPath ) throws IOException {
+        return addClazzpathUnit(pPath.toFile());
+    }
+
+    // java8 convenience method
+    public ClazzpathUnit addClazzpathUnit( final Path pPath, final String pId ) throws IOException {
+        return addClazzpathUnit(pPath.toFile(), pId);
+    }
+
 
     public final ClazzpathUnit addClazzpathUnit( final File pFile ) throws IOException {
         return addClazzpathUnit(pFile, pFile.getAbsolutePath());
@@ -119,10 +127,11 @@ public final class Clazzpath {
 
             return addClazzpathUnit(resources, pId, true);
         }
+
         throw new IllegalArgumentException("neither file nor directory");
     }
 
-    public ClazzpathUnit addClazzpathUnit(final InputStream pInputStream, final String pId) throws IOException {
+    public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
 
         final JarInputStream inputStream = new JarInputStream(pInputStream);
 
@@ -229,7 +238,7 @@ public final class Clazzpath {
         return new HashSet<Clazz>(missing.values());
     }
 
-    public Clazz getClazz(final String pClazzName) {
+    public Clazz getClazz( final String pClazzName ) {
         return (Clazz) clazzes.get(pClazzName);
     }
 

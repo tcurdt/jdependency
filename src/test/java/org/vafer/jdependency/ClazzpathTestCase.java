@@ -40,9 +40,9 @@ public class ClazzpathTestCase {
 
     private static abstract class AddClazzpathUnit {
 
-        abstract ClazzpathUnit to( Clazzpath clazzpath, String filename, String id) throws IOException;
+        abstract ClazzpathUnit to( Clazzpath clazzpath, String filename, String id ) throws IOException;
 
-        final ClazzpathUnit to( Clazzpath clazzpath, String filename) throws IOException {
+        final ClazzpathUnit to( Clazzpath clazzpath, String filename ) throws IOException {
             return to(clazzpath, filename, filename);
         }
     }
@@ -82,7 +82,7 @@ public class ClazzpathTestCase {
                     assertTrue(file.exists() && file.isDirectory());
                     return toClazzpath.addClazzpathUnit(file, id);
                 }
-            }, "dir"}
+            }, "directory"}
         );
     }
 
@@ -148,9 +148,9 @@ public class ClazzpathTestCase {
         }
 
         final Set<String> expected = new HashSet<String>(Arrays.asList(
-                "org.apache.commons.io.output.ProxyOutputStream",
-                "org.apache.commons.io.input.ProxyInputStream"
-                ));
+            "org.apache.commons.io.output.ProxyOutputStream",
+            "org.apache.commons.io.input.ProxyInputStream"
+            ));
 
         assertEquals(expected, actual);
     }
