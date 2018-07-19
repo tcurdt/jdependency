@@ -1,9 +1,11 @@
-## Version 2.0, release 18.07.2018
+## Version 2.0, release 20.07.2018
 
-Upgraded ASM to support latest java versions
-Upgraded to java8 (hence the version bump to 2.0)
-Use java NIO
-Upgraded dependencies
+Upgraded ASM to support java 10
+Raise minium java version to 8
+Internal use of nio
+Added convenience methods to use with Path
+Fixed tests
+Added travis
 
 ## Version 1.4, release 18.05.2018
 
