@@ -90,32 +90,32 @@ public final class Clazzpath {
         return units.remove(pUnit);
     }
 
-    // java8 convenience method
-    public final ClazzpathUnit addClazzpathUnit( final Path pPath ) throws IOException {
-        return addClazzpathUnit(pPath.toFile());
-    }
-
-    // java8 convenience method
-    public ClazzpathUnit addClazzpathUnit( final Path pPath, final String pId ) throws IOException {
-        return addClazzpathUnit(pPath.toFile(), pId);
-    }
-
-
     public final ClazzpathUnit addClazzpathUnit( final File pFile ) throws IOException {
-        return addClazzpathUnit(pFile, pFile.getAbsolutePath());
+        return addClazzpathUnit(pFile.toPath());
     }
 
     public ClazzpathUnit addClazzpathUnit( final File pFile, final String pId ) throws IOException {
+        return addClazzpathUnit(pFile.toPath(), pId);
+    }
 
-        if (pFile.isFile()) {
 
-            return addClazzpathUnit(new FileInputStream(pFile), pId);
+    public final ClazzpathUnit addClazzpathUnit( final Path pPath ) throws IOException {
+        return addClazzpathUnit(pPath, pPath.toString());
+    }
 
-        } else if (pFile.isDirectory()) {
+    public ClazzpathUnit addClazzpathUnit( final Path pPath, final String pId ) throws IOException {
 
-            final String prefix = separatorsToUnix(normalize(pFile.getAbsolutePath() + File.separatorChar));
+        final Path path = pPath.toAbsolutePath();
 
-            Iterable<Resource> resources = Files.walk(pFile.toPath())
+        if (Files.isRegularFile(path)) {
+
+            return addClazzpathUnit(new FileInputStream(path.toFile()), pId);
+
+        } else if (Files.isDirectory(path)) {
+
+            final String prefix = separatorsToUnix(normalize(path.toString() + File.separatorChar));
+
+            Iterable<Resource> resources = Files.walk(path)
                 .filter(p -> Files.isRegularFile(p))
                 .filter(p -> isValidResourceName(p.getFileName().toString()))
                 .map(p -> p.toString())

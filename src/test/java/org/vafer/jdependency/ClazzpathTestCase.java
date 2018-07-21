@@ -29,6 +29,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,7 +76,7 @@ public class ClazzpathTestCase {
                     assertTrue(file.exists() && file.isFile());
                     return toClazzpath.addClazzpathUnit(file, id);
                 }
-            }, "jar"},
+            }, "file-jar"},
             new Object[] { new AddClazzpathUnit() {
 
                 ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
@@ -82,7 +84,23 @@ public class ClazzpathTestCase {
                     assertTrue(file.exists() && file.isDirectory());
                     return toClazzpath.addClazzpathUnit(file, id);
                 }
-            }, "directory"}
+            }, "file-directory"},
+            new Object[] { new AddClazzpathUnit() {
+
+                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
+                    Path path = Paths.get(filename + ".jar");
+                    assertTrue(Files.exists(path) && Files.isRegularFile(path));
+                    return toClazzpath.addClazzpathUnit(path, id);
+                }
+            }, "path-jar"},
+            new Object[] { new AddClazzpathUnit() {
+
+                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
+                    Path path = Paths.get(filename);
+                    assertTrue(Files.exists(path) && Files.isDirectory(path));
+                    return toClazzpath.addClazzpathUnit(path, id);
+                }
+            }, "path-directory"}
         );
     }
 
