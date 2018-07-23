@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +38,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class ClazzpathTestCase {
+
+    private final AddClazzpathUnit addClazzpathUnit;
 
     private static abstract class AddClazzpathUnit {
 
@@ -104,13 +105,9 @@ public class ClazzpathTestCase {
         );
     }
 
-    private final AddClazzpathUnit addClazzpathUnit;
-    private final String kind;
-
     public ClazzpathTestCase( AddClazzpathUnit pAddClazzpathUnit, String pKind ) {
         super();
         addClazzpathUnit = pAddClazzpathUnit;
-        kind = pKind;
     }
 
     @Test

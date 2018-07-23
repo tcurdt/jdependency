@@ -23,7 +23,6 @@ import java.util.Spliterators;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.io.IOException;
-import java.lang.RuntimeException;
 
 /**
  * internal - do not use

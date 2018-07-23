@@ -16,12 +16,10 @@
 package org.vafer.jdependency;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -43,11 +41,15 @@ import static org.vafer.jdependency.utils.StreamUtils.asStream;
 
 public final class Clazzpath {
 
+    private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
+    private final Map<String, Clazz> missing = new HashMap<String, Clazz>();
+    private final Map<String, Clazz> clazzes = new HashMap<String, Clazz>();
+
     private static abstract class Resource {
 
         final private static int ext = ".class".length();
 
-        final String name;
+        final public String name;
 
         Resource( final String pName ) {
             super();
@@ -67,13 +69,6 @@ public final class Clazzpath {
         return pName != null
             && pName.endsWith(".class")
             && !pName.contains( "-" );
-    }
-
-    private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
-    private final Map<String, Clazz> missing = new HashMap<String, Clazz>();
-    private final Map<String, Clazz> clazzes = new HashMap<String, Clazz>();
-
-    public Clazzpath() {
     }
 
     public boolean removeClazzpathUnit( final ClazzpathUnit pUnit ) {
