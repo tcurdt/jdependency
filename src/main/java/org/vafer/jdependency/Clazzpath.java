@@ -22,12 +22,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.stream.Stream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.lang.IllegalArgumentException;
 import org.objectweb.asm.ClassReader;
 
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
