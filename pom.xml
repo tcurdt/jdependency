@@ -157,12 +157,14 @@
             </goals>
             <id>report</id>
           </execution>
+          <!--
           <execution>
             <goals>
               <goal>check</goal>
             </goals>
             <id>check</id>
           </execution>
+          -->
         </executions>
       </plugin>
       <plugin>
