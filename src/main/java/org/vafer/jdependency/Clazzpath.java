@@ -109,7 +109,7 @@ public final class Clazzpath {
 
         if (Files.isRegularFile(path)) {
 
-            return addClazzpathUnit(new FileInputStream(path.toFile()), pId);
+            return addClazzpathUnit(Files.newInputStream(path), pId);
 
         } else if (Files.isDirectory(path)) {
 
@@ -118,10 +118,9 @@ public final class Clazzpath {
             Iterable<Resource> resources = Files.walk(path)
                 .filter(p -> Files.isRegularFile(p))
                 .filter(p -> isValidResourceName(p.getFileName().toString()))
-                .map(p -> p.toString())
-                .map(abs -> (Resource) new Resource(abs.substring(prefix.length())) {
+                .map(p -> (Resource) new Resource(p.toString().substring(prefix.length())) {
                     InputStream getInputStream() throws IOException {
-                        return new FileInputStream(abs);
+                        return Files.newInputStream(p);
                     }
                 })::iterator;
 
