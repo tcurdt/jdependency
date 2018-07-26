@@ -1,4 +1,4 @@
-## Version 2.0, release 24.07.2018
+## Version 2.0, release 27.07.2018
 
 - Upgraded ASM to support java 10
 - Raise minium java version to 8
