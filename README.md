@@ -69,6 +69,7 @@ or
 * [maven-shade-plugin](http://maven.apache.org/plugins/maven-shade-plugin/)
 * [jarjar](http://code.google.com/p/jarjar/)
 * [proguard](http://proguard.sourceforge.net/)
+* [gradle-lean](https://github.com/cuzfrog/gradle-lean)
 
 ## License
 
