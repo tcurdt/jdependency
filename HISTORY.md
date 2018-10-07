@@ -1,3 +1,8 @@
+## Version 2.1, release xx.xx.2018
+
+- Added CI build for Windows
+- Fixed Windows file separator issues
+
 ## Version 2.0, release 27.07.2018
 
 - Upgraded ASM to support java 10
