@@ -17,6 +17,7 @@ package org.vafer.jdependency.asm;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.io.File;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -49,7 +50,7 @@ public final class DependenciesClassAdapter extends ClassRemapper {
         final Set<String> classes = new HashSet<String>();
 
         public String map(String pClassName) {
-            classes.add(pClassName.replace('/', '.'));
+            classes.add(pClassName.replace(File.separatorChar, '.'));
             return pClassName;
         }
     }
