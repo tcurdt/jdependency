@@ -17,6 +17,7 @@ package org.vafer.jdependency.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -77,7 +78,7 @@ final public class DependencyUtils {
     }
 
     public static Set<String> getDependenciesOfClass( final Class<?> pClass ) throws IOException {
-        final String resource = "/" + pClass.getName().replace('.', '/') + ".class";
+        final String resource = File.separator + pClass.getName().replace('.', File.separatorChar) + ".class";
         return getDependenciesOfClass(pClass.getResourceAsStream(resource));
     }
 

@@ -56,7 +56,7 @@ public final class Clazzpath {
             // foo/bar/Foo.class -> // foo.bar.Foo
             this.name = pName
                 .substring(0, all - ext)
-                .replace('/', '.');
+                .replace(File.separatorChar, '.');
         }
 
         abstract InputStream getInputStream() throws IOException;
