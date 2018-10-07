@@ -199,6 +199,12 @@ public class ClazzpathTestCase {
         removed.removeAll(artifact.getClazzes());
         removed.removeAll(artifact.getTransitiveDependencies());
 
+        System.out.println("--");
+        for (Clazz c : removed) {
+            System.out.println(c);
+        }
+        System.out.println("--");
+
         assertEquals("" + removed, 56, removed.size());
 
         final Set<Clazz> kept = cp.getClazzes();
