@@ -54,9 +54,9 @@ public final class Clazzpath {
             final int all = pName.length();
 
             // foo/bar/Foo.class -> // foo.bar.Foo
-            this.name = pName
+            this.name = separatorsToUnix(pName)
                 .substring(0, all - ext)
-                .replace(File.separatorChar, '.');
+                .replace('/', '.');
         }
 
         abstract InputStream getInputStream() throws IOException;
@@ -105,7 +105,7 @@ public final class Clazzpath {
 
         } else if (Files.isDirectory(path)) {
 
-            final String prefix = separatorsToUnix(normalize(path.toString() + File.separatorChar));
+            final String prefix = separatorsToUnix(normalize(path.toString() + '/'));
 
             Iterable<Resource> resources = Files.walk(path)
                 .filter(p -> Files.isRegularFile(p))

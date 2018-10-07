@@ -78,7 +78,7 @@ final public class DependencyUtils {
     }
 
     public static Set<String> getDependenciesOfClass( final Class<?> pClass ) throws IOException {
-        final String resource = File.separator + pClass.getName().replace('.', File.separatorChar) + ".class";
+        final String resource = "/" + pClass.getName().replace('.', '/') + ".class";
         return getDependenciesOfClass(pClass.getResourceAsStream(resource));
     }
 

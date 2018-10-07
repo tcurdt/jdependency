@@ -50,7 +50,7 @@ public final class DependenciesClassAdapter extends ClassRemapper {
         final Set<String> classes = new HashSet<String>();
 
         public String map(String pClassName) {
-            classes.add(pClassName.replace(File.separatorChar, '.'));
+            classes.add(pClassName.replace('/', '.'));
             return pClassName;
         }
     }
