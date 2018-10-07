@@ -15,26 +15,23 @@
  */
 package org.vafer.jdependency;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
 public class ClazzpathTestCase {
@@ -50,6 +47,35 @@ public class ClazzpathTestCase {
         }
     }
 
+    private final String kind;
+
+
+    // mvn is copying all into the test working dir
+    private static Path resourcePath( String filename ) {
+        return Paths.get(filename);
+//        try {
+//            return Paths.get(ClazzpathTestCase.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+//                    .resolve(Paths.get(filename));
+//        } catch (URISyntaxException e) {
+//            fail();
+//            return null;
+//        }
+    }
+
+    // mvn is copying all into the test working dir
+    private static File resourceFile( String filename ) {
+        return Paths.get(filename).toFile();
+
+//        try {
+//            return Paths.get(ClazzpathTestCase.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+//                    .resolve(Paths.get(filename))
+//                    .toFile();
+//        } catch (URISyntaxException e) {
+//            fail();
+//            return null;
+//        }
+    }
+
     /**
      * Parameters for test
      *
@@ -60,54 +86,62 @@ public class ClazzpathTestCase {
     @Parameters(name = "{index}: {1}")
     public static Collection<Object[]> data() {
         return Arrays.asList(
+
             new Object[] { new AddClazzpathUnit() {
 
                 ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
+                    final String p = filename + ".jar";
                     InputStream resourceAsStream = getClass()
                         .getClassLoader()
-                        .getResourceAsStream(filename + ".jar");
-                    assertNotNull(resourceAsStream);
+                        .getResourceAsStream(p);
+                    assertNotNull("missing:" + p, resourceAsStream);
                     return toClazzpath.addClazzpathUnit(resourceAsStream, id);
                 }
             }, "classpath"},
             new Object[] { new AddClazzpathUnit() {
 
                 ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    File file = new File(new File(filename + ".jar").getAbsolutePath());
-                    assertTrue(file.exists() && file.isFile());
+                    final String p = filename + ".jar";
+                    File file = resourceFile(p);
+                    assertTrue("missing:" + file, file.exists() && file.isFile());
                     return toClazzpath.addClazzpathUnit(file, id);
                 }
             }, "file-jar"},
             new Object[] { new AddClazzpathUnit() {
 
                 ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    File file = new File(new File(filename).getAbsolutePath());
-                    assertTrue(file.exists() && file.isDirectory());
+                    final String p = filename;
+                    File file = resourceFile(p);
+                    assertTrue("missing:" + file , file.exists() && file.isDirectory());
                     return toClazzpath.addClazzpathUnit(file, id);
                 }
             }, "file-directory"},
             new Object[] { new AddClazzpathUnit() {
 
                 ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    Path path = Paths.get(filename + ".jar");
-                    assertTrue(Files.exists(path) && Files.isRegularFile(path));
+                    final String p = filename + ".jar";
+                    Path path = resourcePath(p);
+                    assertTrue("missing:" + path, Files.exists(path) && Files.isRegularFile(path));
                     return toClazzpath.addClazzpathUnit(path, id);
                 }
             }, "path-jar"},
             new Object[] { new AddClazzpathUnit() {
 
                 ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    Path path = Paths.get(filename);
-                    assertTrue(Files.exists(path) && Files.isDirectory(path));
+                    final String p = filename;
+                    Path path = resourcePath(p);
+                    assertTrue("missing:" + path, Files.exists(path) && Files.isDirectory(path));
                     return toClazzpath.addClazzpathUnit(path, id);
                 }
             }, "path-directory"}
+
         );
     }
 
     public ClazzpathTestCase( AddClazzpathUnit pAddClazzpathUnit, String pKind ) {
         super();
         addClazzpathUnit = pAddClazzpathUnit;
+        kind = pKind;
     }
 
     @Test
@@ -199,7 +233,7 @@ public class ClazzpathTestCase {
         removed.removeAll(artifact.getClazzes());
         removed.removeAll(artifact.getTransitiveDependencies());
 
-        System.out.println("--");
+        System.out.println("--" + kind);
         for (Clazz c : removed) {
             System.out.println(c);
         }
