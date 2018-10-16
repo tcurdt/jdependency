@@ -1,5 +1,6 @@
 ## Version 2.1, release xx.xx.2018
 
+- Upgraded to ASM 7-beta (JDK11)
 - Added CI build for Windows
 - Fixed Windows file separator issues
 
