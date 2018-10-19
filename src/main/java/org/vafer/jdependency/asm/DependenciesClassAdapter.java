@@ -57,7 +57,7 @@ public final class DependenciesClassAdapter extends ClassRemapper {
 
     static class EmptyVisitor extends ClassVisitor {
 
-        private static final AnnotationVisitor av = new AnnotationVisitor(Opcodes.ASM6) {
+        private static final AnnotationVisitor av = new AnnotationVisitor(Opcodes.ASM7) {
             @Override
             public AnnotationVisitor visitAnnotation(String name, String desc) {
                 return this;
@@ -112,7 +112,7 @@ public final class DependenciesClassAdapter extends ClassRemapper {
             }
         };
 
-        private static final FieldVisitor fieldVisitor = new FieldVisitor( Opcodes.ASM6 ) {
+        private static final FieldVisitor fieldVisitor = new FieldVisitor( Opcodes.ASM7 ) {
             @Override
             public AnnotationVisitor visitAnnotation( String desc, boolean visible ) {
                 return av;
@@ -125,7 +125,7 @@ public final class DependenciesClassAdapter extends ClassRemapper {
         };
 
         public EmptyVisitor() {
-            super(Opcodes.ASM6);
+            super(Opcodes.ASM7);
         }
 
         @Override
