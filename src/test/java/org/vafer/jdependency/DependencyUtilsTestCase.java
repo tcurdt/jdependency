@@ -26,6 +26,16 @@ import org.vafer.jdependency.utils.DependencyUtils;
 
 public final class DependencyUtilsTestCase {
 
+    public static int getJavaVersion() {
+        String version = System.getProperty("java.version");
+        if (version.startsWith("1.")) {
+            version = version.substring(2);
+        }
+        final int dotPos = version.indexOf('.');
+        final int dashPos = version.indexOf('-');
+        return Integer.parseInt(version.substring(0, dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
+    }
+
     @Test
     public void testShouldFindDependenciesOfClassObject() throws Exception {
         final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
@@ -40,6 +50,12 @@ public final class DependencyUtilsTestCase {
                 "java.lang.StringBuilder",
                 "java.lang.Throwable"
                 ));
+
+        if (getJavaVersion() >= 9) {
+            expectedDependencies.add("java.lang.Deprecated");
+            expectedDependencies.add("jdk.internal.HotSpotIntrinsicCandidate");
+        }
+
         assertEquals(expectedDependencies, dependencies);
     }
 }
