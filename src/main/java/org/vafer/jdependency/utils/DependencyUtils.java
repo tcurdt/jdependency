@@ -33,6 +33,7 @@ import org.vafer.jdependency.asm.DependenciesClassAdapter;
  */
 final public class DependencyUtils {
 
+    /*
     public static Set<String> getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
 
         final JarInputStream inputStream = new JarInputStream(pInputStream);
@@ -69,6 +70,7 @@ final public class DependencyUtils {
 
         return dependencies;
     }
+    */
 
     public static Set<String> getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
         final DependenciesClassAdapter v = new DependenciesClassAdapter();
