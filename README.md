@@ -1,7 +1,7 @@
 [![Linux/Mac Build Status](https://secure.travis-ci.org/tcurdt/jdependency.png)](http://travis-ci.org/tcurdt/jdependency)
 [![Windows Build Status](https://img.shields.io/appveyor/ci/tcurdt/jdependency/master.svg?label=windows)](https://ci.appveyor.com/project/tcurdt/jdependency/branch/master)
 [![Coverage Status](https://coveralls.io/repos/tcurdt/jdependency/badge.svg?branch=master&service=github)](https://coveralls.io/github/tcurdt/jdependency?branch=master)
-[![Maven Central](https://img.shields.io/maven-central/v/org.vafer/jdependency.svg?maxAge=2592000)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.vafer%22%20AND%20a%3A%22jdependency%22)
+[![Maven Central](https://img.shields.io/maven-central/v/org.vafer/jdependency.svg?maxAge=86400)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.vafer%22%20AND%20a%3A%22jdependency%22)
 [![Join the chat at https://gitter.im/tcurdt/jdependency](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tcurdt/jdependency?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
