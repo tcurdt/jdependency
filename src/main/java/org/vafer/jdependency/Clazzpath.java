@@ -82,7 +82,7 @@ public final class Clazzpath {
         return units.remove(pUnit);
     }
 
-    public final ClazzpathUnit addClazzpathUnit( final File pFile ) throws IOException {
+    public ClazzpathUnit addClazzpathUnit( final File pFile ) throws IOException {
         return addClazzpathUnit(pFile.toPath());
     }
 
@@ -91,7 +91,7 @@ public final class Clazzpath {
     }
 
 
-    public final ClazzpathUnit addClazzpathUnit( final Path pPath ) throws IOException {
+    public ClazzpathUnit addClazzpathUnit( final Path pPath ) throws IOException {
         return addClazzpathUnit(pPath, pPath.toString());
     }
 
