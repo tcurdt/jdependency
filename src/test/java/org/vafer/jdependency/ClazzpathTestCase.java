@@ -50,30 +50,12 @@ public class ClazzpathTestCase {
     private final String kind;
 
 
-    // mvn is copying all into the test working dir
     private static Path resourcePath( String filename ) {
         return Paths.get(filename);
-//        try {
-//            return Paths.get(ClazzpathTestCase.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-//                    .resolve(Paths.get(filename));
-//        } catch (URISyntaxException e) {
-//            fail();
-//            return null;
-//        }
     }
 
-    // mvn is copying all into the test working dir
     private static File resourceFile( String filename ) {
         return Paths.get(filename).toFile();
-
-//        try {
-//            return Paths.get(ClazzpathTestCase.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-//                    .resolve(Paths.get(filename))
-//                    .toFile();
-//        } catch (URISyntaxException e) {
-//            fail();
-//            return null;
-//        }
     }
 
     /**
