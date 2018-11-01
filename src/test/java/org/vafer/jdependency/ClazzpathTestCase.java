@@ -58,6 +58,10 @@ public class ClazzpathTestCase {
         return Paths.get(filename).toFile();
     }
 
+    private static Set<ClazzpathUnit> unitSet(ClazzpathUnit[] ar) {
+        return new HashSet<ClazzpathUnit>(Arrays.asList(ar));
+    }
+
     /**
      * Parameters for test
      *
@@ -130,13 +134,25 @@ public class ClazzpathTestCase {
     public void testShouldAddClasses() throws IOException {
 
         final Clazzpath cp = new Clazzpath();
-        addClazzpathUnit.to(cp, "jar1");
-        addClazzpathUnit.to(cp, "jar2");
+        final ClazzpathUnit u1 = addClazzpathUnit.to(cp, "jar1");
+        final ClazzpathUnit u2 = addClazzpathUnit.to(cp, "jar2");
 
         final ClazzpathUnit[] units = cp.getUnits();
+
         assertEquals(2, units.length);
+        assertEquals(unitSet(new ClazzpathUnit[]{ u1, u2 }), unitSet(units));
 
         assertEquals(129, cp.getClazzes().size());
+
+        final Clazz clazz = cp.getClazz("org.apache.commons.io.IOUtils");
+        assertNotNull(clazz);
+
+        assertEquals(1, clazz.getClazzpathUnits().size());
+        assertEquals(unitSet(new ClazzpathUnit[]{u1}), clazz.getClazzpathUnits());
+        assertEquals(23, clazz.getDependencies().size());
+        assertEquals(32, clazz.getTransitiveDependencies().size());
+        assertEquals(5, clazz.getReferences().size());
+
     }
 
     @Test
