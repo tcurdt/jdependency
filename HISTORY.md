@@ -1,4 +1,4 @@
-## Version 2.2.0, (release xx.05.2019)
+## Version 2.2.0, release 23.05.2019
 
 - Upgraded to ASM 7.1
 
