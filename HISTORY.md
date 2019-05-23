@@ -1,3 +1,7 @@
+## Version 2.2.0, (release xx.05.2019)
+
+- Upgraded to ASM 7.1
+
 ## Version 2.1.1, release 22.10.2018
 
 - Fixed JDK11 compatibility
