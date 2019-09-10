@@ -1,3 +1,8 @@
+## Version 2.3.0, release ?
+
+- Upgraded to ASM 7.2-beta
+- Fixed the shading of the dependencies
+
 ## Version 2.2.0, release 23.05.2019
 
 - Upgraded to ASM 7.1
