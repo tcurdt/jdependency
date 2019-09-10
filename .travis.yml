@@ -8,7 +8,7 @@ before_install:
 jdk:
   - oraclejdk8
   - oraclejdk9
-  - oraclejdk10
+  - openjdk10
   - oraclejdk11
 
 after_success:
