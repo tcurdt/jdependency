@@ -161,12 +161,14 @@
         <version>3.2.1</version>
         <executions>
           <execution>
+            <!-- <id>attach-shade</id> -->
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
             <configuration>
               <minimizeJar>true</minimizeJar>
+              <!-- <shadedArtifactAttached>false</shadedArtifactAttached> -->
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
@@ -189,12 +191,16 @@
               </artifactSet>
               <relocations>
                 <relocation>
-                  <pattern>org.apache.commons.</pattern>
-                  <shadedPattern>org.vafer.jdeb.shaded.commons.</shadedPattern>
+                  <pattern>org.apache.commons</pattern>
+                  <shadedPattern>org.vafer.jdeb.shaded.commons</shadedPattern>
                 </relocation>
                 <relocation>
-                  <pattern>org.ow2.asm.</pattern>
-                  <shadedPattern>org.vafer.jdeb.shaded.asm.</shadedPattern>
+                  <pattern>org.ow2.asm</pattern>
+                  <shadedPattern>org.vafer.jdeb.shaded.ow2.asm</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.objectweb.asm</pattern>
+                  <shadedPattern>org.vafer.jdeb.shaded.objectweb.asm</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
