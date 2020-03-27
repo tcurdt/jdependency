@@ -1,4 +1,4 @@
-## Version 2.4.0, release xx.03.2020
+## Version 2.4.0, release 27.03.2020
 
 - Upgraded to ASM 7.3
 
