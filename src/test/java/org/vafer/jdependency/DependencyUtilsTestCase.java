@@ -27,14 +27,22 @@ import org.vafer.jdependency.utils.DependencyUtils;
 public final class DependencyUtilsTestCase {
 
     public static int getJavaVersion() {
-        String version = System.getProperty("java.version");
-        if (version.startsWith("1.")) {
-            version = version.substring(2);
-            final int dotPos = version.indexOf('.');
-            final int dashPos = version.indexOf('-');
-            return Integer.parseInt(version.substring(0, dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
-        }
-        return Integer.parseInt(version);
+        return parseVersion(System.getProperty("java.version"));
+    }
+
+    public static int parseVersion(String version) {
+        int dotPos = version.indexOf('.');
+        int dashPos = version.indexOf('-');
+        int len = version.length();
+        String major = version.substring(0, dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : len);
+        return Integer.parseInt(major);
+    }
+
+    @Test
+    public void testVersions() {
+        assertEquals(11, parseVersion("11"));
+        assertEquals(11, parseVersion("11-ea"));
+        assertEquals(11, parseVersion("11.0.2"));
     }
 
     @Test
