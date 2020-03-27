@@ -30,10 +30,11 @@ public final class DependencyUtilsTestCase {
         String version = System.getProperty("java.version");
         if (version.startsWith("1.")) {
             version = version.substring(2);
+            final int dotPos = version.indexOf('.');
+            final int dashPos = version.indexOf('-');
+            return Integer.parseInt(version.substring(0, dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
         }
-        final int dotPos = version.indexOf('.');
-        final int dashPos = version.indexOf('-');
-        return Integer.parseInt(version.substring(0, dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
+        return Integer.parseInt(version);
     }
 
     @Test
