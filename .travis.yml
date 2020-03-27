@@ -6,10 +6,10 @@ before_install:
   - pip install --user codecov
 
 jdk:
-  - oraclejdk8
-  - oraclejdk9
-  - openjdk10
-  - oraclejdk11
+  - openjdk8
+  - openjdk11
+  - openjdk14
+  - openjdk-ea
 
 after_success:
   - mvn clean test jacoco:report coveralls:report
