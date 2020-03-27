@@ -48,7 +48,7 @@
     <connection>scm:git:git@github.com:tcurdt/jdependency.git</connection>
     <developerConnection>scm:git:git@github.com:tcurdt/jdependency.git</developerConnection>
     <url>http://github.com/tcurdt/jdependency</url>
-    <tag>jdependency-2.3.0</tag>
+    <tag>jdependency-2.4.0</tag>
   </scm>
   <build>
     <plugins>
