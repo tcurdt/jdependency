@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.vafer.jdependency"},{"l":"org.vafer.jdependency.asm"},{"l":"org.vafer.jdependency.utils"}]
