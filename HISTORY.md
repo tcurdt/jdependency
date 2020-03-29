@@ -1,6 +1,6 @@
-## Version 2.4.0, release 27.03.2020
+## Version 2.4.0, release 30.03.2020
 
-- Upgraded to ASM 7.3
+- Upgraded to ASM 8.0
 
 ## Version 2.3.0, release 11.11.2019
 

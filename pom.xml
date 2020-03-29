@@ -55,7 +55,7 @@
     <mavenVersion>3.3.9</mavenVersion>
     <mavenPluginPluginVersion>3.6.0</mavenPluginPluginVersion>
     <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
-    <asm.version>7.3.1</asm.version>
+    <asm.version>8.0</asm.version>
   </properties>
   <dependencies>
     <dependency>
@@ -128,7 +128,6 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>3.0.0-M1</version>
         </plugin>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -203,6 +202,11 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>taglist-maven-plugin</artifactId>
           <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.5</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -352,6 +356,20 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+      </executions>
+     </plugin>
     </plugins>
   </build>
   <reporting>
