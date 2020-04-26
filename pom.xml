@@ -55,7 +55,7 @@
     <mavenVersion>3.3.9</mavenVersion>
     <mavenPluginPluginVersion>3.6.0</mavenPluginPluginVersion>
     <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
-    <asm.version>8.0</asm.version>
+    <asm.version>8.0.1</asm.version>
   </properties>
   <dependencies>
     <dependency>
