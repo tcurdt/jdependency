@@ -11,6 +11,11 @@ jdk:
   - openjdk14
   - openjdk-ea
 
+matrix:
+  allow_failures:
+    - jdk: openjdk-ea
+
+
 after_success:
   - mvn clean test jacoco:report coveralls:report
   - codecov
