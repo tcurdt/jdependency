@@ -1,3 +1,7 @@
+## Version 2.5.0, release xx.xx.2020
+
+- Upgraded to ASM 9.0 (JDK 16 support)
+
 ## Version 2.4.0, release 30.03.2020
 
 - Upgraded to ASM 8.0
