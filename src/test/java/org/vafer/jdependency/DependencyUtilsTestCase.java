@@ -62,8 +62,6 @@ public final class DependencyUtilsTestCase {
 
         final int jdk = getJavaVersion();
 
-        System.out.println(jdk);
-
         if (jdk >= 9) {
             expectedDependencies.add("java.lang.Deprecated");
         }
