@@ -62,6 +62,8 @@ public final class DependencyUtilsTestCase {
 
         final int jdk = getJavaVersion();
 
+        System.out.println(jdk);
+
         if (jdk >= 9) {
             expectedDependencies.add("java.lang.Deprecated");
         }
@@ -74,6 +76,6 @@ public final class DependencyUtilsTestCase {
             expectedDependencies.add("jdk.internal.vm.annotation.IntrinsicCandidate");
         }
 
-        assertEquals(expectedDependencies, dependencies);
+        assertEquals("deps should be the same for jdk " + jdk, expectedDependencies, dependencies);
     }
 }
