@@ -60,9 +60,18 @@ public final class DependencyUtilsTestCase {
                 "java.lang.Throwable"
                 ));
 
-        if (getJavaVersion() >= 9) {
+        final int jdk = getJavaVersion();
+
+        if (jdk >= 9) {
             expectedDependencies.add("java.lang.Deprecated");
+        }
+
+        if (jdk >=9 && jdk <= 15) {
             expectedDependencies.add("jdk.internal.HotSpotIntrinsicCandidate");
+        }
+
+        if (jdk > 15) {
+            expectedDependencies.add("jdk.internal.vm.annotation.IntrinsicCandidate");
         }
 
         assertEquals(expectedDependencies, dependencies);
