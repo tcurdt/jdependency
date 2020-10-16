@@ -10,16 +10,16 @@
 jdependency is small library that helps you analyze class level dependencies,
 clashes and missing classes.
 
-Check the documentation on how to use it with [javadocs](http://tcurdt.github.com/jdependency/release/2.4.0/apidocs/) and a source
+Check the documentation on how to use it with [javadocs](https://tcurdt.github.com/jdependency/release/2.4.0/apidocs/) and a source
 [xref](http://tcurdt.github.com/jdependency/release/2.4.0/xref/) is also available.
 
 ## Where to get it
 
-The jars are available on [maven central](http://repo1.maven.org/maven2/org/vafer/jdependency/).
-The source releases you can get in the [download section](http://github.com/tcurdt/jdependency/downloads).
+The jars are available on [maven central](https://repo1.maven.org/maven2/org/vafer/jdependency/).
+The source releases you can get in the [download section](https://github.com/tcurdt/jdependency/downloads).
 
 If feel adventures or want to help out feel free to get the latest code
-[via git](http://github.com/tcurdt/jdependency/tree/master).
+[via git](https://github.com/tcurdt/jdependency/tree/master).
 
     git clone git://github.com/tcurdt/jdependency.git
 
@@ -70,7 +70,7 @@ or
 
 ## Related projects
 
-* [maven-shade-plugin](http://maven.apache.org/plugins/maven-shade-plugin/)
+* [maven-shade-plugin](https://maven.apache.org/plugins/maven-shade-plugin/)
 * [jarjar](http://code.google.com/p/jarjar/)
 * [proguard](http://proguard.sourceforge.net/)
 * [gradle-lean](https://github.com/cuzfrog/gradle-lean)
