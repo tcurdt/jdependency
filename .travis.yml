@@ -11,10 +11,13 @@ jdk:
   - openjdk14
   - openjdk-ea
 
+arch:
+  - amd64
+  - ppc64le
+
 matrix:
   allow_failures:
     - jdk: openjdk-ea
-
 
 after_success:
   - mvn clean test jacoco:report coveralls:report
