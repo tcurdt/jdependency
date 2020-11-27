@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -44,21 +45,129 @@ public class ClazzpathUnitTestCase {
     }
 
     @Test
+    public void testIssue47() throws IOException {
+        final Clazzpath cp = new Clazzpath();
+
+        final ClazzpathUnit u1 = cp.addClazzpathUnit(resourceFile("cxf-core-3.4.0.jar"));
+        final Set<String> u1f = u1.getClazzes().stream()
+            .filter( i -> i.getName().contains("W3CSchema") )
+            .map( i -> i.getName() )
+            .collect(Collectors.toSet());
+        final Set<String> u1fe = new HashSet<String>(Arrays.asList(
+            ));
+        assertEquals(u1fe, u1f);
+
+        final ClazzpathUnit u2 = cp.addClazzpathUnit(resourceFile("woodstox-core-6.2.3.jar"));
+        final Set<String> u2f = u2.getClazzes().stream()
+            .filter( i -> i.getName().contains("W3CSchema") )
+            .map( i -> i.getName() )
+            .collect(Collectors.toSet());
+        final Set<String> u2fe = new HashSet<String>(Arrays.asList(
+            "com.ctc.wstx.msv.W3CSchemaFactory",
+            "com.ctc.wstx.osgi.ValidationSchemaFactoryProviderImpl$W3CSchema",
+            "com.ctc.wstx.msv.W3CSchema"
+            ));
+        assertEquals(u2fe, u2f);
+
+        final Set<String> units = cp.getClazzes().stream()
+            .filter( i -> i.getName().contains("W3CSchema") )
+            .flatMap( i -> i.getClazzpathUnits().stream() )
+            .map( i -> i.toString() )
+            .collect(Collectors.toSet());
+        final Set<String> unitse = new HashSet<String>(Arrays.asList(
+            "woodstox-core-6.2.3.jar"
+            ));
+        assertEquals(unitse, units);
+    }
+
+    @Test
     public void testShouldAddClasses() throws IOException {
+        final Clazzpath cp = new Clazzpath();
+
+        final ClazzpathUnit u = cp.addClazzpathUnit(resourceFile("jar1.jar"));
+        final Set<String> uc = u.getClazzes().stream()
+            .map(c -> c.getName())
+            .collect(Collectors.toSet());
+        final Set<String> uce = new HashSet<String>(Arrays.asList(
+            "org.apache.commons.io.filefilter.IOFileFilter",
+            "org.apache.commons.io.LineIterator",
+            "org.apache.commons.io.output.NullWriter",
+            "org.apache.commons.io.filefilter.FileFilterUtils",
+            "org.apache.commons.io.FileCleaningTracker$Tracker",
+            "org.apache.commons.io.EndianUtils",
+            "org.apache.commons.io.filefilter.EmptyFileFilter",
+            "org.apache.commons.io.filefilter.NotFileFilter",
+            "org.apache.commons.io.filefilter.TrueFileFilter",
+            "org.apache.commons.io.filefilter.AgeFileFilter",
+            "org.apache.commons.io.CopyUtils",
+            "org.apache.commons.io.DirectoryWalker",
+            "org.apache.commons.io.filefilter.AbstractFileFilter",
+            "org.apache.commons.io.output.ByteArrayOutputStream",
+            "org.apache.commons.io.filefilter.ConditionalFileFilter",
+            "org.apache.commons.io.HexDump",
+            "org.apache.commons.io.input.ProxyReader",
+            "org.apache.commons.io.filefilter.FileFileFilter",
+            "org.apache.commons.io.input.DemuxInputStream",
+            "org.apache.commons.io.output.ProxyOutputStream",
+            "org.apache.commons.io.filefilter.DirectoryFileFilter",
+            "org.apache.commons.io.filefilter.HiddenFileFilter",
+            "org.apache.commons.io.IOUtils",
+            "org.apache.commons.io.filefilter.SuffixFileFilter",
+            "org.apache.commons.io.output.ProxyWriter",
+            "org.apache.commons.io.filefilter.FalseFileFilter",
+            "org.apache.commons.io.input.NullInputStream",
+            "org.apache.commons.io.filefilter.CanReadFileFilter",
+            "org.apache.commons.io.output.DemuxOutputStream",
+            "org.apache.commons.io.FilenameUtils",
+            "org.apache.commons.io.DirectoryWalker$CancelException",
+            "org.apache.commons.io.FileCleaningTracker",
+            "org.apache.commons.io.filefilter.DelegateFileFilter",
+            "org.apache.commons.io.filefilter.AndFileFilter",
+            "org.apache.commons.io.IOCase",
+            "org.apache.commons.io.FileDeleteStrategy",
+            "org.apache.commons.io.FileSystemUtils",
+            "org.apache.commons.io.filefilter.SizeFileFilter",
+            "org.apache.commons.io.filefilter.OrFileFilter",
+            "org.apache.commons.io.filefilter.NameFileFilter",
+            "org.apache.commons.io.output.TeeOutputStream",
+            "org.apache.commons.io.output.CountingOutputStream",
+            "org.apache.commons.io.input.CountingInputStream",
+            "org.apache.commons.io.output.DeferredFileOutputStream",
+            "org.apache.commons.io.FileUtils",
+            "org.apache.commons.io.FileCleaner",
+            "org.apache.commons.io.filefilter.PrefixFileFilter",
+            "org.apache.commons.io.FileCleaningTracker$Reaper",
+            "org.apache.commons.io.input.SwappedDataInputStream",
+            "org.apache.commons.io.input.NullReader",
+            "org.apache.commons.io.filefilter.WildcardFilter",
+            "org.apache.commons.io.output.NullOutputStream",
+            "org.apache.commons.io.FileDeleteStrategy$ForceFileDeleteStrategy",
+            "org.apache.commons.io.output.LockableFileWriter",
+            "org.apache.commons.io.filefilter.WildcardFileFilter",
+            "org.apache.commons.io.input.ProxyInputStream",
+            "org.apache.commons.io.output.ThresholdingOutputStream",
+            "org.apache.commons.io.input.ClassLoaderObjectInputStream",
+            "org.apache.commons.io.filefilter.CanWriteFileFilter"
+        ));
+        assertEquals(uce, uc);
+    }
+
+    @Test
+    public void testShouldHaveUnitId() throws IOException {
 
         final Clazzpath cp = new Clazzpath();
 
-        final ClazzpathUnit u1w = cp.addClazzpathUnit(resourceFile("jar1.jar"));
-        assertEquals(u1w.toString(), "jar1.jar");
+        final ClazzpathUnit u1 = cp.addClazzpathUnit(resourceFile("jar1.jar"));
+        assertEquals(u1.toString(), "jar1.jar");
 
-        final ClazzpathUnit u1wo = cp.addClazzpathUnit(resourceFile("jar1.jar"), "jar1");
-        assertEquals(u1wo.toString(), "jar1");
+        final ClazzpathUnit u1e = cp.addClazzpathUnit(resourceFile("jar1.jar"), "jar1");
+        assertEquals(u1e.toString(), "jar1");
 
-        final ClazzpathUnit u2w = cp.addClazzpathUnit(resourcePath("jar2.jar"));
-        assertEquals(u2w.toString(), "jar2.jar");
+        final ClazzpathUnit u2 = cp.addClazzpathUnit(resourcePath("jar2.jar"));
+        assertEquals(u2.toString(), "jar2.jar");
 
-        final ClazzpathUnit u2wo = cp.addClazzpathUnit(resourcePath("jar2.jar"), "jar2");
-        assertEquals(u2wo.toString(), "jar2");
+        final ClazzpathUnit u2e = cp.addClazzpathUnit(resourcePath("jar2.jar"), "jar2");
+        assertEquals(u2e.toString(), "jar2");
     }
 
     @Test

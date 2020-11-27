@@ -170,9 +170,13 @@ public final class Clazzpath {
 
             clazz.addClazzpathUnit(unit);
 
+            /// add to classpath
             clazzes.put(clazzName, clazz);
+
+            // add to classpath unit
             unitClazzes.put(clazzName, clazz);
 
+            // extract dependencies of clazz
             final DependenciesClassAdapter v = new DependenciesClassAdapter();
             final InputStream inputStream = resource.getInputStream();
             try {
@@ -180,7 +184,6 @@ public final class Clazzpath {
             } finally {
                 if (shouldCloseResourceStream) inputStream.close();
             }
-
             final Set<String> depNames = v.getDependencies();
 
             for (String depName : depNames) {
@@ -195,12 +198,14 @@ public final class Clazzpath {
                 if (dep == null) {
                     // it is also not recorded to be missing
                     dep = new Clazz(depName);
-                    dep.addClazzpathUnit(unit);
+                    // add as missing
                     missing.put(depName, dep);
                 }
 
                 if (dep != clazz) {
+                    // unit depends on dep
                     unitDependencies.put(depName, dep);
+                    // clazz depends on dep
                     clazz.addDependency(dep);
                 }
             }
