@@ -1,3 +1,7 @@
+## Version 2.6.0, release ...
+
+- Fixed issue #47, ClazzpathUnits should not be assigned for dependencies
+
 ## Version 2.5.0, release 16.10.2020
 
 - Upgraded to ASM 9.0 (JDK 16 support)
