@@ -15,23 +15,18 @@
  */
 package org.vafer.jdependency;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class ClazzpathUnitTestCase {
 
@@ -51,18 +46,18 @@ public class ClazzpathUnitTestCase {
         final ClazzpathUnit u1 = cp.addClazzpathUnit(resourceFile("cxf-core-3.4.0.jar"));
         final Set<String> u1f = u1.getClazzes().stream()
             .filter( i -> i.getName().contains("W3CSchema") )
-            .map( i -> i.getName() )
+            .map( Clazz::getName )
             .collect(Collectors.toSet());
-        final Set<String> u1fe = new HashSet<String>(Arrays.asList(
+        final Set<String> u1fe = new HashSet<>(Arrays.asList(
             ));
         assertEquals(u1fe, u1f);
 
         final ClazzpathUnit u2 = cp.addClazzpathUnit(resourceFile("woodstox-core-6.2.3.jar"));
         final Set<String> u2f = u2.getClazzes().stream()
             .filter( i -> i.getName().contains("W3CSchema") )
-            .map( i -> i.getName() )
+            .map( Clazz::getName )
             .collect(Collectors.toSet());
-        final Set<String> u2fe = new HashSet<String>(Arrays.asList(
+        final Set<String> u2fe = new HashSet<>(Arrays.asList(
             "com.ctc.wstx.msv.W3CSchemaFactory",
             "com.ctc.wstx.osgi.ValidationSchemaFactoryProviderImpl$W3CSchema",
             "com.ctc.wstx.msv.W3CSchema"
@@ -72,9 +67,9 @@ public class ClazzpathUnitTestCase {
         final Set<String> units = cp.getClazzes().stream()
             .filter( i -> i.getName().contains("W3CSchema") )
             .flatMap( i -> i.getClazzpathUnits().stream() )
-            .map( i -> i.toString() )
+            .map( ClazzpathUnit::toString )
             .collect(Collectors.toSet());
-        final Set<String> unitse = new HashSet<String>(Arrays.asList(
+        final Set<String> unitse = new HashSet<>(Arrays.asList(
             "woodstox-core-6.2.3.jar"
             ));
         assertEquals(unitse, units);
@@ -86,9 +81,9 @@ public class ClazzpathUnitTestCase {
 
         final ClazzpathUnit u = cp.addClazzpathUnit(resourceFile("jar1.jar"));
         final Set<String> uc = u.getClazzes().stream()
-            .map(c -> c.getName())
+            .map(Clazz::getName)
             .collect(Collectors.toSet());
-        final Set<String> uce = new HashSet<String>(Arrays.asList(
+        final Set<String> uce = new HashSet<>(Arrays.asList(
             "org.apache.commons.io.filefilter.IOFileFilter",
             "org.apache.commons.io.LineIterator",
             "org.apache.commons.io.output.NullWriter",

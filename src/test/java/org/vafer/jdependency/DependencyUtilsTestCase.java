@@ -48,7 +48,7 @@ public final class DependencyUtilsTestCase {
     @Test
     public void testShouldFindDependenciesOfClassObject() throws Exception {
         final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
-        final Set<String> expectedDependencies = new HashSet<String>(Arrays.asList(
+        final Set<String> expectedDependencies = new HashSet<>(Arrays.asList(
                 "java.lang.String",
                 "java.lang.IllegalArgumentException",
                 "java.lang.CloneNotSupportedException",

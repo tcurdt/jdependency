@@ -17,21 +17,15 @@ package org.vafer.jdependency.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.File;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 /**
  * internal - do not use
  */
-final public class DependencyUtils {
+public final class DependencyUtils {
 
     /*
     public static Set<String> getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
@@ -75,13 +69,11 @@ final public class DependencyUtils {
     public static Set<String> getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
         final DependenciesClassAdapter v = new DependenciesClassAdapter();
         new ClassReader( pInputStream ).accept( v, ClassReader.EXPAND_FRAMES );
-        final Set<String> depNames = v.getDependencies();
-        return depNames;
+        return v.getDependencies();
     }
 
     public static Set<String> getDependenciesOfClass( final Class<?> pClass ) throws IOException {
-        final String resource = "/" + pClass.getName().replace('.', '/') + ".class";
+        final String resource = '/' + pClass.getName().replace('.', '/') + ".class";
         return getDependenciesOfClass(pClass.getResourceAsStream(resource));
     }
-
 }

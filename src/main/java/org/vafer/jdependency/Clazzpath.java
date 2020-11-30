@@ -15,38 +15,38 @@
  */
 package org.vafer.jdependency;
 
+import static org.apache.commons.io.FilenameUtils.normalize;
+import static org.apache.commons.io.FilenameUtils.separatorsToUnix;
+import static org.vafer.jdependency.utils.StreamUtils.asStream;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
 import org.objectweb.asm.ClassReader;
-
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
-
-import static org.apache.commons.io.FilenameUtils.normalize;
-import static org.apache.commons.io.FilenameUtils.separatorsToUnix;
-
-import static org.vafer.jdependency.utils.StreamUtils.asStream;
 
 
 
 public final class Clazzpath {
 
-    private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
-    private final Map<String, Clazz> missing = new HashMap<String, Clazz>();
-    private final Map<String, Clazz> clazzes = new HashMap<String, Clazz>();
+    private final Set<ClazzpathUnit> units = new HashSet<>();
+    private final Map<String, Clazz> missing = new HashMap<>();
+    private final Map<String, Clazz> clazzes = new HashMap<>();
 
-    private static abstract class Resource {
+    private abstract static class Resource {
 
-        final private static int ext = ".class".length();
+    	private static final int EXT = ".class".length();
 
-        final public String name;
+    	public final String name;
 
         Resource( final String pName ) {
             super();
@@ -55,7 +55,7 @@ public final class Clazzpath {
 
             // foo/bar/Foo.class -> // foo.bar.Foo
             this.name = separatorsToUnix(pName)
-                .substring(0, all - ext)
+                .substring(0, all - EXT)
                 .replace('/', '.');
         }
 
@@ -74,7 +74,7 @@ public final class Clazzpath {
 
         for (Clazz clazz : unitClazzes) {
             clazz.removeClazzpathUnit(pUnit);
-            if (clazz.getClazzpathUnits().size() == 0) {
+            if (clazz.getClazzpathUnits().isEmpty()) {
                 clazzes.remove(clazz.toString());
             }
         }
@@ -98,7 +98,6 @@ public final class Clazzpath {
     public ClazzpathUnit addClazzpathUnit( final Path pPath, final String pId ) throws IOException {
 
         final Path path = pPath.toAbsolutePath();
-
         if (Files.isRegularFile(path)) {
 
             return addClazzpathUnit(Files.newInputStream(path), pId);
@@ -108,10 +107,11 @@ public final class Clazzpath {
             final String prefix = separatorsToUnix(normalize(path.toString() + '/'));
 
             Iterable<Resource> resources = Files.walk(path)
-                .filter(p -> Files.isRegularFile(p))
+                .filter(Files::isRegularFile)
                 .filter(p -> isValidResourceName(p.getFileName().toString()))
                 .map(p -> (Resource) new Resource(p.toString().substring(prefix.length())) {
-                    InputStream getInputStream() throws IOException {
+                    @Override
+					InputStream getInputStream() throws IOException {
                         return Files.newInputStream(p);
                     }
                 })::iterator;
@@ -123,31 +123,25 @@ public final class Clazzpath {
     }
 
     public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
-
-        final JarInputStream inputStream = new JarInputStream(pInputStream);
-
-        try {
-
+        try (final JarInputStream inputStream = new JarInputStream(pInputStream)){
             Iterable<Resource> resources = asStream(inputStream)
-                .map(e -> e.getName())
-                .filter(name -> isValidResourceName(name))
+                .map(JarEntry::getName)
+                .filter(Clazzpath::isValidResourceName)
                 .map(name -> (Resource) new Resource(name) {
-                    InputStream getInputStream() throws IOException {
+                    @Override
+					InputStream getInputStream() throws IOException {
                         return inputStream;
                     }
                 })::iterator;
 
            return addClazzpathUnit(resources, pId, false);
-
-        } finally {
-            inputStream.close();
         }
     }
 
     private ClazzpathUnit addClazzpathUnit( final Iterable<Resource> resources, final String pId, boolean shouldCloseResourceStream ) throws IOException {
 
-        final Map<String, Clazz> unitClazzes = new HashMap<String, Clazz>();
-        final Map<String, Clazz> unitDependencies = new HashMap<String, Clazz>();
+        final Map<String, Clazz> unitClazzes = new HashMap<>();
+        final Map<String, Clazz> unitDependencies = new HashMap<>();
 
         final ClazzpathUnit unit = new ClazzpathUnit(pId, unitClazzes, unitDependencies);
 
@@ -212,16 +206,15 @@ public final class Clazzpath {
         }
 
         units.add(unit);
-
         return unit;
     }
 
     public Set<Clazz> getClazzes() {
-        return new HashSet<Clazz>(clazzes.values());
+        return new HashSet<>(clazzes.values());
     }
 
     public Set<Clazz> getClashedClazzes() {
-        final Set<Clazz> all = new HashSet<Clazz>();
+        final Set<Clazz> all = new HashSet<>();
         for (Clazz clazz : clazzes.values()) {
             if (clazz.getClazzpathUnits().size() > 1) {
                 all.add(clazz);
@@ -231,15 +224,14 @@ public final class Clazzpath {
     }
 
     public Set<Clazz> getMissingClazzes() {
-        return new HashSet<Clazz>(missing.values());
+        return new HashSet<>(missing.values());
     }
 
     public Clazz getClazz( final String pClazzName ) {
-        return (Clazz) clazzes.get(pClazzName);
+        return clazzes.get(pClazzName);
     }
 
     public ClazzpathUnit[] getUnits() {
         return units.toArray(new ClazzpathUnit[units.size()]);
     }
-
 }

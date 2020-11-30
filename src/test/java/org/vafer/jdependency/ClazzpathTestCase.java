@@ -15,10 +15,10 @@
  */
 package org.vafer.jdependency;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class ClazzpathTestCase {
@@ -59,7 +62,7 @@ public class ClazzpathTestCase {
     }
 
     private static Set<ClazzpathUnit> unitSet(ClazzpathUnit[] ar) {
-        return new HashSet<ClazzpathUnit>(Arrays.asList(ar));
+        return new HashSet<>(Arrays.asList(ar));
     }
 
     /**
@@ -75,7 +78,8 @@ public class ClazzpathTestCase {
 
             new Object[] { new AddClazzpathUnit() {
 
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
+                @Override
+				ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
                     final String p = filename + ".jar";
                     InputStream resourceAsStream = getClass()
                         .getClassLoader()
@@ -86,7 +90,8 @@ public class ClazzpathTestCase {
             }, "classpath"},
             new Object[] { new AddClazzpathUnit() {
 
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
+                @Override
+				ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
                     final String p = filename + ".jar";
                     File file = resourceFile(p);
                     assertTrue("missing:" + file, file.exists() && file.isFile());
@@ -95,7 +100,8 @@ public class ClazzpathTestCase {
             }, "file-jar"},
             new Object[] { new AddClazzpathUnit() {
 
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
+                @Override
+				ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
                     final String p = filename;
                     File file = resourceFile(p);
                     assertTrue("missing:" + file , file.exists() && file.isDirectory());
@@ -104,7 +110,8 @@ public class ClazzpathTestCase {
             }, "file-directory"},
             new Object[] { new AddClazzpathUnit() {
 
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
+                @Override
+				ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
                     final String p = filename + ".jar";
                     Path path = resourcePath(p);
                     assertTrue("missing:" + path, Files.exists(path) && Files.isRegularFile(path));
@@ -113,7 +120,8 @@ public class ClazzpathTestCase {
             }, "path-jar"},
             new Object[] { new AddClazzpathUnit() {
 
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
+                @Override
+				ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
                     final String p = filename;
                     Path path = resourcePath(p);
                     assertTrue("missing:" + path, Files.exists(path) && Files.isDirectory(path));
@@ -185,7 +193,7 @@ public class ClazzpathTestCase {
 
         final Set<Clazz> missing = cp.getMissingClazzes();
 
-        final Set<String> actual = new HashSet<String>();
+        final Set<String> actual = new HashSet<>();
         for (Clazz clazz : missing) {
             String name = clazz.getName();
             // ignore the rt
@@ -194,7 +202,7 @@ public class ClazzpathTestCase {
             }
         }
 
-        final Set<String> expected = new HashSet<String>(Arrays.asList(
+        final Set<String> expected = new HashSet<>(Arrays.asList(
             "org.apache.commons.io.output.ProxyOutputStream",
             "org.apache.commons.io.input.ProxyInputStream"
             ));

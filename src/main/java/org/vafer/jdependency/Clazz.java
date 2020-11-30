@@ -20,9 +20,9 @@ import java.util.Set;
 
 public final class Clazz implements Comparable<Clazz> {
 
-    private final Set<Clazz> dependencies = new HashSet<Clazz>();
-    private final Set<Clazz> references = new HashSet<Clazz>();
-    private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
+    private final Set<Clazz> dependencies = new HashSet<>();
+    private final Set<Clazz> references = new HashSet<>();
+    private final Set<ClazzpathUnit> units = new HashSet<>();
 
     private final String name;
 
@@ -62,15 +62,12 @@ public final class Clazz implements Comparable<Clazz> {
         return dependencies;
     }
 
-
-
     public Set<Clazz> getReferences() {
         return references;
     }
 
-
     public Set<Clazz> getTransitiveDependencies() {
-        final Set<Clazz> all = new HashSet<Clazz>();
+        final Set<Clazz> all = new HashSet<>();
         findTransitiveDependencies(all);
         return all;
     }
@@ -85,7 +82,8 @@ public final class Clazz implements Comparable<Clazz> {
         }
     }
 
-    public boolean equals( final Object pO ) {
+    @Override
+	public boolean equals( final Object pO ) {
         if (pO.getClass() != Clazz.class) {
             return false;
         }
@@ -93,15 +91,18 @@ public final class Clazz implements Comparable<Clazz> {
         return name.equals(c.name);
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return name.hashCode();
     }
 
-    public int compareTo( final Clazz pO ) {
-        return name.compareTo(((Clazz) pO).name);
+    @Override
+	public int compareTo( final Clazz pO ) {
+        return name.compareTo(pO.name);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return name;
     }
 
