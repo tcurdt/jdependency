@@ -40,15 +40,15 @@ import static org.vafer.jdependency.utils.StreamUtils.asStream;
 
 public final class Clazzpath {
 
-    private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
-    private final Map<String, Clazz> missing = new HashMap<String, Clazz>();
-    private final Map<String, Clazz> clazzes = new HashMap<String, Clazz>();
+    private final Set<ClazzpathUnit> units = new HashSet<>();
+    private final Map<String, Clazz> missing = new HashMap<>();
+    private final Map<String, Clazz> clazzes = new HashMap<>();
 
-    private static abstract class Resource {
+    private abstract static class Resource {
 
-        final private static int ext = ".class".length();
+        private static final int ext = ".class".length();
 
-        final public String name;
+        public final String name;
 
         Resource( final String pName ) {
             super();
@@ -148,8 +148,8 @@ public final class Clazzpath {
 
     private ClazzpathUnit addClazzpathUnit( final Iterable<Resource> resources, final String pId, boolean shouldCloseResourceStream ) throws IOException {
 
-        final Map<String, Clazz> unitClazzes = new HashMap<String, Clazz>();
-        final Map<String, Clazz> unitDependencies = new HashMap<String, Clazz>();
+        final Map<String, Clazz> unitClazzes = new HashMap<>();
+        final Map<String, Clazz> unitDependencies = new HashMap<>();
 
         final ClazzpathUnit unit = new ClazzpathUnit(pId, unitClazzes, unitDependencies);
 
@@ -228,11 +228,11 @@ public final class Clazzpath {
     }
 
     public Set<Clazz> getClazzes() {
-        return new HashSet<Clazz>(clazzes.values());
+        return new HashSet<>(clazzes.values());
     }
 
     public Set<Clazz> getClashedClazzes() {
-        final Set<Clazz> all = new HashSet<Clazz>();
+        final Set<Clazz> all = new HashSet<>();
         for (Clazz clazz : clazzes.values()) {
             if (clazz.getClazzpathUnits().size() > 1) {
                 all.add(clazz);
@@ -242,11 +242,11 @@ public final class Clazzpath {
     }
 
     public Set<Clazz> getMissingClazzes() {
-        return new HashSet<Clazz>(missing.values());
+        return new HashSet<>(missing.values());
     }
 
     public Clazz getClazz( final String pClazzName ) {
-        return (Clazz) clazzes.get(pClazzName);
+        return clazzes.get(pClazzName);
     }
 
     public ClazzpathUnit[] getUnits() {

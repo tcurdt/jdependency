@@ -19,13 +19,21 @@ import java.util.HashSet;
 import java.util.Set;
 // import java.security.MessageDigest;
 
+
+/**
+ * A `Clazz` represents the single class identifier inside a classpath.
+ * There is only one `Clazz` per classname. It has incoming and outgoing
+ * edges defining references and dependencies. If there are different
+ * versions found, it collects the version from the respective
+ * ClazzpathUnits.
+ */
 public final class Clazz implements Comparable<Clazz> {
 
-    private final Set<Clazz> dependencies = new HashSet<Clazz>();
-    private final Set<Clazz> references = new HashSet<Clazz>();
-    private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
-    // private final Map<MessageDigest, ClazzpathUnit> units = new HashMap<MessageDigest, ClazzpathUnit>();
-    // private final Map<ClazzpathUnit, MessageDigest> units = new HashMap<ClazzpathUnit, MessageDigest>();
+    private final Set<Clazz> dependencies = new HashSet<>();
+    private final Set<Clazz> references = new HashSet<>();
+    private final Set<ClazzpathUnit> units = new HashSet<>();
+    // private final Map<MessageDigest, ClazzpathUnit> units = new HashMap<>();
+    // private final Map<ClazzpathUnit, MessageDigest> units = new HashMap<>();
 
     private final String name;
 
@@ -40,6 +48,7 @@ public final class Clazz implements Comparable<Clazz> {
     // public void addClazzpathUnit( final ClazzpathUnit pUnit, final MessageDigest pDigest ) {
     // }
 
+    // this would need to go as there alsways will be a digest per unit
     public void addClazzpathUnit( final ClazzpathUnit pUnit ) {
         units.add(pUnit);
     }
@@ -75,7 +84,7 @@ public final class Clazz implements Comparable<Clazz> {
 
 
     public Set<Clazz> getTransitiveDependencies() {
-        final Set<Clazz> all = new HashSet<Clazz>();
+        final Set<Clazz> all = new HashSet<>();
         findTransitiveDependencies(all);
         return all;
     }

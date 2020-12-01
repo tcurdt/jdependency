@@ -33,7 +33,7 @@ public final class ClazzpathUnit {
     }
 
     public Set<Clazz> getClazzes() {
-        final Set<Clazz> result = new HashSet<Clazz>(clazzes.values());
+        final Set<Clazz> result = new HashSet<>(clazzes.values());
         return result;
     }
 
@@ -43,12 +43,12 @@ public final class ClazzpathUnit {
     }
 
     public Set<Clazz> getDependencies() {
-        final Set<Clazz> result = new HashSet<Clazz>(dependencies.values());
+        final Set<Clazz> result = new HashSet<>(dependencies.values());
         return result;
     }
 
     public Set<Clazz> getTransitiveDependencies() {
-        final Set<Clazz> all = new HashSet<Clazz>();
+        final Set<Clazz> all = new HashSet<>();
         for (Clazz clazz : clazzes.values()) {
             clazz.findTransitiveDependencies(all);
         }
