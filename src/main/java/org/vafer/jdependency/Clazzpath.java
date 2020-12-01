@@ -25,7 +25,9 @@ import java.util.Set;
 import java.util.jar.JarInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
 import org.objectweb.asm.ClassReader;
+import org.apache.commons.io.input.MessageDigestCalculatingInputStream;
 
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
@@ -153,61 +155,70 @@ public final class Clazzpath {
 
         for (Resource resource : resources) {
 
-            final String clazzName = resource.name;
-
-            Clazz clazz = getClazz(clazzName);
-
-            if (clazz == null) {
-                clazz = missing.get(clazzName);
-
-                if (clazz != null) {
-                    // already marked missing
-                    clazz = missing.remove(clazzName);
-                } else {
-                    clazz = new Clazz(clazzName);
-                }
-            }
-
-            clazz.addClazzpathUnit(unit);
-
-            /// add to classpath
-            clazzes.put(clazzName, clazz);
-
-            // add to classpath unit
-            unitClazzes.put(clazzName, clazz);
-
             // extract dependencies of clazz
-            final DependenciesClassAdapter v = new DependenciesClassAdapter();
-            final InputStream inputStream = resource.getInputStream();
+            InputStream inputStream = null;
             try {
-                new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+                final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                final MessageDigestCalculatingInputStream calculatingInputStream = new MessageDigestCalculatingInputStream(resource.getInputStream(), digest);
+                inputStream = calculatingInputStream;
+
+                final DependenciesClassAdapter v = new DependenciesClassAdapter();
+                new ClassReader(calculatingInputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+
+                // get or create clazz
+                final String clazzName = resource.name;
+                Clazz clazz = getClazz(clazzName);
+                if (clazz == null) {
+                    clazz = missing.get(clazzName);
+
+                    if (clazz != null) {
+                        // already marked missing
+                        clazz = missing.remove(clazzName);
+                    } else {
+                        clazz = new Clazz(clazzName);
+                    }
+                }
+                clazz.addClazzpathUnit(unit);
+                // clazz.addClazzpathUnit(unit, digest);
+
+
+                /// add to classpath
+                clazzes.put(clazzName, clazz);
+
+                // add to classpath unit
+                unitClazzes.put(clazzName, clazz);
+
+
+                // iterate through all dependencies
+                final Set<String> depNames = v.getDependencies();
+                for (String depName : depNames) {
+
+                    Clazz dep = getClazz(depName);
+
+                    if (dep == null) {
+                        // there is no such clazz yet
+                        dep = missing.get(depName);
+                    }
+
+                    if (dep == null) {
+                        // it is also not recorded to be missing
+                        dep = new Clazz(depName);
+                        // add as missing
+                        missing.put(depName, dep);
+                    }
+
+                    if (dep != clazz) {
+                        // unit depends on dep
+                        unitDependencies.put(depName, dep);
+                        // clazz depends on dep
+                        clazz.addDependency(dep);
+                    }
+                }
+
+            } catch(java.security.NoSuchAlgorithmException e) {
+                // well, let's pack and go home
             } finally {
-                if (shouldCloseResourceStream) inputStream.close();
-            }
-            final Set<String> depNames = v.getDependencies();
-
-            for (String depName : depNames) {
-
-                Clazz dep = getClazz(depName);
-
-                if (dep == null) {
-                    // there is no such clazz yet
-                    dep = missing.get(depName);
-                }
-
-                if (dep == null) {
-                    // it is also not recorded to be missing
-                    dep = new Clazz(depName);
-                    // add as missing
-                    missing.put(depName, dep);
-                }
-
-                if (dep != clazz) {
-                    // unit depends on dep
-                    unitDependencies.put(depName, dep);
-                    // clazz depends on dep
-                    clazz.addDependency(dep);
-                }
+                if (shouldCloseResourceStream && inputStream != null) inputStream.close();
             }
         }
 

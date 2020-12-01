@@ -17,12 +17,15 @@ package org.vafer.jdependency;
 
 import java.util.HashSet;
 import java.util.Set;
+// import java.security.MessageDigest;
 
 public final class Clazz implements Comparable<Clazz> {
 
     private final Set<Clazz> dependencies = new HashSet<Clazz>();
     private final Set<Clazz> references = new HashSet<Clazz>();
     private final Set<ClazzpathUnit> units = new HashSet<ClazzpathUnit>();
+    // private final Map<MessageDigest, ClazzpathUnit> units = new HashMap<MessageDigest, ClazzpathUnit>();
+    // private final Map<ClazzpathUnit, MessageDigest> units = new HashMap<ClazzpathUnit, MessageDigest>();
 
     private final String name;
 
@@ -34,6 +37,8 @@ public final class Clazz implements Comparable<Clazz> {
         return name;
     }
 
+    // public void addClazzpathUnit( final ClazzpathUnit pUnit, final MessageDigest pDigest ) {
+    // }
 
     public void addClazzpathUnit( final ClazzpathUnit pUnit ) {
         units.add(pUnit);
