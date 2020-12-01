@@ -33,18 +33,15 @@ public final class ClazzpathUnit {
     }
 
     public Set<Clazz> getClazzes() {
-        final Set<Clazz> result = new HashSet<>(clazzes.values());
-        return result;
+        return new HashSet<>(clazzes.values());
     }
 
     public Clazz getClazz( final String pClazzName ) {
-        final Clazz result = clazzes.get(pClazzName);
-        return result;
+        return clazzes.get(pClazzName);
     }
 
     public Set<Clazz> getDependencies() {
-        final Set<Clazz> result = new HashSet<>(dependencies.values());
-        return result;
+        return new HashSet<>(dependencies.values());
     }
 
     public Set<Clazz> getTransitiveDependencies() {

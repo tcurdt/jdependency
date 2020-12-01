@@ -25,9 +25,7 @@ import java.util.Set;
 import java.util.jar.JarInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
 import org.objectweb.asm.ClassReader;
-import org.apache.commons.io.input.MessageDigestCalculatingInputStream;
 
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
@@ -158,12 +156,10 @@ public final class Clazzpath {
             // extract dependencies of clazz
             InputStream inputStream = null;
             try {
-                final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                final MessageDigestCalculatingInputStream calculatingInputStream = new MessageDigestCalculatingInputStream(resource.getInputStream(), digest);
-                inputStream = calculatingInputStream;
+                inputStream = resource.getInputStream();
 
                 final DependenciesClassAdapter v = new DependenciesClassAdapter();
-                new ClassReader(calculatingInputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+                new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
 
                 // get or create clazz
                 final String clazzName = resource.name;
@@ -179,7 +175,6 @@ public final class Clazzpath {
                     }
                 }
                 clazz.addClazzpathUnit(unit);
-                // clazz.addClazzpathUnit(unit, digest);
 
 
                 /// add to classpath
@@ -215,10 +210,10 @@ public final class Clazzpath {
                     }
                 }
 
-            } catch(java.security.NoSuchAlgorithmException e) {
-                // well, let's pack and go home
             } finally {
-                if (shouldCloseResourceStream && inputStream != null) inputStream.close();
+                if (shouldCloseResourceStream && inputStream != null) {
+                    inputStream.close();
+                }
             }
         }
 

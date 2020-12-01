@@ -17,23 +17,19 @@ package org.vafer.jdependency;
 
 import java.util.HashSet;
 import java.util.Set;
-// import java.security.MessageDigest;
 
 
 /**
  * A `Clazz` represents the single class identifier inside a classpath.
  * There is only one `Clazz` per classname. It has incoming and outgoing
  * edges defining references and dependencies. If there are different
- * versions found, it collects the version from the respective
- * ClazzpathUnits.
+ * versions found, it collects their sources as ClazzpathUnits.
  */
 public final class Clazz implements Comparable<Clazz> {
 
     private final Set<Clazz> dependencies = new HashSet<>();
     private final Set<Clazz> references = new HashSet<>();
     private final Set<ClazzpathUnit> units = new HashSet<>();
-    // private final Map<MessageDigest, ClazzpathUnit> units = new HashMap<>();
-    // private final Map<ClazzpathUnit, MessageDigest> units = new HashMap<>();
 
     private final String name;
 
@@ -45,10 +41,6 @@ public final class Clazz implements Comparable<Clazz> {
         return name;
     }
 
-    // public void addClazzpathUnit( final ClazzpathUnit pUnit, final MessageDigest pDigest ) {
-    // }
-
-    // this would need to go as there alsways will be a digest per unit
     public void addClazzpathUnit( final ClazzpathUnit pUnit ) {
         units.add(pUnit);
     }
@@ -89,6 +81,7 @@ public final class Clazz implements Comparable<Clazz> {
         return all;
     }
 
+
     void findTransitiveDependencies( final Set<? super Clazz> pAll ) {
 
         for (Clazz clazz : dependencies) {
@@ -98,6 +91,7 @@ public final class Clazz implements Comparable<Clazz> {
             }
         }
     }
+
 
     public boolean equals( final Object pO ) {
         if (pO.getClass() != Clazz.class) {
