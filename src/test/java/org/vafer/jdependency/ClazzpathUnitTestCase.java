@@ -16,20 +16,20 @@
 package org.vafer.jdependency;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.vafer.jdependency.utils.ClashUtil;
 
 import static org.junit.Assert.*;
 
@@ -78,6 +78,25 @@ public class ClazzpathUnitTestCase {
             "woodstox-core-6.2.3.jar"
             ));
         assertEquals(unitse, units);
+    }
+    
+    @Test
+    public void ClashUtil() throws IOException {        
+    	Map<String, Path> jarById = new HashMap<String, Path>(2);
+    	String lib1 = "jaxb-impl-2.3.1.jar";
+        String lib2= "jaxb-runtime-2.3.1.jar";
+        jarById.put(lib1, Paths.get(lib1));
+        jarById.put(lib2, Paths.get(lib2));
+
+        final Clazzpath cp = new Clazzpath();
+        for (Entry<String, Path> entry: jarById.entrySet())
+        	cp.addClazzpathUnit(entry.getValue(), entry.getKey());
+
+        Set<Clazz> clashedClazzes = cp.getClashedClazzes();
+        assertTrue("clashedClazzes not recognized", !clashedClazzes.isEmpty());
+                
+        ClashUtil.removeIdenticalClasses(clashedClazzes, jarById);
+        assertTrue("equal classes not ignored", clashedClazzes.isEmpty());
     }
 
     @Test
