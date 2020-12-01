@@ -15,13 +15,13 @@
  */
 package org.vafer.jdependency;
 
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
 import org.vafer.jdependency.utils.DependencyUtils;
 
 public final class DependencyUtilsTestCase {

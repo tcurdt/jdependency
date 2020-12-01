@@ -28,7 +28,7 @@ import java.io.IOException;
  * internal - do not use
  */
 
-final public class StreamUtils {
+public final class StreamUtils {
 
     // public static <T> Stream<T> asStream(Iterator<T> sourceIterator) {
     //     return asStream(sourceIterator, false);

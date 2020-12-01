@@ -31,7 +31,7 @@ import org.vafer.jdependency.asm.DependenciesClassAdapter;
 /**
  * internal - do not use
  */
-final public class DependencyUtils {
+public final class DependencyUtils {
 
     /*
     public static Set<String> getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
