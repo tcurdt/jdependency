@@ -17,7 +17,11 @@ package org.vafer.jdependency;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -76,4 +80,13 @@ public final class DependencyUtilsTestCase {
 
         assertEquals("deps should be the same for jdk " + jdk, expectedDependencies, dependencies);
     }
+
+    @Test
+    public void testShouldThrowOnInvalidStream() throws Exception {
+        assertThrows(IOException.class, () -> {
+            final InputStream inputStream = new FileInputStream("nope");
+            final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(inputStream);
+        });
+    }
+
 }

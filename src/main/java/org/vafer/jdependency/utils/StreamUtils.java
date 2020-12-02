@@ -30,6 +30,8 @@ import java.io.IOException;
 
 public final class StreamUtils {
 
+    private StreamUtils() {}
+
     // public static <T> Stream<T> asStream(Iterator<T> sourceIterator) {
     //     return asStream(sourceIterator, false);
     // }
