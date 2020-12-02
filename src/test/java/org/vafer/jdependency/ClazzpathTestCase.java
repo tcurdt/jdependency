@@ -245,8 +245,8 @@ public class ClazzpathTestCase {
     public void testShouldShowNonUniqClasspathUnitsResponsibleForClash() throws IOException {
 
         final Clazzpath cp = new Clazzpath(true);
-        final ClazzpathUnit a = addClazzpathUnit.to(cp, "jar1");
-        final ClazzpathUnit b = addClazzpathUnit.to(cp, "jar1", "foo");
+        addClazzpathUnit.to(cp, "jar1");
+        addClazzpathUnit.to(cp, "jar1", "foo");
 
         final Set<Clazz> clashed = cp.getClashedClazzes();
 
@@ -280,10 +280,9 @@ public class ClazzpathTestCase {
         assertTrue(MessageDigest.isEqual(d1bytes, d2bytes));
         assertArrayEquals(d1bytes, d2bytes);
 
-        final Set<byte[]> set = new HashSet<>();
-        set.add(d1bytes);
-        set.add(d2bytes);
-
+        // final Set<byte[]> set = new HashSet<>();
+        // set.add(d1bytes);
+        // set.add(d2bytes);
         // assertEquals(1, set.size());
     }
 

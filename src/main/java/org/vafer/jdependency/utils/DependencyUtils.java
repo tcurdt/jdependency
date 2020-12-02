@@ -17,14 +17,8 @@ package org.vafer.jdependency.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.File;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
 import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 

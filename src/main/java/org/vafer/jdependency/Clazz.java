@@ -15,11 +15,10 @@
  */
 package org.vafer.jdependency;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.security.MessageDigest;
+import java.util.Set;
 
 /**
  * A `Clazz` represents the single class identifier inside a classpath.
