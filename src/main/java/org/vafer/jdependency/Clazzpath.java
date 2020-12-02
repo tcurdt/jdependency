@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Base64;
 import java.util.jar.JarInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,12 +30,10 @@ import java.security.MessageDigest;
 
 import org.objectweb.asm.ClassReader;
 import org.apache.commons.io.input.MessageDigestCalculatingInputStream;
-
-import org.vafer.jdependency.asm.DependenciesClassAdapter;
-
 import static org.apache.commons.io.FilenameUtils.normalize;
 import static org.apache.commons.io.FilenameUtils.separatorsToUnix;
 
+import org.vafer.jdependency.asm.DependenciesClassAdapter;
 import static org.vafer.jdependency.utils.StreamUtils.asStream;
 
 
