@@ -18,14 +18,15 @@ package org.vafer.jdependency;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+
+import org.apache.commons.io.HexDump;
 import org.objectweb.asm.ClassReader;
+import org.apache.commons.io.input.MessageDigestCalculatingInputStream;
 
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
@@ -41,6 +42,7 @@ public final class Clazzpath {
     private final Set<ClazzpathUnit> units = new HashSet<>();
     private final Map<String, Clazz> missing = new HashMap<>();
     private final Map<String, Clazz> clazzes = new HashMap<>();
+    private final boolean versions;
 
     private abstract static class Resource {
 
@@ -66,6 +68,14 @@ public final class Clazzpath {
         return pName != null
             && pName.endsWith(".class")
             && !pName.contains( "-" );
+    }
+
+    public Clazzpath() {
+        this(false);
+    }
+
+    public Clazzpath( final boolean pVersions ) {
+        versions = pVersions;
     }
 
     public boolean removeClazzpathUnit( final ClazzpathUnit pUnit ) {
@@ -154,9 +164,14 @@ public final class Clazzpath {
         for (Resource resource : resources) {
 
             // extract dependencies of clazz
-            InputStream inputStream = null;
+            InputStream inputStream = resource.getInputStream();
             try {
-                inputStream = resource.getInputStream();
+                final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                final MessageDigestCalculatingInputStream calculatingInputStream = new MessageDigestCalculatingInputStream(inputStream, digest);
+
+                if (versions) {
+                    inputStream = calculatingInputStream;
+                }
 
                 final DependenciesClassAdapter v = new DependenciesClassAdapter();
                 new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
@@ -174,8 +189,8 @@ public final class Clazzpath {
                         clazz = new Clazz(clazzName);
                     }
                 }
-                clazz.addClazzpathUnit(unit);
-
+                final String d = Base64.getEncoder().encodeToString(digest.digest());
+                clazz.addClazzpathUnit(unit, d);
 
                 /// add to classpath
                 clazzes.put(clazzName, clazz);
@@ -209,7 +224,8 @@ public final class Clazzpath {
                         clazz.addDependency(dep);
                     }
                 }
-
+            } catch(java.security.NoSuchAlgorithmException e) {
+                // well, let's pack and go home
             } finally {
                 if (shouldCloseResourceStream && inputStream != null) {
                     inputStream.close();

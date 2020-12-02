@@ -17,7 +17,9 @@ package org.vafer.jdependency;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.security.MessageDigest;
 
 /**
  * A `Clazz` represents the single class identifier inside a classpath.
@@ -29,7 +31,7 @@ public final class Clazz implements Comparable<Clazz> {
 
     private final Set<Clazz> dependencies = new HashSet<>();
     private final Set<Clazz> references = new HashSet<>();
-    private final Set<ClazzpathUnit> units = new HashSet<>();
+    private final Map<ClazzpathUnit, String> units = new HashMap<>();
 
     private final String name;
 
@@ -41,8 +43,8 @@ public final class Clazz implements Comparable<Clazz> {
         return name;
     }
 
-    public void addClazzpathUnit( final ClazzpathUnit pUnit ) {
-        units.add(pUnit);
+    public void addClazzpathUnit( final ClazzpathUnit pUnit, final String pDigest ) {
+        units.put(pUnit, pDigest);
     }
 
     public void removeClazzpathUnit( final ClazzpathUnit pUnit ) {
@@ -50,7 +52,12 @@ public final class Clazz implements Comparable<Clazz> {
     }
 
     public Set<ClazzpathUnit> getClazzpathUnits() {
-        return units;
+        return units.keySet();
+    }
+
+    public Set<String> getVersions() {
+        // System.out.println("clazz:" + name + " units:" + units);
+        return new HashSet<>(units.values());
     }
 
 

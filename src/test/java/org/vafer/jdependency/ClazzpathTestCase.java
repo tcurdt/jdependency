@@ -26,10 +26,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -238,6 +240,53 @@ public class ClazzpathTestCase {
 
         assertEquals("" + kept, 4, kept.size());
     }
+
+    @Test
+    public void testShouldShowNonUniqClasspathUnitsResponsibleForClash() throws IOException {
+
+        final Clazzpath cp = new Clazzpath(true);
+        final ClazzpathUnit a = addClazzpathUnit.to(cp, "jar1");
+        final ClazzpathUnit b = addClazzpathUnit.to(cp, "jar1", "foo");
+
+        final Set<Clazz> clashed = cp.getClashedClazzes();
+
+        assertEquals(59, clashed.size());
+
+        final Set<Clazz> uniq = clashed.stream()
+//            .map(c -> {
+//                System.out.println("clazz:" + c + " versions:" + c.getVersions());
+//                return c;
+//            })
+            .filter(c -> c.getVersions().size() == 1)
+            .collect(Collectors.toSet());
+
+        clashed.removeAll(uniq);
+
+        assertEquals(0, clashed.size());
+    }
+
+    @Test
+    public void testMessageDigest() throws Exception {
+
+        final MessageDigest d1 = MessageDigest.getInstance("SHA-256");
+        final MessageDigest d2 = MessageDigest.getInstance("SHA-256");
+
+        // assertEquals(d1, d2);
+        // assertEquals(d1.hashCode(), d2.hashCode());
+
+        final byte[] d1bytes = d1.digest();
+        final byte[] d2bytes = d2.digest();
+
+        assertTrue(MessageDigest.isEqual(d1bytes, d2bytes));
+        assertArrayEquals(d1bytes, d2bytes);
+
+        final Set<byte[]> set = new HashSet<>();
+        set.add(d1bytes);
+        set.add(d2bytes);
+
+        // assertEquals(1, set.size());
+    }
+
 
     @Test
     public void testWithModuleInfo() throws Exception {
