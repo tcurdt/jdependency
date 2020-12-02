@@ -43,6 +43,24 @@ or
       System.out.println("class " + clazz + " is contained in " + clazz.getClasspathUnits());
     }
 
+### finding different class versions
+
+    final Clazzpath cp = new Clazzpath(true);
+    cp.addClazzpathUnit(jar1, "jar1.jar");
+    cp.addClazzpathUnit(jar2, "jar2.jar");
+
+    final Set<Clazz> clashed = cp.getClashedClazzes();
+
+    final Set<Clazz> uniq = clashed.stream()
+      .filter(c -> c.getVersions().size() == 1)
+      .collect(Collectors.toSet());
+
+    clashed.removeAll(uniq);
+
+    for(Clazz clazz : clashed) {
+      System.out.println("class " + clazz + " differs accross " + clazz.getClasspathUnits());
+    }
+
 ### finding missing classes
 
     final Clazzpath cp = new Clazzpath();
