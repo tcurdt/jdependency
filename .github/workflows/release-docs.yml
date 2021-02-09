@@ -27,12 +27,15 @@ jobs:
     - name: Publish
       env:
         VERSION: ${{ github.ref }}
+        # echo "${GITHUB_REF/refs\/tags\/jdependency-v/}"
       run: |
-        echo "${GITHUB_REF/refs\/tags\/jdependency-v/}"
-        echo "VERSION=$VERSION"
-        echo "context.github.ref=${{ github.ref }}"
 
-        mkdir site
+        echo "tag_name=${{ github.event.release.tag_name }}"
+        echo "github.ref=${{ github.ref }}"
+        echo "VERSION=$VERSION"
+        echo "TAG=${GITHUB_REF##*/}"
+
+        mkdir -p site/release/VERSION
         mv target/site/xref site/release/VERSION/xref
         mv target/site/apidocs site/release/VERSION/apidocs
         echo "" > site/index.html
