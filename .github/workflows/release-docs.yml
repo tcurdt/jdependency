@@ -1,5 +1,8 @@
 name: docs
 
+env:
+  project: 'jdependency'
+
 on:
   - push
   # release:
@@ -22,10 +25,22 @@ jobs:
       run: mvn site
 
     - name: Publish
-      run: find ./target
+      env:
+        VERSION: ${{ github.ref }}
+      run: |
+        echo "${GITHUB_REF/refs\/tags\/jdependency-v/}"
+        echo "VERSION=$VERSION"
+        echo "context.github.ref=${{ github.ref }}"
+
+        mkdir site
+        mv target/site/xref site/release/VERSION/xref
+        mv target/site/apidocs site/release/VERSION/apidocs
+        echo "" > site/index.html
+        find site
 
     # - name: Publish
     #   uses: peaceiris/actions-gh-pages@v3
     #   with:
     #     github_token: ${{ secrets.GITHUB_TOKEN }}
     #     publish_dir: ./target/site
+    #     keep_files: true
