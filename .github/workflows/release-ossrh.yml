@@ -32,13 +32,7 @@ jobs:
     #       nexus_password: ${{ secrets.nexus_password }}
 
     - name: Deploy
-      run: mvn -B deploy site
+      run: mvn -B deploy
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-
-    # - name: Docs
-    #   uses: peaceiris/actions-gh-pages@v3
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
-    #     publish_dir: ./target/site

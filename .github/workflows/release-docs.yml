@@ -25,11 +25,6 @@ jobs:
       with:
         java-version: 14
 
-    - name: Version
-      uses: actions/setup-java@v1
-      with:
-        java-version: 14
-
     - name: Build
       run: mvn -B site
 
