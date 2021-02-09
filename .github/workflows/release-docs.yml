@@ -5,8 +5,8 @@ env:
 
 on:
   - push
-  # release:
-  #   types: [ published ]
+  release:
+    types: [ published ]
 
 jobs:
   docs:
@@ -18,6 +18,8 @@ jobs:
 
     - name: Version
       uses: tcurdt/action-verify-version-maven@main
+      with:
+        prefix: refs/tags/${{ env.project }}-v
       id: version
 
     - name: Setup
@@ -28,7 +30,7 @@ jobs:
     - name: Build
       run: mvn -B site
 
-    - name: Publish
+    - name: Prepare
       env:
         VERSION: ${{ steps.version.outputs.version }}
       run: |
@@ -41,9 +43,11 @@ jobs:
         cat site/xref/index.html
         cat site/apidocs/index.html
 
-    # - name: Publish
-    #   uses: peaceiris/actions-gh-pages@v3
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
-    #     publish_dir: ./target/site
-    #     keep_files: true
+    - name: Publish
+      uses: peaceiris/actions-gh-pages@v3
+      env:
+        VERSION: ${{ steps.version.outputs.version }}
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site
+        keep_files: true

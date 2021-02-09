@@ -91,6 +91,7 @@
       <version>${asm.version}</version>
     </dependency>
   </dependencies>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -149,13 +150,6 @@
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.6</version>
         </plugin>
-        <!--
-        <plugin>
-          <groupId>org.eluder.coveralls</groupId>
-          <artifactId>coveralls-maven-plugin</artifactId>
-          <version>4.3.0</version>
-        </plugin>
-        -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
@@ -299,25 +293,17 @@
           </execution>
         </executions>
       </plugin>
-      <!--
-      <plugin>
-        <groupId>org.eluder.coveralls</groupId>
-        <artifactId>coveralls-maven-plugin</artifactId>
-      </plugin>
-      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
-            <!-- <id>attach-shade</id> -->
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
             <configuration>
               <minimizeJar>true</minimizeJar>
-              <!-- <shadedArtifactAttached>false</shadedArtifactAttached> -->
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
@@ -356,23 +342,9 @@
           </execution>
         </executions>
       </plugin>
-      <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-      </executions>
-     </plugin>
-     -->
     </plugins>
   </build>
+
   <reporting>
     <excludeDefaults>true</excludeDefaults>
     <outputDirectory>${project.build.directory}/site</outputDirectory>
@@ -431,4 +403,61 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.2.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
