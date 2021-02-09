@@ -40,10 +40,11 @@ jobs:
 
         echo "VERSION=$VERSION"
 
-        mkdir -p site/release/VERSION
+        mkdir -p site/release/VERSION site/xref site/apidocs
         mv target/site/xref site/release/VERSION/xref
         mv target/site/apidocs site/release/VERSION/apidocs
-        echo "" > site/index.html
+        echo "<meta http-equiv='refresh' content='0; URL=/release/VERSION/xref' />" > site/xref/index.html
+        echo "<meta http-equiv='refresh' content='0; URL=/release/VERSION/apidocs' />" > site/apidocs/index.html
         find site
 
     # - name: Publish
