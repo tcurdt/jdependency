@@ -1,0 +1,31 @@
+name: docs
+
+on:
+  - push
+  # release:
+  #   types: [ published ]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
+
+    - name: Build
+      run: mvn site
+
+    - name: Publish
+      run: find ./target
+
+    # - name: Publish
+    #   uses: peaceiris/actions-gh-pages@v3
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     publish_dir: ./target/site
