@@ -12,6 +12,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Version
+      uses: tcurdt/action-verify-version-maven@main
+
     - name: Setup
       uses: actions/setup-java@v1
       with:

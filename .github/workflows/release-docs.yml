@@ -16,24 +16,29 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Version
+      uses: tcurdt/action-verify-version-maven@main
+      id: version
+
     - name: Setup
       uses: actions/setup-java@v1
       with:
         java-version: 14
 
+    - name: Version
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
+
     - name: Build
-      run: mvn site
+      run: mvn -B site
 
     - name: Publish
       env:
-        VERSION: ${{ github.ref }}
-        # echo "${GITHUB_REF/refs\/tags\/jdependency-v/}"
+        VERSION: ${{ steps.version.outputs.version }}
       run: |
 
-        echo "tag_name=${{ github.event.release.tag_name }}"
-        echo "github.ref=${{ github.ref }}"
         echo "VERSION=$VERSION"
-        echo "TAG=${GITHUB_REF##*/}"
 
         mkdir -p site/release/VERSION
         mv target/site/xref site/release/VERSION/xref
