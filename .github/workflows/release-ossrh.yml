@@ -22,9 +22,6 @@ jobs:
       with:
         java-version: 14
 
-    - name: Build
-      run: mvn -B package --file pom.xml
-
     - name: Setup Maven Central
       uses: actions/setup-java@v1
       with: # overwrite settings.xml
@@ -35,8 +32,12 @@ jobs:
         gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
+    - name: Show
+      run: |
+        cat settings.xml
+
     - name: Publish to Maven Central
-      run: mvn -B -Prelease deploy
+      run: mvn -B -Prelease --file pom.xml package deploy
       env:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
