@@ -39,9 +39,6 @@ jobs:
         mv target/site/apidocs site/release/$VERSION/apidocs
         echo "<meta http-equiv='refresh' content='0; URL=/jdependency/release/$VERSION/xref' />" > site/xref/index.html
         echo "<meta http-equiv='refresh' content='0; URL=/jdependency/release/$VERSION/apidocs' />" > site/apidocs/index.html
-        find site
-        cat site/xref/index.html
-        cat site/apidocs/index.html
 
     - name: Publish
       uses: peaceiris/actions-gh-pages@v3
