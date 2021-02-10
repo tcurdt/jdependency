@@ -1,6 +1,7 @@
-## Version 2.6.0, release ...
+## Version 2.6.0, release 10.02.2012
 
 - Fixed issue #47, ClazzpathUnits should not be assigned for dependencies
+- Upgraded to ASM 9.1
 
 ## Version 2.5.0, release 16.10.2020
 
