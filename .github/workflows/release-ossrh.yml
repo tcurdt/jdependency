@@ -35,7 +35,8 @@ jobs:
     - name: Show
       run: |
         find .
-        cat settings.xml || true
+        find ~/.m2
+        cat ~/.m2/settings.xml | grep username
 
     - name: Publish to Maven Central
       run: mvn -B -Prelease --file pom.xml package deploy
