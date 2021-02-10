@@ -4,12 +4,11 @@ on:
   release:
     types: [ published ]
 
-environment:
-  name: maven-central
 
 jobs:
   ossrh:
     runs-on: ubuntu-latest
+    environment: maven-central
     steps:
 
     - name: Checkout
