@@ -34,8 +34,8 @@ jobs:
 
     - name: Env
       run: |
-      echo "Deploying to Maven Central as ${{ secrets.OSSRH_USERNAME }}"
-      cat ~/.m2/settings.xml | grep -v "<passphrase"
+        echo "Deploying to Maven Central as ${{ secrets.OSSRH_USERNAME }}"
+        cat ~/.m2/settings.xml | grep -v "<passphrase"
 
     - name: Publish to Maven Central
       run: mvn -X -B -Prelease --file pom.xml package deploy
