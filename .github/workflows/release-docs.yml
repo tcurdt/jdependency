@@ -37,8 +37,8 @@ jobs:
         mkdir -p site/release/$VERSION site/xref site/apidocs
         mv target/site/xref site/release/$VERSION/xref
         mv target/site/apidocs site/release/$VERSION/apidocs
-        echo "<meta http-equiv='refresh' content='0; URL=/release/$VERSION/xref' />" > site/xref/index.html
-        echo "<meta http-equiv='refresh' content='0; URL=/release/$VERSION/apidocs' />" > site/apidocs/index.html
+        echo "<meta http-equiv='refresh' content='0; URL=/jdependency/release/$VERSION/xref' />" > site/xref/index.html
+        echo "<meta http-equiv='refresh' content='0; URL=/jdependency/release/$VERSION/apidocs' />" > site/apidocs/index.html
         find site
         cat site/xref/index.html
         cat site/apidocs/index.html
