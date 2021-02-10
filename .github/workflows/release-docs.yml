@@ -4,9 +4,9 @@ env:
   project: 'jdependency'
 
 on:
-  - push
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - jdependency-*
 
 jobs:
   docs:
