@@ -1,9 +1,9 @@
 name: ossrh
 
 on:
-  release:
-    types: [ published ]
-
+  push:
+    tags:
+      - jdependency-*
 
 jobs:
   ossrh:
