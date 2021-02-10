@@ -32,13 +32,8 @@ jobs:
         gpg-private-key: ${{ secrets.MAVEN_GPG_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-    - name: Env
-      run: |
-        echo "Deploying to Maven Central as ${{ secrets.OSSRH_USERNAME }}"
-        cat ~/.m2/settings.xml | grep -v "<passphrase"
-
     - name: Publish to Maven Central
-      run: mvn -X -B -Prelease --file pom.xml package deploy
+      run: mvn -B -Prelease --file pom.xml package deploy
       env:
         MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
