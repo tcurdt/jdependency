@@ -34,7 +34,8 @@ jobs:
 
     - name: Show
       run: |
-        cat settings.xml
+        find .
+        cat settings.xml || true
 
     - name: Publish to Maven Central
       run: mvn -B -Prelease --file pom.xml package deploy
