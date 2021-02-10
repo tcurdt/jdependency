@@ -6,7 +6,7 @@
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <additionalparam>-Xdoclint:none</additionalparam>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenVersion>3.6.0</mavenVersion>
     <mavenPluginPluginVersion>3.6.0</mavenPluginPluginVersion>
     <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
     <asm.version>9.1</asm.version>
