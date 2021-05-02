@@ -20,12 +20,12 @@ jobs:
     - name: Setup
       uses: actions/setup-java@v1
       with:
-        java-version: 14
+        java-version: 8
 
     - name: Setup Maven Central
       uses: actions/setup-java@v1
       with: # overwrite settings.xml
-        java-version: 14
+        java-version: 8
         server-id: ossrh
         server-username: OSSRH_USERNAME
         server-password: OSSRH_PASSWORD
