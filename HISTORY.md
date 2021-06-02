@@ -1,3 +1,9 @@
+## Version 2.7.0, release 02.06.2021
+
+- Changed test with java 16
+- Changed requires maven 3.6.0
+- Added ASM9 Opcodes
+
 ## Version 2.6.0, release 10.02.2021
 
 - Fixed issue #47, ClazzpathUnits should not be assigned for dependencies
