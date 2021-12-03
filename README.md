@@ -91,6 +91,7 @@ or
 * [jarjar](http://code.google.com/p/jarjar/)
 * [proguard](http://proguard.sourceforge.net/)
 * [gradle-lean](https://github.com/cuzfrog/gradle-lean)
+* [DepClean](https://github.com/castor-software/depclean)
 
 ## License
 
