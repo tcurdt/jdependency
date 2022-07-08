@@ -1,3 +1,7 @@
+## Version 2.8.0, release xx.07.2022
+
+- Upgraded to ASM 9.3
+
 ## Version 2.7.0, release 02.06.2021
 
 - Changed test with java 16
