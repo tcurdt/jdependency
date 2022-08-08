@@ -87,11 +87,19 @@ or
 
 ## Related projects
 
-* [maven-shade-plugin](https://maven.apache.org/plugins/maven-shade-plugin/)
-* [jarjar](http://code.google.com/p/jarjar/)
-* [proguard](http://proguard.sourceforge.net/)
-* [gradle-lean](https://github.com/cuzfrog/gradle-lean)
-* [DepClean](https://github.com/castor-software/depclean)
+
+provides a report of the dependencies used/unused and provides a debloated version of the pom.xml
+
+
+| Project | Description |
+|---|---|
+| [maven-shade-plugin](https://maven.apache.org/plugins/maven-shade-plugin/) | allows to inline and optimize dependencies into a single jar |
+| [gradle-lean](https://github.com/cuzfrog/gradle-lean) | gradle version of the maven-shade plugin (stale) |
+| [shadow](https://github.com/johnrengelman/shadow) | gradle version of the maven-shade plugin |
+| [jarjar](http://code.google.com/p/jarjar/) | allows to inline and optimize dependencies into a single jar (stale) |
+| [proguard](https://github.com/Guardsquare/proguard) | obfuscator, shrinker (GPL) |
+| [DepClean](https://github.com/castor-software/depclean) |  provides a report of the dependencies used/unused and provides a debloated version of the pom.xml|
+
 
 ## License
 
