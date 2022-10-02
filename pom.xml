@@ -9,7 +9,7 @@
     <mavenVersion>3.6.0</mavenVersion>
     <mavenPluginPluginVersion>3.6.0</mavenPluginPluginVersion>
     <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
-    <asm.version>9.3</asm.version>
+    <asm.version>9.4</asm.version>
   </properties>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.vafer</groupId>
