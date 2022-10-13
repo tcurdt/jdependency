@@ -53,15 +53,17 @@ public final class DependencyUtilsTestCase {
     public void testShouldFindDependenciesOfClassObject() throws Exception {
         final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
         final Set<String> expectedDependencies = new HashSet<String>(Arrays.asList(
-                "java.lang.String",
-                "java.lang.IllegalArgumentException",
-                "java.lang.CloneNotSupportedException",
                 "java.lang.Class",
-                "java.lang.InterruptedException",
+                "java.lang.CloneNotSupportedException",
+                "java.lang.IllegalArgumentException",
                 "java.lang.Integer",
+                "java.lang.InterruptedException",
                 "java.lang.Object",
+                "java.lang.String",
                 "java.lang.StringBuilder",
-                "java.lang.Throwable"
+                "java.lang.Thread",
+                "java.lang.Throwable",
+                "jdk.internal.misc.Blocker"
                 ));
 
         final int jdk = getJavaVersion();
