@@ -1,3 +1,7 @@
+## Version 2.9.0, release xx.10.2022
+
+- Upgraded to ASM 9.4
+
 ## Version 2.8.0, release 04.08.2022
 
 - Upgraded to ASM 9.3
