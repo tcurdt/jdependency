@@ -83,7 +83,9 @@ public final class DependencyUtilsTestCase {
             expectedDependencies.add("jdk.internal.misc.Blocker");
         }
 
-        assertEquals("deps should be the same for jdk " + jdk, expectedDependencies, dependencies);
+        assertEquals("deps should be the same for jdk " + jdk + " (" + System.getProperty("java.version") + ")",
+            expectedDependencies,
+            dependencies);
     }
 
     @Test
