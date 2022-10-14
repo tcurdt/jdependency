@@ -62,8 +62,7 @@ public final class DependencyUtilsTestCase {
                 "java.lang.String",
                 "java.lang.StringBuilder",
                 "java.lang.Thread",
-                "java.lang.Throwable",
-                "jdk.internal.misc.Blocker"
+                "java.lang.Throwable"
                 ));
 
         final int jdk = getJavaVersion();
@@ -78,6 +77,10 @@ public final class DependencyUtilsTestCase {
 
         if (jdk > 15) {
             expectedDependencies.add("jdk.internal.vm.annotation.IntrinsicCandidate");
+        }
+
+        if (jdk > 16) {
+            expectedDependencies.add("jdk.internal.misc.Blocker");
         }
 
         assertEquals("deps should be the same for jdk " + jdk, expectedDependencies, dependencies);
