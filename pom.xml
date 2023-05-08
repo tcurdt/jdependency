@@ -9,7 +9,7 @@
     <mavenVersion>3.6.0</mavenVersion>
     <mavenPluginPluginVersion>3.6.0</mavenPluginPluginVersion>
     <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
-    <asm.version>9.4</asm.version>
+    <asm.version>9.5</asm.version>
   </properties>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.vafer</groupId>
@@ -332,15 +332,15 @@
             </goals>
             <configuration>
               <target unless="maven.test.skip">
-                <mkdir dir="${test.workingDirectory}"></mkdir>
+                <mkdir dir="${test.workingDirectory}"/>
                 <copy todir="${test.workingDirectory}">
-                  <fileset dir="${basedir}/src/test/resources" includes="*.jar"></fileset>
+                  <fileset dir="${basedir}/src/test/resources" includes="*.jar"/>
                 </copy>
-                <unjar dest="${test.workingDirectory}/jar1" src="${test.workingDirectory}/jar1.jar"></unjar>
-                <unjar dest="${test.workingDirectory}/jar2" src="${test.workingDirectory}/jar2.jar"></unjar>
-                <unjar dest="${test.workingDirectory}/jar1-missing" src="${test.workingDirectory}/jar1-missing.jar"></unjar>
-                <unjar dest="${test.workingDirectory}/jar3using1" src="${test.workingDirectory}/jar3using1.jar"></unjar>
-                <unjar dest="${test.workingDirectory}/asm-6.0_BETA" src="${test.workingDirectory}/asm-6.0_BETA.jar"></unjar>
+                <unjar dest="${test.workingDirectory}/jar1" src="${test.workingDirectory}/jar1.jar"/>
+                <unjar dest="${test.workingDirectory}/jar2" src="${test.workingDirectory}/jar2.jar"/>
+                <unjar dest="${test.workingDirectory}/jar1-missing" src="${test.workingDirectory}/jar1-missing.jar"/>
+                <unjar dest="${test.workingDirectory}/jar3using1" src="${test.workingDirectory}/jar3using1.jar"/>
+                <unjar dest="${test.workingDirectory}/asm-6.0_BETA" src="${test.workingDirectory}/asm-6.0_BETA.jar"/>
               </target>
             </configuration>
           </execution>
