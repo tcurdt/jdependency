@@ -1,4 +1,4 @@
-## Version 2.9.0, release 10.08.2023
+## Version 2.9.0, release 11.08.2023
 
 - Upgraded to ASM 9.4 (JDK 20 support)
 
