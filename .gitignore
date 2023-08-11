@@ -3,3 +3,4 @@ target
 *.iml
 *.ipr
 *.iws
+dependency-reduced-pom.xml
