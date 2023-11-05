@@ -41,6 +41,12 @@
       <email>krosenvold@apache.org</email>
     </developer>
   </developers>
+  <contributors>
+    <contributor>
+      <name>Niels Basjes</name>
+      <email>nielsbasjes@apache.org</email>
+    </contributor>
+  </contributors>
   <scm>
     <connection>scm:git:git@github.com:tcurdt/jdependency.git</connection>
     <developerConnection>scm:git:git@github.com:tcurdt/jdependency.git</developerConnection>

@@ -23,17 +23,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Base64;
+import java.util.TreeMap;
 import java.util.jar.JarInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 
+import org.apache.commons.io.input.MessageDigestInputStream;
 import org.objectweb.asm.ClassReader;
-import org.apache.commons.io.input.MessageDigestCalculatingInputStream;
 import static org.apache.commons.io.FilenameUtils.normalize;
 import static org.apache.commons.io.FilenameUtils.separatorsToUnix;
 
+import org.vafer.jdependency.Clazz.ParsedFileName;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
+
+import static org.vafer.jdependency.Clazz.parseClassFileName;
 import static org.vafer.jdependency.utils.StreamUtils.asStream;
 
 
@@ -46,20 +50,16 @@ public final class Clazzpath {
     private final boolean versions;
 
     private abstract static class Resource {
+        public final String fileName;
+        public final String forJava;
+        public final String name; // Class name !
 
-        private static final int ext = ".class".length();
-
-        public final String name;
-
-        Resource( final String pName ) {
+        Resource( final String pFileName ) {
             super();
-
-            final int all = pName.length();
-
-            // foo/bar/Foo.class -> // foo.bar.Foo
-            this.name = separatorsToUnix(pName)
-                .substring(0, all - ext)
-                .replace('/', '.');
+            this.fileName = pFileName;
+            ParsedFileName parsedFileName = parseClassFileName(pFileName);
+            forJava = parsedFileName.forJava;
+            name = parsedFileName.className;
         }
 
         abstract InputStream getInputStream() throws IOException;
@@ -68,7 +68,7 @@ public final class Clazzpath {
     private static boolean isValidResourceName( final String pName ) {
         return pName != null
             && pName.endsWith(".class")
-            && !pName.contains( "-" );
+            && ( !pName.contains( "-" ) || pName.contains("META-INF/versions/") );
     }
 
     public Clazzpath() {
@@ -86,7 +86,7 @@ public final class Clazzpath {
         for (Clazz clazz : unitClazzes) {
             clazz.removeClazzpathUnit(pUnit);
             if (clazz.getClazzpathUnits().size() == 0) {
-                clazzes.remove(clazz.toString());
+                clazzes.remove(clazz.getName());
             }
         }
 
@@ -168,7 +168,8 @@ public final class Clazzpath {
             InputStream inputStream = resource.getInputStream();
             try {
                 final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                final MessageDigestCalculatingInputStream calculatingInputStream = new MessageDigestCalculatingInputStream(inputStream, digest);
+                final  MessageDigestInputStream calculatingInputStream =
+                        MessageDigestInputStream.builder().setInputStream(inputStream).setMessageDigest(digest).get();
 
                 if (versions) {
                     inputStream = calculatingInputStream;
@@ -190,6 +191,7 @@ public final class Clazzpath {
                         clazz = new Clazz(clazzName);
                     }
                 }
+                clazz.addMultiReleaseFile(unit, resource.forJava, resource.fileName);
                 final String d = Base64.getEncoder().encodeToString(digest.digest());
                 clazz.addClazzpathUnit(unit, d);
 
@@ -241,6 +243,10 @@ public final class Clazzpath {
 
     public Set<Clazz> getClazzes() {
         return new HashSet<>(clazzes.values());
+    }
+
+    public Map<String, Clazz> getClazzesMap() {
+        return new TreeMap<>(clazzes);
     }
 
     public Set<Clazz> getClashedClazzes() {
