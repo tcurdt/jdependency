@@ -18,6 +18,7 @@ package org.vafer.jdependency;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public final class ClazzpathUnit {
 
@@ -34,6 +35,10 @@ public final class ClazzpathUnit {
 
     public Set<Clazz> getClazzes() {
         return new HashSet<>(clazzes.values());
+    }
+
+    public Map<String, Clazz> getClazzesMap() {
+        return new TreeMap<>(clazzes);
     }
 
     public Clazz getClazz( final String pClazzName ) {

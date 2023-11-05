@@ -19,24 +19,40 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.vafer.jdependency.Clazz.parseClassFileName;
 
 public class ClazzpathUnitTestCase {
 
     private static Path resourcePath( String filename ) {
-        return Paths.get(filename);
+        ClassLoader classLoader = ClazzpathUnitTestCase.class.getClassLoader();
+        URL resource = classLoader.getResource(filename);
+        if (resource == null) {
+            return null;
+        }
+        return Paths.get(resource.getFile());
     }
 
     private static File resourceFile( String filename ) {
-        return Paths.get(filename).toFile();
+        ClassLoader classLoader = ClazzpathUnitTestCase.class.getClassLoader();
+        URL resource = classLoader.getResource(filename);
+        if (resource == null) {
+            return null;
+        }
+        return new File(resource.getFile());
     }
 
     @Test
@@ -69,10 +85,8 @@ public class ClazzpathUnitTestCase {
             .flatMap( i -> i.getClazzpathUnits().stream() )
             .map( i -> i.toString() )
             .collect(Collectors.toSet());
-        final Set<String> unitse = new HashSet<String>(Arrays.asList(
-            "woodstox-core-6.2.3.jar"
-            ));
-        assertEquals(unitse, units);
+        assertEquals(1, units.size());
+        assertTrue(units.iterator().next().endsWith("woodstox-core-6.2.3.jar"));
     }
 
     @Test
@@ -153,13 +167,13 @@ public class ClazzpathUnitTestCase {
         final Clazzpath cp = new Clazzpath();
 
         final ClazzpathUnit u1 = cp.addClazzpathUnit(resourceFile("jar1.jar"));
-        assertEquals(u1.toString(), "jar1.jar");
+        assertTrue(u1.toString().endsWith("jar1.jar"));
 
         final ClazzpathUnit u1e = cp.addClazzpathUnit(resourceFile("jar1.jar"), "jar1");
         assertEquals(u1e.toString(), "jar1");
 
         final ClazzpathUnit u2 = cp.addClazzpathUnit(resourcePath("jar2.jar"));
-        assertEquals(u2.toString(), "jar2.jar");
+        assertTrue(u2.toString().endsWith("jar2.jar"));
 
         final ClazzpathUnit u2e = cp.addClazzpathUnit(resourcePath("jar2.jar"), "jar2");
         assertEquals(u2e.toString(), "jar2");
@@ -177,6 +191,90 @@ public class ClazzpathUnitTestCase {
         final Set<Clazz> transitiveDeps = u.getTransitiveDependencies();
         assertEquals(116, transitiveDeps.size());
 
+    }
+
+
+    private void verifyFileNameParsing(String fileName, String forJava, String className) {
+        Clazz.ParsedFileName result = parseClassFileName(fileName);
+        assertEquals(className, result.className);
+        assertEquals(forJava, result.forJava);
+    }
+
+    private void verifyFileNameParsingInvalid(String fileName) {
+        assertNull(parseClassFileName(fileName));
+    }
+
+    @Test
+    public void testFileNameCheck(){
+        assertFalse(Clazz.isMultiReleaseClassFile("nl/basjes/maven/multijdk/App.class"));
+        assertTrue(Clazz.isMultiReleaseClassFile("META-INF/versions/11/nl/basjes/maven/multijdk/App.class"));
+        assertTrue(Clazz.isMultiReleaseClassFile("META-INF/versions/1234/nl/basjes/maven/multijdk/App.class"));
+    }
+
+    @Test
+    public void testFileNameParsing(){
+        verifyFileNameParsing("nl/basjes/maven/multijdk/App.class",                         "8",    "nl.basjes.maven.multijdk.App");
+        verifyFileNameParsing("META-INF/versions/11/nl/basjes/maven/multijdk/App.class",    "11",   "nl.basjes.maven.multijdk.App");
+        verifyFileNameParsing("META-INF/versions/1234/nl/basjes/maven/multijdk/App.class",  "1234", "nl.basjes.maven.multijdk.App");
+
+        verifyFileNameParsingInvalid("nl/basjes/maven/multijdk/App.classsssss");
+        verifyFileNameParsingInvalid("nl/basjes/maven/multijdk/App.txt");
+        verifyFileNameParsingInvalid("META-INF/versions/xxx/nl/basjes/maven/multijdk/App.class");
+    }
+
+    private void verifyFileInClazz(Clazz clazz, String expectedFilename, String forJava, boolean mustBePresent) {
+        Clazz.ClazzFile actualClazzFile = clazz.getFileNames().get(forJava);
+        String actualFileName = actualClazzFile == null ? null : actualClazzFile.getFilename();
+        if (mustBePresent) {
+            assertEquals("Incorrect filename for Java "+forJava, expectedFilename, actualFileName);
+        } else {
+            assertNull("Unexpected filename for Java "+forJava, actualFileName);
+        }
+    }
+
+    private void verifyClazzFiles(Clazz clazz, boolean have8, boolean have11, boolean have17) {
+        String expectedFilename = clazz.getName().replace(".", "/")+".class";
+        verifyFileInClazz(clazz, expectedFilename, "8", have8);
+        verifyFileInClazz(clazz, "META-INF/versions/11/" + expectedFilename, "11", have11);
+        verifyFileInClazz(clazz, "META-INF/versions/17/" + expectedFilename, "17", have17);
+    }
+
+    @Test
+    public void testMultiReleaseJar() throws IOException {
+        final Clazzpath cp = new Clazzpath();
+
+        // The Application
+        final ClazzpathUnit app = cp.addClazzpathUnit(resourceFile("uses-multi-jdk-1.0.jar"));
+        Map<String, Clazz> appClazzes = app.getClazzesMap();
+
+        assertEquals(1, appClazzes.size());
+        verifyClazzFiles(appClazzes.get("nl.example.Main"), true, false, false);
+
+        // The multi release dependency
+        final ClazzpathUnit dependency = cp.addClazzpathUnit(resourceFile("multi-jdk-1.0.0.jar"));
+        Map<String, Clazz> dependencyClazzes = dependency.getClazzesMap();
+                                                                                             // Java 8, Java 11, Java 17
+        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.Main"),                true,   false,   false);
+        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.App"),                 true,   true,    true);
+        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.AbstractJavaVersion"), true,   false,   false);
+        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.JavaVersion"),         true,   true,    false);
+        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.Unused"),              true,   true,    true);
+        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.OnlyUsedInJava17"),    false,  true,    false);
+        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.SpecificToJava11"),    false,  true,    false);
+        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.SpecificToJava17"),    false,  false,   true);
+
+        // Check which are obsolete
+        final Set<Clazz> removable = cp.getClazzes();
+        removable.removeAll(appClazzes.values());
+        removable.removeAll(app.getTransitiveDependencies());
+
+        Map<String, Clazz> removableClazzes = removable
+                .stream()
+                .collect(Collectors.toMap(Clazz::getName, Function.identity()));
+
+        assertEquals(2, removableClazzes.size());
+        assertTrue(removableClazzes.containsKey("nl.basjes.maven.multijdk.Main"));
+        assertTrue(removableClazzes.containsKey("nl.basjes.maven.multijdk.Unused"));
     }
 
 }
