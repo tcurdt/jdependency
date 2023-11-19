@@ -86,7 +86,7 @@ public class ClazzpathUnitTestCase {
             .map( i -> i.toString() )
             .collect(Collectors.toSet());
         assertEquals(1, units.size());
-        assertTrue(units.iterator().next().endsWith("woodstox-core-6.2.3.jar"));
+        assertTrue(units.iterator().next().endsWith("/woodstox-core-6.2.3.jar"));
     }
 
     @Test
@@ -167,13 +167,13 @@ public class ClazzpathUnitTestCase {
         final Clazzpath cp = new Clazzpath();
 
         final ClazzpathUnit u1 = cp.addClazzpathUnit(resourceFile("jar1.jar"));
-        assertTrue(u1.toString().endsWith("jar1.jar"));
+        assertTrue(u1.toString().endsWith("/jar1.jar"));
 
         final ClazzpathUnit u1e = cp.addClazzpathUnit(resourceFile("jar1.jar"), "jar1");
         assertEquals(u1e.toString(), "jar1");
 
         final ClazzpathUnit u2 = cp.addClazzpathUnit(resourcePath("jar2.jar"));
-        assertTrue(u2.toString().endsWith("jar2.jar"));
+        assertTrue(u2.toString().endsWith("/jar2.jar"));
 
         final ClazzpathUnit u2e = cp.addClazzpathUnit(resourcePath("jar2.jar"), "jar2");
         assertEquals(u2e.toString(), "jar2");
