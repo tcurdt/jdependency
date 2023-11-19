@@ -1,4 +1,4 @@
-package nl.basjes.maven.multijdk;
+package org.vafer.multijdk;
 /*
  * Copyright 2010-2023 The jdependency developers.
  *
@@ -15,8 +15,19 @@ package nl.basjes.maven.multijdk;
  * limitations under the License.
  */
 
-public class App {
-    public String doSomething() {
-        return new SpecificToJava11().doSomething() + " 11";
+import java.util.stream.Collectors;
+
+public class JavaVersion extends AbstractJavaVersion {
+    public String getCodeVersion() {
+        return "11";
+    }
+
+    public String getJavaVersion() {
+        return Runtime.version()
+            .version()
+            .stream()
+            .limit(3)
+            .map(Object::toString)
+            .collect(Collectors.joining("."));
     }
 }

@@ -1,4 +1,4 @@
-package nl.basjes.maven.multijdk;
+package org.vafer.multijdk;
 /*
  * Copyright 2010-2023 The jdependency developers.
  *
@@ -14,13 +14,8 @@ package nl.basjes.maven.multijdk;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-public class Main {
-    public static void main(String[] args) {
-        JavaVersion javaVersion = new JavaVersion();
-        System.out.println("Java detect: " + javaVersion.getCodeVersion());
-        System.out.println("Java major : " + javaVersion.getJavaMajorVersion());
-        System.out.println("App code   : " + new App().doSomething());
-        System.out.println("Unused     : " + new Unused().doSomething());
+public class Unused {
+    public String doSomething() {
+        return "java 17";
     }
 }

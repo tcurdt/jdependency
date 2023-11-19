@@ -206,20 +206,20 @@ public class ClazzpathUnitTestCase {
 
     @Test
     public void testFileNameCheck(){
-        assertFalse(Clazz.isMultiReleaseClassFile("nl/basjes/maven/multijdk/App.class"));
-        assertTrue(Clazz.isMultiReleaseClassFile("META-INF/versions/11/nl/basjes/maven/multijdk/App.class"));
-        assertTrue(Clazz.isMultiReleaseClassFile("META-INF/versions/1234/nl/basjes/maven/multijdk/App.class"));
+        assertFalse(Clazz.isMultiReleaseClassFile("org/vafer/multijdk/App.class"));
+        assertTrue(Clazz.isMultiReleaseClassFile("META-INF/versions/11/org/vafer/multijdk/App.class"));
+        assertTrue(Clazz.isMultiReleaseClassFile("META-INF/versions/1234/org/vafer/multijdk/App.class"));
     }
 
     @Test
     public void testFileNameParsing(){
-        verifyFileNameParsing("nl/basjes/maven/multijdk/App.class",                         "8",    "nl.basjes.maven.multijdk.App");
-        verifyFileNameParsing("META-INF/versions/11/nl/basjes/maven/multijdk/App.class",    "11",   "nl.basjes.maven.multijdk.App");
-        verifyFileNameParsing("META-INF/versions/1234/nl/basjes/maven/multijdk/App.class",  "1234", "nl.basjes.maven.multijdk.App");
+        verifyFileNameParsing("org/vafer/multijdk/App.class",                         "8",    "org.vafer.multijdk.App");
+        verifyFileNameParsing("META-INF/versions/11/org/vafer/multijdk/App.class",    "11",   "org.vafer.multijdk.App");
+        verifyFileNameParsing("META-INF/versions/1234/org/vafer/multijdk/App.class",  "1234", "org.vafer.multijdk.App");
 
-        verifyFileNameParsingInvalid("nl/basjes/maven/multijdk/App.classsssss");
-        verifyFileNameParsingInvalid("nl/basjes/maven/multijdk/App.txt");
-        verifyFileNameParsingInvalid("META-INF/versions/xxx/nl/basjes/maven/multijdk/App.class");
+        verifyFileNameParsingInvalid("org/vafer/multijdk/App.classsssss");
+        verifyFileNameParsingInvalid("org/vafer/multijdk/App.txt");
+        verifyFileNameParsingInvalid("META-INF/versions/xxx/org/vafer/multijdk/App.class");
     }
 
     private void verifyFileInClazz(Clazz clazz, String expectedFilename, String forJava, boolean mustBePresent) {
@@ -254,14 +254,14 @@ public class ClazzpathUnitTestCase {
         final ClazzpathUnit dependency = cp.addClazzpathUnit(resourceFile("multi-jdk-1.0.0.jar"));
         Map<String, Clazz> dependencyClazzes = dependency.getClazzesMap();
                                                                                              // Java 8, Java 11, Java 17
-        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.Main"),                true,   false,   false);
-        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.App"),                 true,   true,    true);
-        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.AbstractJavaVersion"), true,   false,   false);
-        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.JavaVersion"),         true,   true,    false);
-        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.Unused"),              true,   true,    true);
-        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.OnlyUsedInJava17"),    false,  true,    false);
-        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.SpecificToJava11"),    false,  true,    false);
-        verifyClazzFiles(dependencyClazzes.get("nl.basjes.maven.multijdk.SpecificToJava17"),    false,  false,   true);
+        verifyClazzFiles(dependencyClazzes.get("org.vafer.multijdk.Main"),                true,   false,   false);
+        verifyClazzFiles(dependencyClazzes.get("org.vafer.multijdk.App"),                 true,   true,    true);
+        verifyClazzFiles(dependencyClazzes.get("org.vafer.multijdk.AbstractJavaVersion"), true,   false,   false);
+        verifyClazzFiles(dependencyClazzes.get("org.vafer.multijdk.JavaVersion"),         true,   true,    false);
+        verifyClazzFiles(dependencyClazzes.get("org.vafer.multijdk.Unused"),              true,   true,    true);
+        verifyClazzFiles(dependencyClazzes.get("org.vafer.multijdk.OnlyUsedInJava17"),    false,  true,    false);
+        verifyClazzFiles(dependencyClazzes.get("org.vafer.multijdk.SpecificToJava11"),    false,  true,    false);
+        verifyClazzFiles(dependencyClazzes.get("org.vafer.multijdk.SpecificToJava17"),    false,  false,   true);
 
         // Check which are obsolete
         final Set<Clazz> removable = cp.getClazzes();
@@ -273,8 +273,8 @@ public class ClazzpathUnitTestCase {
                 .collect(Collectors.toMap(Clazz::getName, Function.identity()));
 
         assertEquals(2, removableClazzes.size());
-        assertTrue(removableClazzes.containsKey("nl.basjes.maven.multijdk.Main"));
-        assertTrue(removableClazzes.containsKey("nl.basjes.maven.multijdk.Unused"));
+        assertTrue(removableClazzes.containsKey("org.vafer.multijdk.Main"));
+        assertTrue(removableClazzes.containsKey("org.vafer.multijdk.Unused"));
     }
 
 }

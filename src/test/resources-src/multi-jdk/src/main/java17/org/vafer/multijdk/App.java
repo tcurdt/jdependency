@@ -1,4 +1,4 @@
-package nl.basjes.maven.multijdk;
+package org.vafer.multijdk;
 /*
  * Copyright 2010-2023 The jdependency developers.
  *
@@ -15,8 +15,8 @@ package nl.basjes.maven.multijdk;
  * limitations under the License.
  */
 
-public class SpecificToJava17 {
+public class App {
     public String doSomething() {
-        return "java";
+        return new SpecificToJava17().doSomething() + " " + new OnlyUsedInJava17().doSomething();
     }
 }
