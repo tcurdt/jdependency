@@ -14,8 +14,8 @@ package nl.example;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import nl.basjes.maven.multijdk.JavaVersion;
-import nl.basjes.maven.multijdk.App;
+import org.vafer.multijdk.JavaVersion;
+import org.vafer.multijdk.App;
 
 public class Main {
     public static void main(String[] args) {

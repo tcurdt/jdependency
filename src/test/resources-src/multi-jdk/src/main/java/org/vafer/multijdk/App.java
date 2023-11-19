@@ -1,4 +1,4 @@
-package nl.basjes.maven.multijdk;
+package org.vafer.multijdk;
 /*
  * Copyright 2010-2023 The jdependency developers.
  *
@@ -15,18 +15,8 @@ package nl.basjes.maven.multijdk;
  * limitations under the License.
  */
 
-public abstract class AbstractJavaVersion {
-
-    public abstract String getCodeVersion();
-    public abstract String getJavaVersion();
-
-    public String getJavaMajorVersion() {
-        String version = getJavaVersion();
-        String[] versionElements = version.split("\\.");
-        String majorVersion = versionElements[0];
-        if ("1".equals(majorVersion)) {
-            majorVersion = versionElements[1];
-        }
-        return majorVersion;
+public class App {
+    public String doSomething() {
+        return "base";
     }
 }

@@ -35,7 +35,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>nl.basjes.maven</groupId>
+      <groupId>org.vafer</groupId>
       <artifactId>multi-jdk</artifactId>
       <version>1.0.0</version>
     </dependency>

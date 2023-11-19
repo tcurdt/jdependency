@@ -1,4 +1,4 @@
-package nl.basjes.maven.multijdk;
+package org.vafer.multijdk;
 /*
  * Copyright 2010-2023 The jdependency developers.
  *
@@ -17,6 +17,6 @@ package nl.basjes.maven.multijdk;
 
 public class Unused {
     public String doSomething() {
-        return "base";
+        return "java 11";
     }
 }

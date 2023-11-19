@@ -24,7 +24,7 @@
 
   <name>Multi Release Jar</name>
 
-  <groupId>nl.basjes.maven</groupId>
+  <groupId>org.vafer</groupId>
   <artifactId>multi-jdk</artifactId>
   <version>1.0.0</version>
 
@@ -85,7 +85,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>nl.basjes.maven.multijdk.Main</mainClass>
+              <mainClass>org.vafer.multijdk.Main</mainClass>
             </manifest>
             <manifestEntries>
               <Multi-Release>true</Multi-Release>
