@@ -3,6 +3,7 @@
 - Upgraded to ASM 9.6
 - Upgraded other internal dependencies
 - Added support for multi release jars (Thanks for Niels Basjes)
+- Changed minimum Maven version to 3.6.3
 
 ## Version 2.9.0, release 11.08.2023
 
