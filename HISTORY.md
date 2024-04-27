@@ -1,3 +1,7 @@
+## Version 2.11.0, release xx.xx.2024
+
+- Changed minium Java version to 11
+
 ## Version 2.10.0, release 25.01.2024
 
 - Upgraded to ASM 9.6

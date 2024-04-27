@@ -3,8 +3,9 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.release>11</maven.compiler.release>
     <additionalparam>-Xdoclint:none</additionalparam>
     <mavenVersion>3.6.3</mavenVersion>
     <mavenPluginPluginVersion>3.6.3</mavenPluginPluginVersion>
@@ -218,6 +219,7 @@
         <configuration>
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
+          <release>${maven.compiler.release}</release>
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
