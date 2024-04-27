@@ -6,9 +6,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <maven.compiler.release>11</maven.compiler.release>
-    <additionalparam>-Xdoclint:none</additionalparam>
-    <mavenVersion>3.6.3</mavenVersion>
-    <mavenPluginPluginVersion>3.6.3</mavenPluginPluginVersion>
+    <maven.version>3.9.6</maven.version>
     <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
     <asm.version>9.7</asm.version>
   </properties>
@@ -320,7 +318,7 @@
             <configuration>
               <rules>
                 <requireMavenVersion>
-                  <version>${mavenVersion}</version>
+                  <version>[${maven.version},4.0.0)</version>
                 </requireMavenVersion>
               </rules>
             </configuration>
