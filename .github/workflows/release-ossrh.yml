@@ -21,12 +21,17 @@ jobs:
       uses: actions/setup-java@v4
       with: # overwrite settings.xml
         distribution: 'zulu'
-        java-version: 16
+        java-version: 21
         server-id: ossrh
         server-username: OSSRH_USERNAME
         server-password: OSSRH_PASSWORD
         gpg-private-key: ${{ secrets.MAVEN_GPG_KEY }}
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+    - name: Maven
+      uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.9.6
 
     - name: Publish to Maven Central
       run: mvn -B -Prelease --file pom.xml deploy

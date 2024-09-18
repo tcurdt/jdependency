@@ -26,7 +26,12 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'zulu'
-        java-version: 16
+        java-version: 21
+
+    - name: Maven
+      uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.9.6
 
     - name: Build
       run: mvn -B site
