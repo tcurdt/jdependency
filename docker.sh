@@ -1,15 +1,14 @@
 #!/bin/sh
 
-MVN=3.5.4
-JDKS="jdk-9-slim jdk-10-slim jdk-11-slim"
+TAGS="3.9-eclipse-temurin-21-alpine"
 
-for JDK in $JDKS; do
-  echo "testing ${MVN}-${JDK}"
+for TAG in $TAGS; do
+  echo "testing ${TAG}"
 
-  docker run -it --rm --name jdependency-${JDK} \
+  docker run -it --rm --name jdependency-${TAG} \
     -v "$(pwd)":/usr/src/mymaven \
     -w /usr/src/mymaven \
-    maven:${MVN}-${JDK} \
+    maven:${TAG} \
     mvn clean test
 
 done
