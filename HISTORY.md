@@ -1,4 +1,8 @@
-## Version 2.12.0, release xx.xx.202x
+## Version 2.12.0, dev
+
+## Version 2.12.0, release 02.02.2025
+
+- Upgraded to ASM 9.7.1 (JDK 24 support)
 
 ## Version 2.11.0, release 18.11.2024
 
@@ -115,5 +119,3 @@
 ## Version 0.2, released 12.01.2006
 
 ## Version 0.1, released 28.05.2006
-
-
