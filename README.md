@@ -21,82 +21,82 @@ If feel adventures or want to help out feel free to get the latest code
 [via git](https://github.com/tcurdt/jdependency/tree/master).
 
 ```sh
-    git clone git://github.com/tcurdt/jdependency.git
+git clone git://github.com/tcurdt/jdependency.git
 ```
 
 ## How to use it
 
 ```java
-    final File jar1 = ...
-    final File jar2 = ...
+final File jar1 = ...
+final File jar2 = ...
 ```
 
 or
 
 ```java
-    final Path jar1 = ...
-    final Path jar2 = ...
+final Path jar1 = ...
+final Path jar2 = ...
 ```
 
 ### finding classpath clashes
 
 ```java
-    final Clazzpath cp = new Clazzpath();
-    cp.addClazzpathUnit(jar1, "jar1.jar");
-    cp.addClazzpathUnit(jar2, "jar2.jar");
+final Clazzpath cp = new Clazzpath();
+cp.addClazzpathUnit(jar1, "jar1.jar");
+cp.addClazzpathUnit(jar2, "jar2.jar");
 
-    final Set<Clazz> clashed = cp.getClashedClazzes();
-    for(Clazz clazz : clashed) {
-      System.out.println("class " + clazz + " is contained in " + clazz.getClasspathUnits());
-    }
+final Set<Clazz> clashed = cp.getClashedClazzes();
+for(Clazz clazz : clashed) {
+  System.out.println("class " + clazz + " is contained in " + clazz.getClasspathUnits());
+}
 ```
 
 ### finding different class versions
 
 ```java
-    final Clazzpath cp = new Clazzpath(true);
-    cp.addClazzpathUnit(jar1, "jar1.jar");
-    cp.addClazzpathUnit(jar2, "jar2.jar");
+final Clazzpath cp = new Clazzpath(true);
+cp.addClazzpathUnit(jar1, "jar1.jar");
+cp.addClazzpathUnit(jar2, "jar2.jar");
 
-    final Set<Clazz> clashed = cp.getClashedClazzes();
+final Set<Clazz> clashed = cp.getClashedClazzes();
 
-    final Set<Clazz> uniq = clashed.stream()
-      .filter(c -> c.getVersions().size() == 1)
-      .collect(Collectors.toSet());
+final Set<Clazz> uniq = clashed.stream()
+  .filter(c -> c.getVersions().size() == 1)
+  .collect(Collectors.toSet());
 
-    clashed.removeAll(uniq);
+clashed.removeAll(uniq);
 
-    for(Clazz clazz : clashed) {
-      System.out.println("class " + clazz + " differs accross " + clazz.getClasspathUnits());
-    }
+for(Clazz clazz : clashed) {
+  System.out.println("class " + clazz + " differs accross " + clazz.getClasspathUnits());
+}
 ```
 
 ### finding missing classes
 
 ```java
-    final Clazzpath cp = new Clazzpath();
-    cp.addClazzpathUnit(jar1, "jar1.jar");
+final Clazzpath cp = new Clazzpath();
+cp.addClazzpathUnit(jar1, "jar1.jar");
 
-    final Set<Clazz> missing = cp.getMissingClazzes();
-    for(Clazz clazz : missing) {
-      System.out.println("class " + clazz + " is missing");
-    }
+final Set<Clazz> missing = cp.getMissingClazzes();
+for(Clazz clazz : missing) {
+  System.out.println("class " + clazz + " is missing");
+}
 ```
 
 ### finding unused classes
 
 ```java
-    final Clazzpath cp = new Clazzpath();
-    final ClazzpathUnit artifact = cp.addClazzpathUnit(jar1, "artifact.jar");
-    cp.addClazzpathUnit(jar2, "dependency.jar");
+final Clazzpath cp = new Clazzpath();
+final ClazzpathUnit artifact = cp.addClazzpathUnit(jar1, "artifact.jar");
+cp.addClazzpathUnit(jar2, "dependency.jar");
 
-    final Set<Clazz> removable = cp.getClazzes();
-    removable.removeAll(artifact.getClazzes());
-    removable.removeAll(artifact.getTransitiveDependencies());
+final Set<Clazz> removable = cp.getClazzes();
+removable.removeAll(artifact.getClazzes());
+removable.removeAll(artifact.getTransitiveDependencies());
 
-    for(Clazz clazz : removable) {
-      System.out.println("class " + clazz + " is not required");
-    }
+for(Clazz clazz : removable) {
+  System.out.println("class " + clazz + " is not required");
+}
 ```
 
 ## Related projects
