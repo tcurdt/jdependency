@@ -8,7 +8,7 @@
     <maven.compiler.release>11</maven.compiler.release>
     <maven.version>3.9.6</maven.version>
     <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
-    <asm.version>9.7.1</asm.version>
+    <asm.version>9.8</asm.version>
   </properties>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.vafer</groupId>
