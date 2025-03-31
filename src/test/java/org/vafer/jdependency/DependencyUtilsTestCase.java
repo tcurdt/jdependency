@@ -49,9 +49,8 @@ public final class DependencyUtilsTestCase {
         if (tokens.length < 2) {
             return 0;
         }
-        int minor = Integer.parseInt(tokens[1]);
 
-        return minor;
+        return Integer.parseInt(tokens[1]);
     }
 
     @Test
@@ -66,7 +65,7 @@ public final class DependencyUtilsTestCase {
     //@Test
     public void testShouldFindDependenciesOfClassObject() throws Exception {
         final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
-        final Set<String> expectedDependencies = new HashSet<String>(Arrays.asList(
+        final Set<String> expectedDependencies = new HashSet<>(Arrays.asList(
                 "java.lang.Class",
                 "java.lang.CloneNotSupportedException",
                 "java.lang.IllegalArgumentException",
@@ -103,7 +102,7 @@ public final class DependencyUtilsTestCase {
     }
 
     //@Test
-    public void testShouldThrowOnInvalidStream() throws Exception {
+    public void testShouldThrowOnInvalidStream() {
         assertThrows(IOException.class, () -> {
             final InputStream inputStream = new FileInputStream("nope");
             final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(inputStream);

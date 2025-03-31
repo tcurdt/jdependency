@@ -28,6 +28,7 @@ import java.util.jar.JarInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
+import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.input.MessageDigestInputStream;
 import org.objectweb.asm.ClassReader;
@@ -85,7 +86,7 @@ public final class Clazzpath {
 
         for (Clazz clazz : unitClazzes) {
             clazz.removeClazzpathUnit(pUnit);
-            if (clazz.getClazzpathUnits().size() == 0) {
+            if (clazz.getClazzpathUnits().isEmpty()) {
                 clazzes.remove(clazz.getName());
             }
         }
@@ -119,7 +120,7 @@ public final class Clazzpath {
             final String prefix = separatorsToUnix(normalize(path.toString() + '/'));
 
             Iterable<Resource> resources = Files.walk(path)
-                .filter(p -> Files.isRegularFile(p))
+                .filter(Files::isRegularFile)
                 .filter(p -> isValidResourceName(p.getFileName().toString()))
                 .map(p -> (Resource) new Resource(p.toString().substring(prefix.length())) {
                     InputStream getInputStream() throws IOException {
@@ -135,23 +136,19 @@ public final class Clazzpath {
 
     public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
 
-        final JarInputStream inputStream = new JarInputStream(pInputStream);
-
-        try {
-
+        try (JarInputStream inputStream = new JarInputStream(pInputStream)) {
             Iterable<Resource> resources = asStream(inputStream)
-                .map(e -> e.getName())
-                .filter(name -> isValidResourceName(name))
+                .map(ZipEntry::getName)
+                .filter(Clazzpath::isValidResourceName)
                 .map(name -> (Resource) new Resource(name) {
-                    InputStream getInputStream() throws IOException {
+                    @Override
+                    InputStream getInputStream() {
                         return inputStream;
                     }
                 })::iterator;
 
-           return addClazzpathUnit(resources, pId, false);
+            return addClazzpathUnit(resources, pId, false);
 
-        } finally {
-            inputStream.close();
         }
     }
 

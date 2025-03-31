@@ -49,9 +49,6 @@ public class ClazzpathTestCase {
         }
     }
 
-    private final String kind;
-
-
     private static Path resourcePath( String filename ) {
         return Paths.get(filename);
     }
@@ -61,12 +58,12 @@ public class ClazzpathTestCase {
     }
 
     private static Set<ClazzpathUnit> unitSet(ClazzpathUnit[] ar) {
-        return new HashSet<ClazzpathUnit>(Arrays.asList(ar));
+        return Set.of(ar);
     }
 
     /**
      * Parameters for test
-     *
+     * <p>
      * 1. AddClazzpathUnit for classpath-based jars
      * 2. AddClazzpathUnit for filesystem-based jars
      * 3. AddClazzpathUnit for filesystem-based directories
@@ -98,8 +95,7 @@ public class ClazzpathTestCase {
             new Object[] { new AddClazzpathUnit() {
 
                 ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    final String p = filename;
-                    File file = resourceFile(p);
+                    File file = resourceFile(filename);
                     assertTrue("missing:" + file , file.exists() && file.isDirectory());
                     return toClazzpath.addClazzpathUnit(file, id);
                 }
@@ -116,8 +112,7 @@ public class ClazzpathTestCase {
             new Object[] { new AddClazzpathUnit() {
 
                 ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    final String p = filename;
-                    Path path = resourcePath(p);
+                    Path path = resourcePath(filename);
                     assertTrue("missing:" + path, Files.exists(path) && Files.isDirectory(path));
                     return toClazzpath.addClazzpathUnit(path, id);
                 }
@@ -129,7 +124,6 @@ public class ClazzpathTestCase {
     public ClazzpathTestCase( AddClazzpathUnit pAddClazzpathUnit, String pKind ) {
         super();
         addClazzpathUnit = pAddClazzpathUnit;
-        kind = pKind;
     }
 
     @Test
@@ -187,7 +181,7 @@ public class ClazzpathTestCase {
 
         final Set<Clazz> missing = cp.getMissingClazzes();
 
-        final Set<String> actual = new HashSet<String>();
+        final Set<String> actual = new HashSet<>();
         for (Clazz clazz : missing) {
             String name = clazz.getName();
             // ignore the rt
@@ -196,10 +190,10 @@ public class ClazzpathTestCase {
             }
         }
 
-        final Set<String> expected = new HashSet<String>(Arrays.asList(
+        final Set<String> expected = Set.of(
             "org.apache.commons.io.output.ProxyOutputStream",
             "org.apache.commons.io.input.ProxyInputStream"
-            ));
+            );
 
         assertEquals(expected, actual);
     }
