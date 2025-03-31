@@ -1,9 +1,5 @@
 ## [Unreleased] - 2025-xx-xx
-[Unreleased]: https://github.com/tcurdt/jdependency/compare/jdependency-2.13..HEAD
-
-
-## [2.13.0] - 2025-03-31
-[2.13.0]: https://github.com/tcurdt/jdependency/releases/tag/jdependency-2.13
+[Unreleased]: https://github.com/tcurdt/jdependency/compare/jdependency-2.12..HEAD
 
 - Upgraded to ASM 9.8
 
