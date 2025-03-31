@@ -8,7 +8,7 @@ on:
 jobs:
   ossrh:
     runs-on: ubuntu-latest
-#    if: github.event.repository.fork == false
+    if: github.event.repository.fork == false
     environment: maven-central
     permissions:
       contents: write
@@ -17,31 +17,31 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-#    - name: Version
-#      uses: tcurdt/action-verify-version-maven@main
-#
-#    - name: Setup Maven Central
-#      uses: actions/setup-java@v4
-#      with: # overwrite settings.xml
-#        distribution: 'zulu'
-#        java-version: 21
-#        server-id: ossrh
-#        server-username: OSSRH_USERNAME
-#        server-password: OSSRH_PASSWORD
-#        gpg-private-key: ${{ secrets.MAVEN_GPG_KEY }}
-#        gpg-passphrase: MAVEN_GPG_PASSPHRASE
-#
-#    - name: Maven
-#      uses: stCarolas/setup-maven@v5
-#      with:
-#        maven-version: 3.9.6
-#
-#    - name: Publish to Maven Central
-#      run: mvn -B -Prelease --file pom.xml deploy
-#      env:
-#        MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-#        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-#        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+    - name: Version
+      uses: tcurdt/action-verify-version-maven@main
+
+    - name: Setup Maven Central
+      uses: actions/setup-java@v4
+      with: # overwrite settings.xml
+        distribution: 'zulu'
+        java-version: 21
+        server-id: ossrh
+        server-username: OSSRH_USERNAME
+        server-password: OSSRH_PASSWORD
+        gpg-private-key: ${{ secrets.MAVEN_GPG_KEY }}
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+    - name: Maven
+      uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.9.6
+
+    - name: Publish to Maven Central
+      run: mvn -B -Prelease --file pom.xml deploy
+      env:
+        MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
 
     - name: Extract release notes
       uses: ffurrer2/extract-release-notes@v2
