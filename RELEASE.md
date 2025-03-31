@@ -1,7 +1,7 @@
 - mvn verify
 - mvn versions:display-dependency-updates
 - mvn versions:display-plugin-updates
-- update HISTORY.md
+- update CHANGELOG.md
 - change version in pom.xml
 - push and wait for build
 - create tag jdependency-VERSION

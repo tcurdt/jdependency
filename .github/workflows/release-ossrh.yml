@@ -46,7 +46,7 @@ jobs:
     - name: Extract release notes
       uses: ffurrer2/extract-release-notes@v2
       with:
-        changelog_file: HISTORY.md
+        changelog_file: CHANGELOG.md
         release_notes_file: RELEASE_NOTES.md
 
     - name: Create GitHub release
