@@ -63,7 +63,7 @@ public final class DependencyUtilsTestCase {
 
     }
 
-    //@Test
+    @Test
     public void testShouldFindDependenciesOfClassObject() throws Exception {
         final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
         final Set<String> expectedDependencies = new HashSet<String>(Arrays.asList(
@@ -102,7 +102,7 @@ public final class DependencyUtilsTestCase {
             dependencies);
     }
 
-    //@Test
+    @Test
     public void testShouldThrowOnInvalidStream() throws Exception {
         assertThrows(IOException.class, () -> {
             final InputStream inputStream = new FileInputStream("nope");
