@@ -1,24 +1,20 @@
 ## [Unreleased] - 2025-xx-xx
-[Unreleased]: https://github.com/tcurdt/jdependency/compare/jdependency-2.12..HEAD
 
 - Upgraded to ASM 9.8
 
 
 ## [2.12.0] - 2025-02-02
-[2.12.0]: https://github.com/tcurdt/jdependency/releases/tag/jdependency-2.12
 
 - Upgraded to ASM 9.7.1 (JDK 24 support)
 
 
 ## [2.11.0] - 2024-11-18
-[2.11.0]: https://github.com/tcurdt/jdependency/releases/tag/jdependency-2.11
 
 - Upgraded to ASM 9.7 (JDK 23 support)
 - Changed minimum Java to 11
 
 
 ## [2.10.0] - 2024-01-25
-[2.10.0]: https://github.com/tcurdt/jdependency/releases/tag/jdependency-2.10
 
 - Upgraded to ASM 9.6
 - Upgraded other internal dependencies
