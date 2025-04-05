@@ -1,22 +1,26 @@
-## Version 2.13.0, dev
+## [Unreleased] - 2025-xx-xx
 
 - Upgraded to ASM 9.8
 
-## Version 2.12.0, release 02.02.2025
+
+## [2.12.0] - 2025-02-02
 
 - Upgraded to ASM 9.7.1 (JDK 24 support)
 
-## Version 2.11.0, release 18.11.2024
+
+## [2.11.0] - 2024-11-18
 
 - Upgraded to ASM 9.7 (JDK 23 support)
-- Changed minimum Java version to 11
+- Changed minimum Java to 11
 
-## Version 2.10.0, release 25.01.2024
+
+## [2.10.0] - 2024-01-25
 
 - Upgraded to ASM 9.6
 - Upgraded other internal dependencies
 - Added support for multi release jars (Thanks to Niels Basjes)
 - Changed minimum Maven version to 3.6.3
+
 
 ## Version 2.9.0, release 11.08.2023
 
