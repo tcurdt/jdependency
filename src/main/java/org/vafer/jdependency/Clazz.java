@@ -37,8 +37,8 @@ public final class Clazz implements Comparable<Clazz> {
     private final Map<ClazzpathUnit, String> units = new HashMap<>();
 
     public static final class ClazzFile {
-        private ClazzpathUnit unit;
-        private String filename;
+        private final ClazzpathUnit unit;
+        private final String filename;
 
         public ClazzFile(ClazzpathUnit unit, String filename) {
             this.unit = unit;
@@ -74,7 +74,7 @@ public final class Clazz implements Comparable<Clazz> {
         name = pName;
     }
 
-    private static final Pattern EXTRACT_MULTI_RELEASE_JAVA_VERSION = Pattern.compile("^(?:META-INF[\\/\\\\]versions[\\/\\\\](\\d+)[\\/\\\\])?([^.]+).class$");
+    private static final Pattern EXTRACT_MULTI_RELEASE_JAVA_VERSION = Pattern.compile("^(?:META-INF[/\\\\]versions[/\\\\](\\d+)[\\/\\\\])?([^.]+).class$");
 
     public static final class ParsedFileName {
         public String className;
@@ -170,7 +170,6 @@ public final class Clazz implements Comparable<Clazz> {
         return new HashSet<>(units.values());
     }
 
-
     public void addDependency( final Clazz pClazz ) {
         pClazz.references.add(this);
         dependencies.add(pClazz);
@@ -185,19 +184,15 @@ public final class Clazz implements Comparable<Clazz> {
         return dependencies;
     }
 
-
-
     public Set<Clazz> getReferences() {
         return references;
     }
-
 
     public Set<Clazz> getTransitiveDependencies() {
         final Set<Clazz> all = new HashSet<>();
         findTransitiveDependencies(all);
         return all;
     }
-
 
     void findTransitiveDependencies( final Set<? super Clazz> pAll ) {
 
@@ -209,25 +204,27 @@ public final class Clazz implements Comparable<Clazz> {
         }
     }
 
-
-    public boolean equals( final Object pO ) {
-        if (pO.getClass() != Clazz.class) {
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != Clazz.class) {
             return false;
         }
-        final Clazz c = (Clazz) pO;
+        final Clazz c = (Clazz) obj;
         return name.equals(c.name);
     }
 
+    @Override
     public int hashCode() {
         return name.hashCode();
     }
 
-    public int compareTo( final Clazz pO ) {
-        return name.compareTo(((Clazz) pO).name);
+    @Override
+    public int compareTo(Clazz o) {
+        return name.compareTo(o.name);
     }
 
+    @Override
     public String toString() {
         return name + " in " + classFilenames;
     }
-
 }

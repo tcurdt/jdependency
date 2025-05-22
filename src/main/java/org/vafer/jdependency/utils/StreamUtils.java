@@ -27,7 +27,6 @@ import java.io.IOException;
 /**
  * internal - do not use
  */
-
 public final class StreamUtils {
 
     private StreamUtils() {}
@@ -43,10 +42,11 @@ public final class StreamUtils {
 
     public static Stream<JarEntry> asStream( final JarInputStream pInputStream ) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-            new Iterator<JarEntry>() {
+            new Iterator<>() {
 
                 JarEntry entry = null;
 
+                @Override
                 public boolean hasNext() {
                     try {
                         if (entry == null) {
@@ -58,6 +58,7 @@ public final class StreamUtils {
                     }
                 }
 
+                @Override
                 public JarEntry next() {
                     try {
                         JarEntry result = entry != null
