@@ -2,7 +2,7 @@
 
 ## [Unreleased] - 2025-xx-xx
 
-## [2.13.0] - 2025-xx-xx
+## [2.13.0] - 2025-06-14
 
 - Upgraded to ASM 9.8
 
