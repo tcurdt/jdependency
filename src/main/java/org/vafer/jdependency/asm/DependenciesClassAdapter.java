@@ -33,7 +33,6 @@ import org.objectweb.asm.commons.Remapper;
 /**
  * internal - do not use
  */
-
 public final class DependenciesClassAdapter extends ClassRemapper {
 
     private static final int OPCODES = Opcodes.ASM9;
@@ -50,11 +49,12 @@ public final class DependenciesClassAdapter extends ClassRemapper {
 
     private static class CollectingRemapper extends Remapper {
 
-        final Set<String> classes = new HashSet<String>();
+        final Set<String> classes = new HashSet<>();
 
-        public String map(String pClassName) {
-            classes.add(pClassName.replace('/', '.'));
-            return pClassName;
+        @Override
+        public String map(String internalName) {
+            classes.add(internalName.replace('/', '.'));
+            return internalName;
         }
     }
 
