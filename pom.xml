@@ -13,7 +13,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.vafer</groupId>
   <artifactId>jdependency</artifactId>
-  <version>2.13</version>
+  <version>2.14</version>
   <name>jdependency</name>
   <description>This project provides an API to analyse class dependencies</description>
   <url>http://github.com/tcurdt/jdependency</url>
@@ -53,8 +53,8 @@
   </scm>
   <distributionManagement>
     <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <id>central</id>
+      <url>https://central.sonatype.com/api/v1/publisher</url>
     </repository>
   </distributionManagement>
 
@@ -221,10 +221,18 @@
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
+
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.10.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+        </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
