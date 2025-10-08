@@ -15,7 +15,7 @@ Check the documentation on how to use it with [javadocs](https://tcurdt.github.i
 ## Where to get it
 
 The jars are available on [maven central](https://repo1.maven.org/maven2/org/vafer/jdependency/).
-The source releases you can get in the [download section](https://github.com/tcurdt/jdependency/downloads).
+The source releases you can get in the [release section](https://github.com/tcurdt/jdependency/releases).
 
 If feel adventures or want to help out feel free to get the latest code
 [via git](https://github.com/tcurdt/jdependency/tree/master).
