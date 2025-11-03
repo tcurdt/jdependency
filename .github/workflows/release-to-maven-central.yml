@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Version
         uses: tcurdt/action-verify-version-maven@main
@@ -52,7 +54,7 @@ jobs:
         run: |
           # remove jdependency- prefix of the tag.
           release_name="${GITHUB_REF_NAME#jdependency-}"
-          gh release create ${{ github.ref_name }} --title $release_name --notes-file RELEASE_NOTES.md
+          gh release create ${GITHUB_REF_NAME} --title $release_name --notes-file RELEASE_NOTES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
