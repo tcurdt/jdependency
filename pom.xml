@@ -3,9 +3,9 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.release>8</maven.compiler.release>
     <maven.version>3.9.6</maven.version>
     <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
     <asm.version>9.9.1</asm.version>
@@ -15,8 +15,8 @@
   <artifactId>jdependency</artifactId>
   <version>2.14</version>
   <name>jdependency</name>
-  <description>This project provides an API to analyse class dependencies</description>
-  <url>http://github.com/tcurdt/jdependency</url>
+  <description>This project provides an API to analyze class dependencies</description>
+  <url>https://github.com/tcurdt/jdependency</url>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
