@@ -37,8 +37,8 @@ public final class Clazz implements Comparable<Clazz> {
     private final Map<ClazzpathUnit, String> units = new HashMap<>();
 
     public static final class ClazzFile {
-        private ClazzpathUnit unit;
-        private String filename;
+        private final ClazzpathUnit unit;
+        private final String filename;
 
         public ClazzFile(ClazzpathUnit unit, String filename) {
             this.unit = unit;

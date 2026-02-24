@@ -28,6 +28,8 @@ import java.util.jar.JarInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.input.MessageDigestInputStream;
 import org.objectweb.asm.ClassReader;
@@ -118,30 +120,29 @@ public final class Clazzpath {
 
             final String prefix = separatorsToUnix(normalize(path.toString() + '/'));
 
-            Iterable<Resource> resources = Files.walk(path)
-                .filter(p -> Files.isRegularFile(p))
-                .filter(p -> isValidResourceName(p.getFileName().toString()))
-                .map(p -> (Resource) new Resource(p.toString().substring(prefix.length())) {
-                    InputStream getInputStream() throws IOException {
-                        return Files.newInputStream(p);
-                    }
-                })::iterator;
+            try (Stream<Path> stream = Files.walk(path)) {
+                Iterable<Resource> resources = stream
+                        .filter(Files::isRegularFile)
+                        .filter(p -> isValidResourceName(p.getFileName().toString()))
+                        .map(p -> (Resource) new Resource(p.toString().substring(prefix.length())) {
+                            InputStream getInputStream() throws IOException {
+                                return Files.newInputStream(p);
+                            }
+                        })::iterator;
 
-            return addClazzpathUnit(resources, pId, true);
+                return addClazzpathUnit(resources, pId, true);
+            }
         }
 
         throw new IllegalArgumentException("neither file nor directory");
     }
 
     public ClazzpathUnit addClazzpathUnit( final InputStream pInputStream, final String pId ) throws IOException {
-
-        final JarInputStream inputStream = new JarInputStream(pInputStream);
-
-        try {
+        try (final JarInputStream inputStream = new JarInputStream(pInputStream)) {
 
             Iterable<Resource> resources = asStream(inputStream)
-                .map(e -> e.getName())
-                .filter(name -> isValidResourceName(name))
+                .map(ZipEntry::getName)
+                .filter(Clazzpath::isValidResourceName)
                 .map(name -> (Resource) new Resource(name) {
                     InputStream getInputStream() throws IOException {
                         return inputStream;
@@ -149,9 +150,6 @@ public final class Clazzpath {
                 })::iterator;
 
            return addClazzpathUnit(resources, pId, false);
-
-        } finally {
-            inputStream.close();
         }
     }
 
