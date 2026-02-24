@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -7,15 +11,17 @@
     <maven.compiler.target>8</maven.compiler.target>
     <maven.compiler.release>8</maven.compiler.release>
     <maven.version>3.9.6</maven.version>
-    <test.workingDirectory>${project.build.directory}/test-working-directory</test.workingDirectory>
+    <test.workingDirectory
+    >${project.build.directory}/test-working-directory</test.workingDirectory>
     <asm.version>9.9.1</asm.version>
   </properties>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.vafer</groupId>
   <artifactId>jdependency</artifactId>
-  <version>2.14</version>
+  <version>2.15</version>
   <name>jdependency</name>
-  <description>This project provides an API to analyze class dependencies</description>
+  <description
+  >This project provides an API to analyze class dependencies</description>
   <url>https://github.com/tcurdt/jdependency</url>
   <licenses>
     <license>
@@ -48,7 +54,8 @@
   </contributors>
   <scm>
     <connection>scm:git:git@github.com:tcurdt/jdependency.git</connection>
-    <developerConnection>scm:git:git@github.com:tcurdt/jdependency.git</developerConnection>
+    <developerConnection
+    >scm:git:git@github.com:tcurdt/jdependency.git</developerConnection>
     <url>http://github.com/tcurdt/jdependency</url>
   </scm>
   <distributionManagement>
@@ -275,7 +282,8 @@
                 </relocation>
                 <relocation>
                   <pattern>org.objectweb.asm</pattern>
-                  <shadedPattern>org.vafer.jdeb.shaded.objectweb.asm</shadedPattern>
+                  <shadedPattern
+                  >org.vafer.jdeb.shaded.objectweb.asm</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -346,15 +354,33 @@
             </goals>
             <configuration>
               <target unless="maven.test.skip">
-                <mkdir dir="${test.workingDirectory}"></mkdir>
+                <mkdir dir="${test.workingDirectory}" />
                 <copy todir="${test.workingDirectory}">
-                  <fileset dir="${basedir}/src/test/resources" includes="*.jar"></fileset>
+                  <fileset
+                    dir="${basedir}/src/test/resources"
+                    includes="*.jar"
+                  />
                 </copy>
-                <unjar dest="${test.workingDirectory}/jar1" src="${test.workingDirectory}/jar1.jar"></unjar>
-                <unjar dest="${test.workingDirectory}/jar2" src="${test.workingDirectory}/jar2.jar"></unjar>
-                <unjar dest="${test.workingDirectory}/jar1-missing" src="${test.workingDirectory}/jar1-missing.jar"></unjar>
-                <unjar dest="${test.workingDirectory}/jar3using1" src="${test.workingDirectory}/jar3using1.jar"></unjar>
-                <unjar dest="${test.workingDirectory}/asm-6.0_BETA" src="${test.workingDirectory}/asm-6.0_BETA.jar"></unjar>
+                <unjar
+                  dest="${test.workingDirectory}/jar1"
+                  src="${test.workingDirectory}/jar1.jar"
+                />
+                <unjar
+                  dest="${test.workingDirectory}/jar2"
+                  src="${test.workingDirectory}/jar2.jar"
+                />
+                <unjar
+                  dest="${test.workingDirectory}/jar1-missing"
+                  src="${test.workingDirectory}/jar1-missing.jar"
+                />
+                <unjar
+                  dest="${test.workingDirectory}/jar3using1"
+                  src="${test.workingDirectory}/jar3using1.jar"
+                />
+                <unjar
+                  dest="${test.workingDirectory}/asm-6.0_BETA"
+                  src="${test.workingDirectory}/asm-6.0_BETA.jar"
+                />
               </target>
             </configuration>
           </execution>
