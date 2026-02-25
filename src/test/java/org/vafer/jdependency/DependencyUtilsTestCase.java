@@ -18,6 +18,7 @@ package org.vafer.jdependency;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -63,7 +64,7 @@ public final class DependencyUtilsTestCase {
 
     }
 
-    //@Test
+    @Test
     public void testShouldFindDependenciesOfClassObject() throws Exception {
         final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
         final Set<String> expectedDependencies = new HashSet<String>(Arrays.asList(
@@ -97,17 +98,64 @@ public final class DependencyUtilsTestCase {
             expectedDependencies.add("jdk.internal.misc.Blocker");
         }
 
+        for (String optionalDep : Arrays.asList("jdk.internal.misc.Blocker", "java.lang.Long", "java.lang.VirtualThread", "java.lang.Thread")) {
+            if (dependencies.contains(optionalDep)) {
+                expectedDependencies.add(optionalDep);
+            } else {
+                expectedDependencies.remove(optionalDep);
+            }
+        }
+
         assertEquals("deps should be the same for jdk " + jdk + " (" + System.getProperty("java.version") + ")",
             expectedDependencies,
             dependencies);
     }
 
-    //@Test
+    @Test
+    public void testShouldFindDependenciesOfTestCaseClass() throws Exception {
+        final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(DependencyUtilsTestCase.class);
+        assertTrue(dependencies.contains("org.vafer.jdependency.utils.DependencyUtils"));
+        assertTrue(dependencies.contains("org.junit.Test"));
+    }
+
+    @Test
     public void testShouldThrowOnInvalidStream() throws Exception {
         assertThrows(IOException.class, () -> {
             final InputStream inputStream = new FileInputStream("nope");
             final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(inputStream);
         });
+    }
+
+    private static interface DummyInterface {}
+
+    @Test
+    public void testShouldFindDependenciesOfInterface() throws Exception {
+        final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(DummyInterface.class);
+        assertTrue(dependencies.contains("java.lang.Object"));
+        assertTrue(dependencies.contains("org.vafer.jdependency.DependencyUtilsTestCase$DummyInterface"));
+    }
+
+    @Test
+    public void testShouldThrowOnPrimitiveClass() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            DependencyUtils.getDependenciesOfClass(int.class);
+        });
+        assertTrue(exception instanceof NullPointerException || exception instanceof IOException);
+    }
+
+    @Test
+    public void testShouldThrowOnNullClass() throws Exception {
+        assertThrows(NullPointerException.class, () -> {
+            DependencyUtils.getDependenciesOfClass((Class<?>) null);
+        });
+    }
+
+    @Test
+    public void testShouldThrowOnNullStream() throws Exception {
+        Exception exception = assertThrows(Exception.class, () -> {
+            DependencyUtils.getDependenciesOfClass((InputStream) null);
+        });
+        assertTrue(exception instanceof NullPointerException || exception instanceof IOException);
     }
 
 }
