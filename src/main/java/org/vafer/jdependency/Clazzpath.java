@@ -32,12 +32,11 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.input.MessageDigestInputStream;
-import org.objectweb.asm.ClassReader;
+import org.vafer.jdependency.utils.DependencyUtils;
 import static org.apache.commons.io.FilenameUtils.normalize;
 import static org.apache.commons.io.FilenameUtils.separatorsToUnix;
 
 import org.vafer.jdependency.Clazz.ParsedFileName;
-import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 import static org.vafer.jdependency.Clazz.parseClassFileName;
 import static org.vafer.jdependency.utils.StreamUtils.asStream;
@@ -173,8 +172,7 @@ public final class Clazzpath {
                     inputStream = calculatingInputStream;
                 }
 
-                final DependenciesClassAdapter v = new DependenciesClassAdapter();
-                new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+                final Set<String> depNames = DependencyUtils.getDependenciesOfClass(inputStream);
 
                 // get or create clazz
                 final String clazzName = resource.name;
@@ -201,7 +199,6 @@ public final class Clazzpath {
 
 
                 // iterate through all dependencies
-                final Set<String> depNames = v.getDependencies();
                 for (String depName : depNames) {
 
                     Clazz dep = getClazz(depName);

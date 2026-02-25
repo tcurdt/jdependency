@@ -38,7 +38,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Package
-        run: mvn -B clean package jacoco:report
+        run: mvn -B clean verify jacoco:report
 
       - name: Coverage
         uses: codecov/codecov-action@v7.0.0
