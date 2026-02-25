@@ -7,13 +7,12 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-    <maven.compiler.release>8</maven.compiler.release>
+    <maven.compiler.source>24</maven.compiler.source>
+    <maven.compiler.target>24</maven.compiler.target>
+    <maven.compiler.release>24</maven.compiler.release>
     <maven.version>3.9.6</maven.version>
     <test.workingDirectory
     >${project.build.directory}/test-working-directory</test.workingDirectory>
-    <asm.version>9.9.1</asm.version>
   </properties>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.vafer</groupId>
@@ -78,31 +77,6 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.21.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm</artifactId>
-      <version>${asm.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm-analysis</artifactId>
-      <version>${asm.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm-commons</artifactId>
-      <version>${asm.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm-util</artifactId>
-      <version>${asm.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.asm</groupId>
-      <artifactId>asm-tree</artifactId>
-      <version>${asm.version}</version>
     </dependency>
   </dependencies>
 
@@ -250,7 +224,8 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <minimizeJar>true</minimizeJar>
+              <!-- TODO: https://github.com/apache/maven-shade-plugin/issues/747 -->
+              <minimizeJar>false</minimizeJar>
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
@@ -264,26 +239,12 @@
               <artifactSet>
                 <includes>
                   <include>commons-io:commons-io</include>
-                  <include>org.ow2.asm:asm</include>
-                  <include>org.ow2.asm:asm-analysis</include>
-                  <include>org.ow2.asm:asm-commons</include>
-                  <include>org.ow2.asm:asm-util</include>
-                  <include>org.ow2.asm:asm-tree</include>
                 </includes>
               </artifactSet>
               <relocations>
                 <relocation>
                   <pattern>org.apache.commons</pattern>
                   <shadedPattern>org.vafer.jdeb.shaded.commons</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.ow2.asm</pattern>
-                  <shadedPattern>org.vafer.jdeb.shaded.ow2.asm</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.objectweb.asm</pattern>
-                  <shadedPattern
-                  >org.vafer.jdeb.shaded.objectweb.asm</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>

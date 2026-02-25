@@ -10,9 +10,10 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        # Always test on the latest version and LTS.
-        java: [8, 11, 17, 21, 25]
+        os: [ ubuntu-latest, windows-latest ]
+        java:
+          - 24 # Requires Java 24 or above for the Class-File API (java.lang.classfile)
+          - 25
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
