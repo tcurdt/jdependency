@@ -32,12 +32,14 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.input.MessageDigestInputStream;
-import org.objectweb.asm.ClassReader;
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.constantpool.ClassEntry;
+import java.lang.classfile.constantpool.PoolEntry;
 import static org.apache.commons.io.FilenameUtils.normalize;
 import static org.apache.commons.io.FilenameUtils.separatorsToUnix;
 
 import org.vafer.jdependency.Clazz.ParsedFileName;
-import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
 import static org.vafer.jdependency.Clazz.parseClassFileName;
 import static org.vafer.jdependency.utils.StreamUtils.asStream;
@@ -50,6 +52,8 @@ public final class Clazzpath {
     private final Map<String, Clazz> missing = new HashMap<>();
     private final Map<String, Clazz> clazzes = new HashMap<>();
     private final boolean versions;
+
+    private static final java.util.regex.Pattern DESCRIPTOR_PATTERN = java.util.regex.Pattern.compile("L([a-zA-Z0-9_/\\$]+);");
 
     private abstract static class Resource {
         public final String fileName;
@@ -173,8 +177,30 @@ public final class Clazzpath {
                     inputStream = calculatingInputStream;
                 }
 
-                final DependenciesClassAdapter v = new DependenciesClassAdapter();
-                new ClassReader(inputStream).accept(v, ClassReader.EXPAND_FRAMES | ClassReader.SKIP_DEBUG);
+                final byte[] bytes = inputStream.readAllBytes();
+                final ClassModel classModel = ClassFile.of().parse(bytes);
+                final Set<String> depNames = new HashSet<>();
+                for (PoolEntry entry : classModel.constantPool()) {
+                    if (entry instanceof ClassEntry classEntry) {
+                        String className = classEntry.asInternalName().replace('/', '.');
+                        if (className.startsWith("[")) {
+                            java.util.regex.Matcher m = DESCRIPTOR_PATTERN.matcher(classEntry.asInternalName());
+                            while (m.find()) {
+                                depNames.add(m.group(1).replace('/', '.'));
+                            }
+                        } else {
+                            depNames.add(className);
+                        }
+                    } else if (entry instanceof java.lang.classfile.constantpool.Utf8Entry utf8Entry) {
+                        String str = utf8Entry.stringValue();
+                        if (str.indexOf('L') != -1 && str.indexOf(';') != -1) {
+                            java.util.regex.Matcher m = DESCRIPTOR_PATTERN.matcher(str);
+                            while (m.find()) {
+                                depNames.add(m.group(1).replace('/', '.'));
+                            }
+                        }
+                    }
+                }
 
                 // get or create clazz
                 final String clazzName = resource.name;
@@ -201,7 +227,6 @@ public final class Clazzpath {
 
 
                 // iterate through all dependencies
-                final Set<String> depNames = v.getDependencies();
                 for (String depName : depNames) {
 
                     Clazz dep = getClazz(depName);

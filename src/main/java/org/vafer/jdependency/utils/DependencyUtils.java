@@ -17,10 +17,15 @@ package org.vafer.jdependency.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Set;
-
-import org.objectweb.asm.ClassReader;
-import org.vafer.jdependency.asm.DependenciesClassAdapter;
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.constantpool.ClassEntry;
+import java.lang.classfile.constantpool.PoolEntry;
+import java.lang.classfile.constantpool.Utf8Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * internal - do not use
@@ -68,11 +73,34 @@ public final class DependencyUtils {
     }
     */
 
+    private static final Pattern DESCRIPTOR_PATTERN = Pattern.compile("L([a-zA-Z0-9_/\\$]+);");
+
     public static Set<String> getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
-        final DependenciesClassAdapter v = new DependenciesClassAdapter();
-        new ClassReader( pInputStream ).accept( v, ClassReader.EXPAND_FRAMES );
-        final Set<String> depNames = v.getDependencies();
-        return depNames;
+        final byte[] bytes = pInputStream.readAllBytes();
+        final ClassModel classModel = ClassFile.of().parse(bytes);
+        final Set<String> dependencies = new HashSet<>();
+        for (PoolEntry entry : classModel.constantPool()) {
+            if (entry instanceof ClassEntry classEntry) {
+                String className = classEntry.asInternalName().replace('/', '.');
+                if (className.startsWith("[")) {
+                    Matcher m = DESCRIPTOR_PATTERN.matcher(classEntry.asInternalName());
+                    while (m.find()) {
+                        dependencies.add(m.group(1).replace('/', '.'));
+                    }
+                } else {
+                    dependencies.add(className);
+                }
+            } else if (entry instanceof Utf8Entry utf8Entry) {
+                String str = utf8Entry.stringValue();
+                if (str.indexOf('L') != -1 && str.indexOf(';') != -1) {
+                    Matcher m = DESCRIPTOR_PATTERN.matcher(str);
+                    while (m.find()) {
+                        dependencies.add(m.group(1).replace('/', '.'));
+                    }
+                }
+            }
+        }
+        return dependencies;
     }
 
     public static Set<String> getDependenciesOfClass( final Class<?> pClass ) throws IOException {
