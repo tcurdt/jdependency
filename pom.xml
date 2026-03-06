@@ -175,6 +175,11 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>3.21.0</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.6.1</version>
+        </plugin>
         <!-- Release plugins -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -294,6 +299,30 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-asmless-artifact</id>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <!-- Note: this path relies on m-shade-p config; if that changes, update here may be needed -->
+                  <file>${project.build.directory}/original-${project.artifactId}-${project.version}.jar</file>
+                  <type>jar</type>
+                  <classifier>classes</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
