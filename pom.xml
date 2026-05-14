@@ -13,7 +13,7 @@
     <maven.version>3.9.6</maven.version>
     <test.workingDirectory
     >${project.build.directory}/test-working-directory</test.workingDirectory>
-    <asm.version>9.9.1</asm.version>
+    <asm.version>9.10</asm.version>
   </properties>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.vafer</groupId>
