@@ -2,6 +2,10 @@
 
 ## [Unreleased] - 2026-xx-xx
 
+## [2.16.0] - 2026-05-24
+
+- Upgraded to ASM 9.10
+
 ## [2.15.0] - 2026-02-25
 
 - Changed minimum Java back to 8

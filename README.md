@@ -1,8 +1,6 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/tcurdt/jdependency/ci.yml?style=for-the-badge)](https://github.com/tcurdt/jdependency/actions)
 [![Coverage Status](https://img.shields.io/codecov/c/github/tcurdt/jdependency/master?style=for-the-badge)](https://codecov.io/gh/tcurdt/jdependency)
 [![Maven Central](https://img.shields.io/maven-central/v/org.vafer/jdependency.svg?style=for-the-badge&maxAge=86400)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.vafer%22%20AND%20a%3A%22jdependency%22)
-[![Join the chat](https://img.shields.io/gitter/room/tcurdt/jdependency?style=for-the-badge)](https://gitter.im/tcurdt/jdependency?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 
 # jdependency - explore your classpath
 
@@ -101,19 +99,16 @@ for(Clazz clazz : removable) {
 
 ## Related projects
 
-
 provides a report of the dependencies used/unused and provides a debloated version of the pom.xml
 
-
-| Project | Description |
-|---|---|
-| [maven-shade-plugin](https://maven.apache.org/plugins/maven-shade-plugin/) | allows to inline and optimize dependencies into a single jar |
-| [gradle-lean](https://github.com/cuzfrog/gradle-lean) | gradle version of the maven-shade plugin (stale) |
-| [shadow](https://github.com/GradleUp/shadow) | gradle version of the maven-shade plugin |
-| [jarjar](http://code.google.com/p/jarjar/) | allows to inline and optimize dependencies into a single jar (stale) |
-| [proguard](https://github.com/Guardsquare/proguard) | obfuscator, shrinker (GPL) |
-| [DepClean](https://github.com/castor-software/depclean) |  provides a report of the dependencies used/unused and provides a debloated version of the pom.xml|
-
+| Project                                                                    | Description                                                                                       |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| [maven-shade-plugin](https://maven.apache.org/plugins/maven-shade-plugin/) | allows to inline and optimize dependencies into a single jar                                      |
+| [gradle-lean](https://github.com/cuzfrog/gradle-lean)                      | gradle version of the maven-shade plugin (stale)                                                  |
+| [shadow](https://github.com/GradleUp/shadow)                               | gradle version of the maven-shade plugin                                                          |
+| [jarjar](http://code.google.com/p/jarjar/)                                 | allows to inline and optimize dependencies into a single jar (stale)                              |
+| [proguard](https://github.com/Guardsquare/proguard)                        | obfuscator, shrinker (GPL)                                                                        |
+| [DepClean](https://github.com/castor-software/depclean)                    | provides a report of the dependencies used/unused and provides a debloated version of the pom.xml |
 
 ## License
 
