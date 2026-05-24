@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.vafer</groupId>
   <artifactId>jdependency</artifactId>
-  <version>2.15</version>
+  <version>2.16</version>
   <name>jdependency</name>
   <description
   >This project provides an API to analyze class dependencies</description>
@@ -292,7 +292,8 @@
                 </relocation>
                 <relocation>
                   <pattern>org.objectweb.asm</pattern>
-                  <shadedPattern>org.vafer.jdeb.shaded.objectweb.asm</shadedPattern>
+                  <shadedPattern
+                  >org.vafer.jdeb.shaded.objectweb.asm</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -313,7 +314,8 @@
               <artifacts>
                 <artifact>
                   <!-- Note: this path relies on m-shade-p config; if that changes, update here may be needed -->
-                  <file>${project.build.directory}/original-${project.artifactId}-${project.version}.jar</file>
+                  <file
+                  >${project.build.directory}/original-${project.artifactId}-${project.version}.jar</file>
                   <type>jar</type>
                   <classifier>classes</classifier>
                 </artifact>
