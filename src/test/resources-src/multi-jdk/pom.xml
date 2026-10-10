@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
- ~ Copyright 2010-2024 The jdependency developers.
+ ~ Copyright 2010-2026 The jdependency developers.
  ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -15,11 +14,11 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
 -->
-
 <project
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
   <modelVersion>4.0.0</modelVersion>
 
   <name>Multi Release Jar</name>
@@ -33,7 +32,8 @@
     <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 
     <!-- Needed to make the build reproducible https://reproducible-builds.org/ -->
-    <project.build.outputTimestamp>2023-11-11T12:34:56Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp
+    >2023-11-11T12:34:56Z</project.build.outputTimestamp>
   </properties>
 
   <build>
@@ -54,7 +54,8 @@
               <source>11</source>
               <target>11</target>
               <release>11</release>
-              <compileSourceRoots>${project.basedir}/src/main/java11</compileSourceRoots>
+              <compileSourceRoots
+              >${project.basedir}/src/main/java11</compileSourceRoots>
               <multiReleaseOutput>true</multiReleaseOutput>
             </configuration>
           </execution>
@@ -68,7 +69,8 @@
               <source>17</source>
               <target>17</target>
               <release>17</release>
-              <compileSourceRoots>${project.basedir}/src/main/java17</compileSourceRoots>
+              <compileSourceRoots
+              >${project.basedir}/src/main/java17</compileSourceRoots>
               <multiReleaseOutput>true</multiReleaseOutput>
             </configuration>
           </execution>
@@ -111,11 +113,13 @@
                 <resource>
                   <directory>target</directory>
                   <includes>
-                    <include>${project.artifactId}-${project.version}.jar</include>
+                    <include
+                    >${project.artifactId}-${project.version}.jar</include>
                   </includes>
                 </resource>
               </resources>
-              <outputDirectory>${project.basedir}/../../resources/</outputDirectory>
+              <outputDirectory
+              >${project.basedir}/../../resources/</outputDirectory>
             </configuration>
           </execution>
         </executions>

@@ -1,6 +1,7 @@
 package org.vafer.multijdk;
+
 /*
- * Copyright 2010-2024 The jdependency developers.
+ * Copyright 2010-2026 The jdependency developers.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,8 @@ package org.vafer.multijdk;
  */
 
 public class SpecificToJava11 {
-    public String doSomething() {
-        return "java";
-    }
+
+  public String doSomething() {
+    return "java";
+  }
 }

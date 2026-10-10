@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
- ~ Copyright 2010-2024 The jdependency developers.
+ ~ Copyright 2010-2026 The jdependency developers.
  ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
 -->
-
 <project>
   <modelVersion>4.0.0</modelVersion>
 
@@ -30,7 +28,8 @@
     <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 
     <!-- Needed to make the build reproducible https://reproducible-builds.org/ -->
-    <project.build.outputTimestamp>2023-11-11T12:34:56Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp
+    >2023-11-11T12:34:56Z</project.build.outputTimestamp>
   </properties>
 
   <dependencies>
@@ -58,11 +57,13 @@
                 <resource>
                   <directory>target</directory>
                   <includes>
-                    <include>${project.artifactId}-${project.version}.jar</include>
+                    <include
+                    >${project.artifactId}-${project.version}.jar</include>
                   </includes>
                 </resource>
               </resources>
-              <outputDirectory>${project.basedir}/../../resources/</outputDirectory>
+              <outputDirectory
+              >${project.basedir}/../../resources/</outputDirectory>
             </configuration>
           </execution>
         </executions>

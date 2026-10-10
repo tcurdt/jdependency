@@ -1,6 +1,7 @@
 package org.vafer.multijdk;
+
 /*
- * Copyright 2010-2024 The jdependency developers.
+ * Copyright 2010-2026 The jdependency developers.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +18,17 @@ package org.vafer.multijdk;
 
 public abstract class AbstractJavaVersion {
 
-    public abstract String getCodeVersion();
-    public abstract String getJavaVersion();
+  public abstract String getCodeVersion();
 
-    public String getJavaMajorVersion() {
-        String version = getJavaVersion();
-        String[] versionElements = version.split("\\.");
-        String majorVersion = versionElements[0];
-        if ("1".equals(majorVersion)) {
-            majorVersion = versionElements[1];
-        }
-        return majorVersion;
+  public abstract String getJavaVersion();
+
+  public String getJavaMajorVersion() {
+    String version = getJavaVersion();
+    String[] versionElements = version.split("\\.");
+    String majorVersion = versionElements[0];
+    if ("1".equals(majorVersion)) {
+      majorVersion = versionElements[1];
     }
+    return majorVersion;
+  }
 }
