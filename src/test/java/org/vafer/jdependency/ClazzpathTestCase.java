@@ -15,11 +15,11 @@
  */
 package org.vafer.jdependency;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import static org.junit.Assert.*;
+import static org.objectweb.asm.Opcodes.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,268 +31,443 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
+import java.util.zip.ZipEntry;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
 
 @RunWith(Parameterized.class)
 public class ClazzpathTestCase {
 
-    private final AddClazzpathUnit addClazzpathUnit;
+  private final AddClazzpathUnit addClazzpathUnit;
 
-    private static abstract class AddClazzpathUnit {
+  private abstract static class AddClazzpathUnit {
 
-        abstract ClazzpathUnit to( Clazzpath clazzpath, String filename, String id ) throws IOException;
+    abstract ClazzpathUnit to(Clazzpath clazzpath, String filename, String id)
+      throws IOException;
 
-        final ClazzpathUnit to( Clazzpath clazzpath, String filename ) throws IOException {
-            return to(clazzpath, filename, filename);
-        }
+    final ClazzpathUnit to(Clazzpath clazzpath, String filename)
+      throws IOException {
+      return to(clazzpath, filename, filename);
+    }
+  }
+
+  private final String kind;
+
+  private static Path resourcePath(String filename) {
+    return Paths.get(filename);
+  }
+
+  private static File resourceFile(String filename) {
+    return Paths.get(filename).toFile();
+  }
+
+  private static Set<ClazzpathUnit> unitSet(ClazzpathUnit[] ar) {
+    return new HashSet<ClazzpathUnit>(Arrays.asList(ar));
+  }
+
+  private static Set<String> names(Set<Clazz> clazzes) {
+    return clazzes.stream().map(Clazz::getName).collect(Collectors.toSet());
+  }
+
+  private static Clazz missingClazz(Clazzpath clazzpath, String name) {
+    return clazzpath
+      .getMissingClazzes()
+      .stream()
+      .filter(c -> c.getName().equals(name))
+      .findFirst()
+      .orElse(null);
+  }
+
+  /**
+   * A jar with a single class `Root` calling `XMLInputFactory.newInstance()`
+   */
+  private static InputStream rootJarUsingXMLInputFactory() throws IOException {
+    final ClassWriter cw = new ClassWriter(0);
+    cw.visit(V1_8, ACC_PUBLIC, "Root", null, "java/lang/Object", null);
+    final MethodVisitor mv = cw.visitMethod(
+      ACC_PUBLIC | ACC_STATIC,
+      "main",
+      "()V",
+      null,
+      null
+    );
+    mv.visitCode();
+    mv.visitMethodInsn(
+      INVOKESTATIC,
+      "javax/xml/stream/XMLInputFactory",
+      "newInstance",
+      "()Ljavax/xml/stream/XMLInputFactory;",
+      false
+    );
+    mv.visitInsn(POP);
+    mv.visitInsn(RETURN);
+    mv.visitMaxs(1, 0);
+    mv.visitEnd();
+    cw.visitEnd();
+
+    final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    try (JarOutputStream jar = new JarOutputStream(bytes)) {
+      jar.putNextEntry(new ZipEntry("Root.class"));
+      jar.write(cw.toByteArray());
+      jar.closeEntry();
+    }
+    return new ByteArrayInputStream(bytes.toByteArray());
+  }
+
+  /**
+   * Parameters for test
+   *
+   * 1. AddClazzpathUnit for classpath-based jars
+   * 2. AddClazzpathUnit for filesystem-based jars
+   * 3. AddClazzpathUnit for filesystem-based directories
+   */
+  @Parameters(name = "{index}: {1}")
+  public static Collection<Object[]> data() {
+    return Arrays.asList(
+      new Object[] {
+        new AddClazzpathUnit() {
+          ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id)
+            throws IOException {
+            final String p = filename + ".jar";
+            InputStream resourceAsStream = getClass()
+              .getClassLoader()
+              .getResourceAsStream(p);
+            assertNotNull("missing:" + p, resourceAsStream);
+            return toClazzpath.addClazzpathUnit(resourceAsStream, id);
+          }
+        },
+        "classpath",
+      },
+      new Object[] {
+        new AddClazzpathUnit() {
+          ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id)
+            throws IOException {
+            final String p = filename + ".jar";
+            File file = resourceFile(p);
+            assertTrue("missing:" + file, file.exists() && file.isFile());
+            return toClazzpath.addClazzpathUnit(file, id);
+          }
+        },
+        "file-jar",
+      },
+      new Object[] {
+        new AddClazzpathUnit() {
+          ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id)
+            throws IOException {
+            final String p = filename;
+            File file = resourceFile(p);
+            assertTrue("missing:" + file, file.exists() && file.isDirectory());
+            return toClazzpath.addClazzpathUnit(file, id);
+          }
+        },
+        "file-directory",
+      },
+      new Object[] {
+        new AddClazzpathUnit() {
+          ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id)
+            throws IOException {
+            final String p = filename + ".jar";
+            Path path = resourcePath(p);
+            assertTrue(
+              "missing:" + path,
+              Files.exists(path) && Files.isRegularFile(path)
+            );
+            return toClazzpath.addClazzpathUnit(path, id);
+          }
+        },
+        "path-jar",
+      },
+      new Object[] {
+        new AddClazzpathUnit() {
+          ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id)
+            throws IOException {
+            final String p = filename;
+            Path path = resourcePath(p);
+            assertTrue(
+              "missing:" + path,
+              Files.exists(path) && Files.isDirectory(path)
+            );
+            return toClazzpath.addClazzpathUnit(path, id);
+          }
+        },
+        "path-directory",
+      }
+    );
+  }
+
+  public ClazzpathTestCase(AddClazzpathUnit pAddClazzpathUnit, String pKind) {
+    super();
+    addClazzpathUnit = pAddClazzpathUnit;
+    kind = pKind;
+  }
+
+  @Test
+  public void testShouldAddClasses() throws IOException {
+    final Clazzpath cp = new Clazzpath();
+    final ClazzpathUnit u1 = addClazzpathUnit.to(cp, "jar1");
+    final ClazzpathUnit u2 = addClazzpathUnit.to(cp, "jar2");
+
+    final ClazzpathUnit[] units = cp.getUnits();
+
+    assertEquals(2, units.length);
+    assertEquals(unitSet(new ClazzpathUnit[] { u1, u2 }), unitSet(units));
+
+    assertEquals(129, cp.getClazzes().size());
+
+    final Clazz clazz = cp.getClazz("org.apache.commons.io.IOUtils");
+    assertNotNull(clazz);
+
+    assertEquals(1, clazz.getClazzpathUnits().size());
+    assertEquals(
+      unitSet(new ClazzpathUnit[] { u1 }),
+      clazz.getClazzpathUnits()
+    );
+    assertEquals(23, clazz.getDependencies().size());
+    assertEquals(32, clazz.getTransitiveDependencies().size());
+    assertEquals(5, clazz.getReferences().size());
+  }
+
+  @Test
+  public void testShouldRemoveClasspathUnit() throws IOException {
+    final Clazzpath cp = new Clazzpath();
+
+    final ClazzpathUnit unit1 = addClazzpathUnit.to(cp, "jar1");
+
+    assertEquals(59, cp.getClazzes().size());
+
+    final ClazzpathUnit unit2 = addClazzpathUnit.to(cp, "jar2");
+
+    assertEquals(129, cp.getClazzes().size());
+
+    cp.removeClazzpathUnit(unit1);
+
+    assertEquals(70, cp.getClazzes().size());
+
+    cp.removeClazzpathUnit(unit2);
+
+    assertEquals(0, cp.getClazzes().size());
+  }
+
+  @Test
+  public void testShouldRevealMissingClasses() throws IOException {
+    final Clazzpath cp = new Clazzpath();
+    addClazzpathUnit.to(cp, "jar1-missing");
+
+    final Set<Clazz> missing = cp.getMissingClazzes();
+
+    final Set<String> actual = new HashSet<String>();
+    for (Clazz clazz : missing) {
+      String name = clazz.getName();
+      // ignore the rt
+      if (!name.startsWith("java")) {
+        actual.add(name);
+      }
     }
 
-    private final String kind;
+    final Set<String> expected = new HashSet<String>(
+      Arrays.asList(
+        "org.apache.commons.io.output.ProxyOutputStream",
+        "org.apache.commons.io.input.ProxyInputStream"
+      )
+    );
 
+    assertEquals(expected, actual);
+  }
 
-    private static Path resourcePath( String filename ) {
-        return Paths.get(filename);
+  @Test
+  public void testShouldShowClasspathUnitsResponsibleForClash()
+    throws IOException {
+    final Clazzpath cp = new Clazzpath();
+    final ClazzpathUnit a = addClazzpathUnit.to(cp, "jar1");
+    final ClazzpathUnit b = addClazzpathUnit.to(cp, "jar1", "foo");
+
+    final Set<Clazz> clashed = cp.getClashedClazzes();
+    final Set<Clazz> all = cp.getClazzes();
+
+    assertEquals(all, clashed);
+
+    for (Clazz clazz : clashed) {
+      assertTrue(clazz.getClazzpathUnits().contains(a));
+      assertTrue(clazz.getClazzpathUnits().contains(b));
     }
+  }
 
-    private static File resourceFile( String filename ) {
-        return Paths.get(filename).toFile();
+  @Test
+  public void testShouldFindUnusedClasses() throws IOException {
+    final Clazzpath cp = new Clazzpath();
+    final ClazzpathUnit artifact = addClazzpathUnit.to(cp, "jar3using1");
+    addClazzpathUnit.to(cp, "jar1");
+
+    final Set<Clazz> removed = cp.getClazzes();
+    removed.removeAll(artifact.getClazzes());
+    removed.removeAll(artifact.getTransitiveDependencies());
+
+    assertEquals("" + removed, 56, removed.size());
+
+    final Set<Clazz> kept = cp.getClazzes();
+    kept.removeAll(removed);
+
+    assertEquals("" + kept, 4, kept.size());
+  }
+
+  @Test
+  public void testShouldShowNonUniqClasspathUnitsResponsibleForClash()
+    throws IOException {
+    final Clazzpath cp = new Clazzpath(true);
+    addClazzpathUnit.to(cp, "jar1");
+    addClazzpathUnit.to(cp, "jar1", "foo");
+
+    final Set<Clazz> clashed = cp.getClashedClazzes();
+
+    assertEquals(59, clashed.size());
+
+    final Set<Clazz> uniq = clashed
+      .stream()
+      //            .map(c -> {
+      //                System.out.println("clazz:" + c + " versions:" + c.getVersions());
+      //                return c;
+      //            })
+      .filter(c -> c.getVersions().size() == 1)
+      .collect(Collectors.toSet());
+
+    clashed.removeAll(uniq);
+
+    assertEquals(0, clashed.size());
+  }
+
+  @Test
+  public void testMessageDigest() throws Exception {
+    final MessageDigest d1 = MessageDigest.getInstance("SHA-256");
+    final MessageDigest d2 = MessageDigest.getInstance("SHA-256");
+
+    // assertEquals(d1, d2);
+    // assertEquals(d1.hashCode(), d2.hashCode());
+
+    final byte[] d1bytes = d1.digest();
+    final byte[] d2bytes = d2.digest();
+
+    assertTrue(MessageDigest.isEqual(d1bytes, d2bytes));
+    assertArrayEquals(d1bytes, d2bytes);
+
+    // final Set<byte[]> set = new HashSet<>();
+    // set.add(d1bytes);
+    // set.add(d2bytes);
+    // assertEquals(1, set.size());
+  }
+
+  @Test
+  public void testWithModuleInfo() throws Exception {
+    final Clazzpath cp = new Clazzpath();
+    final ClazzpathUnit artifact = addClazzpathUnit.to(cp, "asm-6.0_BETA");
+
+    assertNull(artifact.getClazz("module-info"));
+  }
+
+  @Test
+  public void testShouldIgnoreDeclarationsByDefault() throws Exception {
+    final Clazzpath cp = new Clazzpath();
+    addClazzpathUnit.to(cp, "woodstox-core-6.2.3");
+
+    for (Clazz clazz : cp.getClazzes()) {
+      assertTrue(clazz.getDeclaredDependencies().isEmpty());
+      assertTrue(clazz.getDeclaredReferences().isEmpty());
     }
+  }
 
-    private static Set<ClazzpathUnit> unitSet(ClazzpathUnit[] ar) {
-        return new HashSet<ClazzpathUnit>(Arrays.asList(ar));
+  @Test
+  public void testShouldAddServiceDeclarations() throws Exception {
+    final Clazzpath plain = new Clazzpath();
+    addClazzpathUnit.to(plain, "woodstox-core-6.2.3");
+
+    final Clazzpath cp = new Clazzpath(false, DeclaredDependencies.services());
+    addClazzpathUnit.to(cp, "woodstox-core-6.2.3");
+
+    final Clazz provider = cp.getClazz("com.ctc.wstx.stax.WstxInputFactory");
+    assertNotNull(provider);
+    assertEquals(1, provider.getDeclaredReferences().size());
+
+    // the JDK interface is not on the classpath but still gets the edge
+    final Clazz factory = provider.getDeclaredReferences().iterator().next();
+    assertEquals("javax.xml.stream.XMLInputFactory", factory.getName());
+    assertEquals(
+      new HashSet<>(Arrays.asList("com.ctc.wstx.stax.WstxInputFactory")),
+      names(factory.getDeclaredDependencies())
+    );
+
+    // declarations don't change the classes or what is missing
+    assertEquals(names(plain.getClazzes()), names(cp.getClazzes()));
+    assertEquals(
+      names(plain.getMissingClazzes()),
+      names(cp.getMissingClazzes())
+    );
+  }
+
+  @Test
+  public void testShouldAddModuleInfoProvides() throws Exception {
+    final Clazzpath cp = new Clazzpath(
+      false,
+      DeclaredDependencies.moduleInfo()
+    );
+    final ClazzpathUnit unit = addClazzpathUnit.to(cp, "woodstox-core-6.2.3");
+
+    assertNull(unit.getClazz("module-info"));
+
+    final Clazz provider = cp.getClazz("com.ctc.wstx.stax.WstxOutputFactory");
+    assertNotNull(provider);
+    assertEquals(
+      new HashSet<>(Arrays.asList("javax.xml.stream.XMLOutputFactory")),
+      names(provider.getDeclaredReferences())
+    );
+  }
+
+  @Test
+  public void testShouldKeepServiceProviders() throws Exception {
+    final Clazzpath plain = new Clazzpath();
+    final ClazzpathUnit plainRoot = plain.addClazzpathUnit(
+      rootJarUsingXMLInputFactory(),
+      "root"
+    );
+    addClazzpathUnit.to(plain, "woodstox-core-6.2.3");
+
+    assertFalse(
+      names(plainRoot.getTransitiveDependencies()).contains(
+        "com.ctc.wstx.stax.WstxInputFactory"
+      )
+    );
+
+    for (boolean declarationsFirst : new boolean[] { true, false }) {
+      final Clazzpath cp = new Clazzpath(false, DeclaredDependencies.all());
+      final ClazzpathUnit root;
+      if (declarationsFirst) {
+        addClazzpathUnit.to(cp, "woodstox-core-6.2.3");
+        root = cp.addClazzpathUnit(rootJarUsingXMLInputFactory(), "root");
+      } else {
+        root = cp.addClazzpathUnit(rootJarUsingXMLInputFactory(), "root");
+        addClazzpathUnit.to(cp, "woodstox-core-6.2.3");
+      }
+
+      assertNotNull(missingClazz(cp, "javax.xml.stream.XMLInputFactory"));
+
+      final Set<String> kept = names(root.getTransitiveDependencies());
+      assertTrue(kept.contains("com.ctc.wstx.stax.WstxInputFactory"));
+      // and what the provider needs
+      assertTrue(
+        kept.containsAll(
+          names(
+            cp
+              .getClazz("com.ctc.wstx.stax.WstxInputFactory")
+              .getTransitiveDependencies()
+          )
+        )
+      );
+      // but not other providers
+      assertFalse(kept.contains("com.ctc.wstx.stax.WstxOutputFactory"));
     }
-
-    /**
-     * Parameters for test
-     *
-     * 1. AddClazzpathUnit for classpath-based jars
-     * 2. AddClazzpathUnit for filesystem-based jars
-     * 3. AddClazzpathUnit for filesystem-based directories
-     */
-    @Parameters(name = "{index}: {1}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(
-
-            new Object[] { new AddClazzpathUnit() {
-
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    final String p = filename + ".jar";
-                    InputStream resourceAsStream = getClass()
-                        .getClassLoader()
-                        .getResourceAsStream(p);
-                    assertNotNull("missing:" + p, resourceAsStream);
-                    return toClazzpath.addClazzpathUnit(resourceAsStream, id);
-                }
-            }, "classpath"},
-            new Object[] { new AddClazzpathUnit() {
-
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    final String p = filename + ".jar";
-                    File file = resourceFile(p);
-                    assertTrue("missing:" + file, file.exists() && file.isFile());
-                    return toClazzpath.addClazzpathUnit(file, id);
-                }
-            }, "file-jar"},
-            new Object[] { new AddClazzpathUnit() {
-
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    final String p = filename;
-                    File file = resourceFile(p);
-                    assertTrue("missing:" + file , file.exists() && file.isDirectory());
-                    return toClazzpath.addClazzpathUnit(file, id);
-                }
-            }, "file-directory"},
-            new Object[] { new AddClazzpathUnit() {
-
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    final String p = filename + ".jar";
-                    Path path = resourcePath(p);
-                    assertTrue("missing:" + path, Files.exists(path) && Files.isRegularFile(path));
-                    return toClazzpath.addClazzpathUnit(path, id);
-                }
-            }, "path-jar"},
-            new Object[] { new AddClazzpathUnit() {
-
-                ClazzpathUnit to(Clazzpath toClazzpath, String filename, String id) throws IOException {
-                    final String p = filename;
-                    Path path = resourcePath(p);
-                    assertTrue("missing:" + path, Files.exists(path) && Files.isDirectory(path));
-                    return toClazzpath.addClazzpathUnit(path, id);
-                }
-            }, "path-directory"}
-
-        );
-    }
-
-    public ClazzpathTestCase( AddClazzpathUnit pAddClazzpathUnit, String pKind ) {
-        super();
-        addClazzpathUnit = pAddClazzpathUnit;
-        kind = pKind;
-    }
-
-    @Test
-    public void testShouldAddClasses() throws IOException {
-
-        final Clazzpath cp = new Clazzpath();
-        final ClazzpathUnit u1 = addClazzpathUnit.to(cp, "jar1");
-        final ClazzpathUnit u2 = addClazzpathUnit.to(cp, "jar2");
-
-        final ClazzpathUnit[] units = cp.getUnits();
-
-        assertEquals(2, units.length);
-        assertEquals(unitSet(new ClazzpathUnit[]{ u1, u2 }), unitSet(units));
-
-        assertEquals(129, cp.getClazzes().size());
-
-        final Clazz clazz = cp.getClazz("org.apache.commons.io.IOUtils");
-        assertNotNull(clazz);
-
-        assertEquals(1, clazz.getClazzpathUnits().size());
-        assertEquals(unitSet(new ClazzpathUnit[]{u1}), clazz.getClazzpathUnits());
-        assertEquals(23, clazz.getDependencies().size());
-        assertEquals(32, clazz.getTransitiveDependencies().size());
-        assertEquals(5, clazz.getReferences().size());
-
-    }
-
-    @Test
-    public void testShouldRemoveClasspathUnit() throws IOException {
-
-        final Clazzpath cp = new Clazzpath();
-
-        final ClazzpathUnit unit1 = addClazzpathUnit.to(cp, "jar1");
-
-        assertEquals(59, cp.getClazzes().size());
-
-        final ClazzpathUnit unit2 = addClazzpathUnit.to(cp, "jar2");
-
-        assertEquals(129, cp.getClazzes().size());
-
-        cp.removeClazzpathUnit(unit1);
-
-        assertEquals(70, cp.getClazzes().size());
-
-        cp.removeClazzpathUnit(unit2);
-
-        assertEquals(0, cp.getClazzes().size());
-    }
-
-    @Test
-    public void testShouldRevealMissingClasses() throws IOException {
-
-        final Clazzpath cp = new Clazzpath();
-        addClazzpathUnit.to(cp, "jar1-missing");
-
-        final Set<Clazz> missing = cp.getMissingClazzes();
-
-        final Set<String> actual = new HashSet<String>();
-        for (Clazz clazz : missing) {
-            String name = clazz.getName();
-            // ignore the rt
-            if (!name.startsWith("java")) {
-                actual.add(name);
-            }
-        }
-
-        final Set<String> expected = new HashSet<String>(Arrays.asList(
-            "org.apache.commons.io.output.ProxyOutputStream",
-            "org.apache.commons.io.input.ProxyInputStream"
-            ));
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testShouldShowClasspathUnitsResponsibleForClash() throws IOException {
-
-        final Clazzpath cp = new Clazzpath();
-        final ClazzpathUnit a = addClazzpathUnit.to(cp, "jar1");
-        final ClazzpathUnit b = addClazzpathUnit.to(cp, "jar1", "foo");
-
-        final Set<Clazz> clashed = cp.getClashedClazzes();
-        final Set<Clazz> all = cp.getClazzes();
-
-        assertEquals(all, clashed);
-
-        for (Clazz clazz : clashed) {
-            assertTrue(clazz.getClazzpathUnits().contains(a));
-            assertTrue(clazz.getClazzpathUnits().contains(b));
-        }
-    }
-
-    @Test
-    public void testShouldFindUnusedClasses() throws IOException {
-
-        final Clazzpath cp = new Clazzpath();
-        final ClazzpathUnit artifact = addClazzpathUnit.to(cp, "jar3using1");
-        addClazzpathUnit.to(cp, "jar1");
-
-        final Set<Clazz> removed = cp.getClazzes();
-        removed.removeAll(artifact.getClazzes());
-        removed.removeAll(artifact.getTransitiveDependencies());
-
-        assertEquals("" + removed, 56, removed.size());
-
-        final Set<Clazz> kept = cp.getClazzes();
-        kept.removeAll(removed);
-
-        assertEquals("" + kept, 4, kept.size());
-    }
-
-    @Test
-    public void testShouldShowNonUniqClasspathUnitsResponsibleForClash() throws IOException {
-
-        final Clazzpath cp = new Clazzpath(true);
-        addClazzpathUnit.to(cp, "jar1");
-        addClazzpathUnit.to(cp, "jar1", "foo");
-
-        final Set<Clazz> clashed = cp.getClashedClazzes();
-
-        assertEquals(59, clashed.size());
-
-        final Set<Clazz> uniq = clashed.stream()
-//            .map(c -> {
-//                System.out.println("clazz:" + c + " versions:" + c.getVersions());
-//                return c;
-//            })
-            .filter(c -> c.getVersions().size() == 1)
-            .collect(Collectors.toSet());
-
-        clashed.removeAll(uniq);
-
-        assertEquals(0, clashed.size());
-    }
-
-    @Test
-    public void testMessageDigest() throws Exception {
-
-        final MessageDigest d1 = MessageDigest.getInstance("SHA-256");
-        final MessageDigest d2 = MessageDigest.getInstance("SHA-256");
-
-        // assertEquals(d1, d2);
-        // assertEquals(d1.hashCode(), d2.hashCode());
-
-        final byte[] d1bytes = d1.digest();
-        final byte[] d2bytes = d2.digest();
-
-        assertTrue(MessageDigest.isEqual(d1bytes, d2bytes));
-        assertArrayEquals(d1bytes, d2bytes);
-
-        // final Set<byte[]> set = new HashSet<>();
-        // set.add(d1bytes);
-        // set.add(d2bytes);
-        // assertEquals(1, set.size());
-    }
-
-
-    @Test
-    public void testWithModuleInfo() throws Exception {
-
-        final Clazzpath cp = new Clazzpath();
-        final ClazzpathUnit artifact = addClazzpathUnit.to(cp, "asm-6.0_BETA");
-
-        assertNull(artifact.getClazz("module-info"));
-    }
+  }
 }

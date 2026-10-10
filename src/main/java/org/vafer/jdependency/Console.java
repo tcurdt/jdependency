@@ -16,5 +16,5 @@
 package org.vafer.jdependency;
 
 public interface Console {
-    void println( final String pString );
+  void println(final String pString);
 }

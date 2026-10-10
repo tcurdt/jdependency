@@ -15,14 +15,14 @@
  */
 package org.vafer.jdependency.utils;
 
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.io.IOException;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * internal - do not use
@@ -30,46 +30,48 @@ import java.io.IOException;
 
 public final class StreamUtils {
 
-    private StreamUtils() {}
+  private StreamUtils() {}
 
-    // public static <T> Stream<T> asStream(Iterator<T> sourceIterator) {
-    //     return asStream(sourceIterator, false);
-    // }
+  // public static <T> Stream<T> asStream(Iterator<T> sourceIterator) {
+  //     return asStream(sourceIterator, false);
+  // }
 
-    // public static <T> Stream<T> asStream(Iterator<T> sourceIterator, boolean parallel) {
-    //     Iterable<T> iterable = () -> sourceIterator;
-    //     return StreamSupport.stream(iterable.spliterator(), parallel);
-    // }
+  // public static <T> Stream<T> asStream(Iterator<T> sourceIterator, boolean parallel) {
+  //     Iterable<T> iterable = () -> sourceIterator;
+  //     return StreamSupport.stream(iterable.spliterator(), parallel);
+  // }
 
-    public static Stream<JarEntry> asStream( final JarInputStream pInputStream ) {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-            new Iterator<JarEntry>() {
+  public static Stream<JarEntry> asStream(final JarInputStream pInputStream) {
+    return StreamSupport.stream(
+      Spliterators.spliteratorUnknownSize(
+        new Iterator<JarEntry>() {
+          JarEntry entry = null;
 
-                JarEntry entry = null;
+          public boolean hasNext() {
+            try {
+              if (entry == null) {
+                entry = pInputStream.getNextJarEntry();
+              }
+              return entry != null;
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          }
 
-                public boolean hasNext() {
-                    try {
-                        if (entry == null) {
-                            entry = pInputStream.getNextJarEntry();
-                        }
-                        return entry != null;
-                    } catch(IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                public JarEntry next() {
-                    try {
-                        JarEntry result = entry != null
-                          ? entry
-                          : pInputStream.getNextJarEntry();
-                        entry = null;
-                        return result;
-                    } catch(IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-            }, Spliterator.IMMUTABLE), false);
-    }
+          public JarEntry next() {
+            try {
+              JarEntry result =
+                entry != null ? entry : pInputStream.getNextJarEntry();
+              entry = null;
+              return result;
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          }
+        },
+        Spliterator.IMMUTABLE
+      ),
+      false
+    );
+  }
 }

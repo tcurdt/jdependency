@@ -17,7 +17,6 @@ package org.vafer.jdependency.asm;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -36,145 +35,205 @@ import org.objectweb.asm.commons.Remapper;
 
 public final class DependenciesClassAdapter extends ClassRemapper {
 
-    private static final int OPCODES = Opcodes.ASM9;
+  private static final int OPCODES = Opcodes.ASM9;
 
-    private static final EmptyVisitor ev = new EmptyVisitor();
+  private static final EmptyVisitor ev = new EmptyVisitor();
 
-    public DependenciesClassAdapter() {
-        super(ev, new CollectingRemapper());
+  public DependenciesClassAdapter() {
+    super(ev, new CollectingRemapper());
+  }
+
+  public Set<String> getDependencies() {
+    return ((CollectingRemapper) super.remapper).classes;
+  }
+
+  private static class CollectingRemapper extends Remapper {
+
+    final Set<String> classes = new HashSet<String>();
+
+    CollectingRemapper() {
+      super(OPCODES);
     }
 
-    public Set<String> getDependencies() {
-        return ((CollectingRemapper) super.remapper).classes;
+    public String map(String pClassName) {
+      classes.add(pClassName.replace('/', '.'));
+      return pClassName;
+    }
+  }
+
+  static class EmptyVisitor extends ClassVisitor {
+
+    private static final AnnotationVisitor av = new AnnotationVisitor(OPCODES) {
+      @Override
+      public AnnotationVisitor visitAnnotation(String name, String desc) {
+        return this;
+      }
+
+      @Override
+      public AnnotationVisitor visitArray(String name) {
+        return this;
+      }
+    };
+
+    private static final MethodVisitor mv = new MethodVisitor(OPCODES) {
+      @Override
+      public AnnotationVisitor visitAnnotationDefault() {
+        return av;
+      }
+
+      @Override
+      public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        return av;
+      }
+
+      @Override
+      public AnnotationVisitor visitParameterAnnotation(
+        int parameter,
+        String desc,
+        boolean visible
+      ) {
+        return av;
+      }
+
+      @Override
+      public AnnotationVisitor visitInsnAnnotation(
+        int typeRef,
+        TypePath typePath,
+        String descriptor,
+        boolean visible
+      ) {
+        return av;
+      }
+
+      @Override
+      public AnnotationVisitor visitLocalVariableAnnotation(
+        int typeRef,
+        TypePath typePath,
+        Label[] start,
+        Label[] end,
+        int[] index,
+        String descriptor,
+        boolean visible
+      ) {
+        return av;
+      }
+
+      @Override
+      public AnnotationVisitor visitTryCatchAnnotation(
+        int typeRef,
+        TypePath typePath,
+        String descriptor,
+        boolean visible
+      ) {
+        return av;
+      }
+
+      @Override
+      public AnnotationVisitor visitTypeAnnotation(
+        int typeRef,
+        TypePath typePath,
+        String descriptor,
+        boolean visible
+      ) {
+        return av;
+      }
+    };
+
+    private static final FieldVisitor fieldVisitor = new FieldVisitor(OPCODES) {
+      @Override
+      public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        return av;
+      }
+
+      @Override
+      public AnnotationVisitor visitTypeAnnotation(
+        int typeRef,
+        TypePath typePath,
+        String descriptor,
+        boolean visible
+      ) {
+        return av;
+      }
+    };
+
+    private static final ModuleVisitor moduleVisitor = new ModuleVisitor(
+      OPCODES
+    ) {};
+
+    private static final RecordComponentVisitor recordComponentVisitor =
+      new RecordComponentVisitor(OPCODES) {
+        @Override
+        public AnnotationVisitor visitAnnotation(
+          String descriptor,
+          boolean visible
+        ) {
+          return av;
+        }
+
+        @Override
+        public AnnotationVisitor visitTypeAnnotation(
+          int typeRef,
+          TypePath typePath,
+          String descriptor,
+          boolean visible
+        ) {
+          return av;
+        }
+      };
+
+    public EmptyVisitor() {
+      super(OPCODES);
     }
 
-    private static class CollectingRemapper extends Remapper {
-
-        final Set<String> classes = new HashSet<String>();
-
-        public String map(String pClassName) {
-            classes.add(pClassName.replace('/', '.'));
-            return pClassName;
-        }
+    @Override
+    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+      return av;
     }
 
-    static class EmptyVisitor extends ClassVisitor {
-
-        private static final AnnotationVisitor av = new AnnotationVisitor(OPCODES) {
-            @Override
-            public AnnotationVisitor visitAnnotation(String name, String desc) {
-                return this;
-            }
-
-            @Override
-            public AnnotationVisitor visitArray(String name) {
-                return this;
-            }
-        };
-
-        private static final MethodVisitor mv = new MethodVisitor(OPCODES) {
-            @Override
-            public AnnotationVisitor visitAnnotationDefault() {
-                return av;
-            }
-
-            @Override
-            public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                return av;
-            }
-
-            @Override
-            public AnnotationVisitor visitParameterAnnotation(
-                int parameter, String desc, boolean visible) {
-                return av;
-            }
-
-            @Override
-            public AnnotationVisitor visitInsnAnnotation( int typeRef, TypePath typePath, String descriptor,
-                                                          boolean visible ) {
-                return av;
-            }
-
-            @Override
-            public AnnotationVisitor visitLocalVariableAnnotation( int typeRef, TypePath typePath, Label[] start,
-                                                                   Label[] end, int[] index, String descriptor,
-                                                                   boolean visible ) {
-                return av;
-            }
-
-            @Override
-            public AnnotationVisitor visitTryCatchAnnotation( int typeRef, TypePath typePath, String descriptor,
-                                                              boolean visible ) {
-                return av;
-            }
-
-            @Override
-            public AnnotationVisitor visitTypeAnnotation( int typeRef, TypePath typePath, String descriptor,
-                                                          boolean visible ) {
-                return av;
-            }
-        };
-
-        private static final FieldVisitor fieldVisitor = new FieldVisitor(OPCODES) {
-            @Override
-            public AnnotationVisitor visitAnnotation( String desc, boolean visible ) {
-                return av;
-            }
-            @Override
-            public AnnotationVisitor visitTypeAnnotation( int typeRef, TypePath typePath, String descriptor,
-                                                          boolean visible ) {
-                return av;
-            }
-        };
-
-        private static final ModuleVisitor moduleVisitor = new ModuleVisitor(OPCODES) {
-        };
-
-        private static final RecordComponentVisitor recordComponentVisitor = new RecordComponentVisitor(OPCODES) {
-            @Override
-            public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-                return av;
-            }
-
-            @Override
-            public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible) {
-                return av;
-            }
-        };
-
-        public EmptyVisitor() {
-            super(OPCODES);
-        }
-
-        @Override
-        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-            return av;
-        }
-
-        @Override
-        public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-            return fieldVisitor;
-        }
-
-        @Override
-        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-            return mv;
-        }
-
-        @Override
-        public AnnotationVisitor visitTypeAnnotation( int typeRef, TypePath typePath, String descriptor,
-                                                      boolean visible ) {
-            return av;
-        }
-
-        @Override
-        public ModuleVisitor visitModule(String name, int access, String version) {
-            return moduleVisitor;
-        }
-
-        @Override
-        public RecordComponentVisitor visitRecordComponent(String name, String descriptor, String signature) {
-            return recordComponentVisitor;
-        }
+    @Override
+    public FieldVisitor visitField(
+      int access,
+      String name,
+      String desc,
+      String signature,
+      Object value
+    ) {
+      return fieldVisitor;
     }
+
+    @Override
+    public MethodVisitor visitMethod(
+      int access,
+      String name,
+      String desc,
+      String signature,
+      String[] exceptions
+    ) {
+      return mv;
+    }
+
+    @Override
+    public AnnotationVisitor visitTypeAnnotation(
+      int typeRef,
+      TypePath typePath,
+      String descriptor,
+      boolean visible
+    ) {
+      return av;
+    }
+
+    @Override
+    public ModuleVisitor visitModule(String name, int access, String version) {
+      return moduleVisitor;
+    }
+
+    @Override
+    public RecordComponentVisitor visitRecordComponent(
+      String name,
+      String descriptor,
+      String signature
+    ) {
+      return recordComponentVisitor;
+    }
+  }
 }

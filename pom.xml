@@ -416,6 +416,10 @@
                   dest="${test.workingDirectory}/asm-6.0_BETA"
                   src="${test.workingDirectory}/asm-6.0_BETA.jar"
                 />
+                <unjar
+                  dest="${test.workingDirectory}/woodstox-core-6.2.3"
+                  src="${test.workingDirectory}/woodstox-core-6.2.3.jar"
+                />
               </target>
             </configuration>
           </execution>

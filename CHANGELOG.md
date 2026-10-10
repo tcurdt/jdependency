@@ -2,6 +2,10 @@
 
 ## [Unreleased] - 2026-xx-xx
 
+- Added `DeclaredDependencies` to include class references from `META-INF/services`,
+  `module-info.class`, Spring and Sisu metadata (opt-in) #385
+- Fixed versioned `module-info.class` in multi-release jars being treated as a class
+
 ## [2.16.0] - 2026-05-24
 
 - Upgraded to ASM 9.10

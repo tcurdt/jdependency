@@ -18,7 +18,6 @@ package org.vafer.jdependency.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
-
 import org.objectweb.asm.ClassReader;
 import org.vafer.jdependency.asm.DependenciesClassAdapter;
 
@@ -27,9 +26,9 @@ import org.vafer.jdependency.asm.DependenciesClassAdapter;
  */
 public final class DependencyUtils {
 
-    private DependencyUtils() {}
+  private DependencyUtils() {}
 
-    /*
+  /*
     public static Set<String> getDependenciesOfJar( final InputStream pInputStream ) throws IOException {
 
         final JarInputStream inputStream = new JarInputStream(pInputStream);
@@ -68,16 +67,18 @@ public final class DependencyUtils {
     }
     */
 
-    public static Set<String> getDependenciesOfClass( final InputStream pInputStream ) throws IOException {
-        final DependenciesClassAdapter v = new DependenciesClassAdapter();
-        new ClassReader( pInputStream ).accept( v, ClassReader.EXPAND_FRAMES );
-        final Set<String> depNames = v.getDependencies();
-        return depNames;
-    }
+  public static Set<String> getDependenciesOfClass(
+    final InputStream pInputStream
+  ) throws IOException {
+    final DependenciesClassAdapter v = new DependenciesClassAdapter();
+    new ClassReader(pInputStream).accept(v, ClassReader.EXPAND_FRAMES);
+    final Set<String> depNames = v.getDependencies();
+    return depNames;
+  }
 
-    public static Set<String> getDependenciesOfClass( final Class<?> pClass ) throws IOException {
-        final String resource = "/" + pClass.getName().replace('.', '/') + ".class";
-        return getDependenciesOfClass(pClass.getResourceAsStream(resource));
-    }
-
+  public static Set<String> getDependenciesOfClass(final Class<?> pClass)
+    throws IOException {
+    final String resource = "/" + pClass.getName().replace('.', '/') + ".class";
+    return getDependenciesOfClass(pClass.getResourceAsStream(resource));
+  }
 }

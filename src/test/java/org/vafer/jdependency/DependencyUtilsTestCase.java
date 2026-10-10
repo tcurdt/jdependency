@@ -15,7 +15,6 @@
  */
 package org.vafer.jdependency;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -25,89 +24,99 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
+import org.junit.Test;
 import org.vafer.jdependency.utils.DependencyUtils;
 
 public final class DependencyUtilsTestCase {
 
-    public static int getJavaVersion() {
-        return parseVersion(System.getProperty("java.version"));
+  public static int getJavaVersion() {
+    return parseVersion(System.getProperty("java.version"));
+  }
+
+  public static int parseVersion(String version) {
+    String[] tokens = version.split("[.-]");
+
+    if (tokens.length < 1) {
+      return 0;
+    }
+    int major = Integer.parseInt(tokens[0]);
+
+    if (major != 1) {
+      return major;
     }
 
-    public static int parseVersion(String version) {
-        String[] tokens = version.split("[.-]");
+    if (tokens.length < 2) {
+      return 0;
+    }
+    int minor = Integer.parseInt(tokens[1]);
 
-        if (tokens.length < 1) {
-            return 0;
-        }
-        int major = Integer.parseInt(tokens[0]);
+    return minor;
+  }
 
-        if (major != 1) {
-            return major;
-        }
+  @Test
+  public void testVersions() {
+    assertEquals(11, parseVersion("11"));
+    assertEquals(11, parseVersion("11-ea"));
+    assertEquals(11, parseVersion("11.0.2"));
+    assertEquals(8, parseVersion("1.8.0_345"));
+  }
 
-        if (tokens.length < 2) {
-            return 0;
-        }
-        int minor = Integer.parseInt(tokens[1]);
+  //@Test
+  public void testShouldFindDependenciesOfClassObject() throws Exception {
+    final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(
+      Object.class
+    );
+    final Set<String> expectedDependencies = new HashSet<String>(
+      Arrays.asList(
+        "java.lang.Class",
+        "java.lang.CloneNotSupportedException",
+        "java.lang.IllegalArgumentException",
+        "java.lang.Integer",
+        "java.lang.InterruptedException",
+        "java.lang.Object",
+        "java.lang.String",
+        "java.lang.StringBuilder",
+        "java.lang.Thread",
+        "java.lang.Throwable"
+      )
+    );
 
-        return minor;
+    final int jdk = getJavaVersion();
+
+    if (jdk >= 9) {
+      expectedDependencies.add("java.lang.Deprecated");
     }
 
-    @Test
-    public void testVersions() {
-        assertEquals(11, parseVersion("11"));
-        assertEquals(11, parseVersion("11-ea"));
-        assertEquals(11, parseVersion("11.0.2"));
-        assertEquals(8, parseVersion("1.8.0_345"));
-
+    if (jdk >= 9 && jdk <= 15) {
+      expectedDependencies.add("jdk.internal.HotSpotIntrinsicCandidate");
     }
 
-    //@Test
-    public void testShouldFindDependenciesOfClassObject() throws Exception {
-        final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(Object.class);
-        final Set<String> expectedDependencies = new HashSet<String>(Arrays.asList(
-                "java.lang.Class",
-                "java.lang.CloneNotSupportedException",
-                "java.lang.IllegalArgumentException",
-                "java.lang.Integer",
-                "java.lang.InterruptedException",
-                "java.lang.Object",
-                "java.lang.String",
-                "java.lang.StringBuilder",
-                "java.lang.Thread",
-                "java.lang.Throwable"
-                ));
-
-        final int jdk = getJavaVersion();
-
-        if (jdk >= 9) {
-            expectedDependencies.add("java.lang.Deprecated");
-        }
-
-        if (jdk >=9 && jdk <= 15) {
-            expectedDependencies.add("jdk.internal.HotSpotIntrinsicCandidate");
-        }
-
-        if (jdk > 15) {
-            expectedDependencies.add("jdk.internal.vm.annotation.IntrinsicCandidate");
-        }
-
-        if (jdk > 16) {
-            expectedDependencies.add("jdk.internal.misc.Blocker");
-        }
-
-        assertEquals("deps should be the same for jdk " + jdk + " (" + System.getProperty("java.version") + ")",
-            expectedDependencies,
-            dependencies);
+    if (jdk > 15) {
+      expectedDependencies.add("jdk.internal.vm.annotation.IntrinsicCandidate");
     }
 
-    //@Test
-    public void testShouldThrowOnInvalidStream() throws Exception {
-        assertThrows(IOException.class, () -> {
-            final InputStream inputStream = new FileInputStream("nope");
-            final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(inputStream);
-        });
+    if (jdk > 16) {
+      expectedDependencies.add("jdk.internal.misc.Blocker");
     }
 
+    assertEquals(
+      "deps should be the same for jdk " +
+        jdk +
+        " (" +
+        System.getProperty("java.version") +
+        ")",
+      expectedDependencies,
+      dependencies
+    );
+  }
+
+  //@Test
+  public void testShouldThrowOnInvalidStream() throws Exception {
+    assertThrows(IOException.class, () -> {
+      final InputStream inputStream = new FileInputStream("nope");
+      final Set<String> dependencies = DependencyUtils.getDependenciesOfClass(
+        inputStream
+      );
+    });
+  }
 }

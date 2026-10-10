@@ -97,6 +97,34 @@ for(Clazz clazz : removable) {
 }
 ```
 
+### including declared dependencies
+
+Some classes are only loaded reflectively and are referenced from resources instead of bytecode
+(like `META-INF/services`). Without knowing about these they look unused.
+Declarations add an edge from the declared trigger (like the service interface) to the declared class,
+so it is part of the transitive dependencies whenever the trigger is.
+
+```java
+final Clazzpath cp = new Clazzpath(false, DeclaredDependencies.all());
+final ClazzpathUnit artifact = cp.addClazzpathUnit(jar1, "artifact.jar");
+cp.addClazzpathUnit(jar2, "dependency.jar");
+
+final Set<Clazz> removable = cp.getClazzes();
+removable.removeAll(artifact.getClazzes());
+removable.removeAll(artifact.getTransitiveDependencies());
+```
+
+| Declaration                              | Resource                          |
+| ---------------------------------------- | --------------------------------- |
+| `DeclaredDependencies.services()`        | `META-INF/services/*`             |
+| `DeclaredDependencies.moduleInfo()`      | `provides` in `module-info.class` |
+| `DeclaredDependencies.springImports()`   | `META-INF/spring/*.imports`       |
+| `DeclaredDependencies.springFactories()` | `META-INF/spring.factories`       |
+| `DeclaredDependencies.sisuIndex()`       | `META-INF/sisu/*`                 |
+
+Other formats listing one class per line can be added with `DeclaredDependencies.classList(prefix, suffix)`
+or by implementing `DeclaredDependencies`.
+
 ## Related projects
 
 provides a report of the dependencies used/unused and provides a debloated version of the pom.xml

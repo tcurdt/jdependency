@@ -22,42 +22,46 @@ import java.util.TreeMap;
 
 public final class ClazzpathUnit {
 
-    private final String id;
+  private final String id;
 
-    private final Map<String, Clazz> clazzes;
-    private final Map<String, Clazz> dependencies;
+  private final Map<String, Clazz> clazzes;
+  private final Map<String, Clazz> dependencies;
 
-    ClazzpathUnit( final String pId, final Map<String, Clazz> pClazzes, final Map<String, Clazz> pDependencies ) {
-        id = pId;
-        clazzes = pClazzes;
-        dependencies = pDependencies;
+  ClazzpathUnit(
+    final String pId,
+    final Map<String, Clazz> pClazzes,
+    final Map<String, Clazz> pDependencies
+  ) {
+    id = pId;
+    clazzes = pClazzes;
+    dependencies = pDependencies;
+  }
+
+  public Set<Clazz> getClazzes() {
+    return new HashSet<>(clazzes.values());
+  }
+
+  public Map<String, Clazz> getClazzesMap() {
+    return new TreeMap<>(clazzes);
+  }
+
+  public Clazz getClazz(final String pClazzName) {
+    return clazzes.get(pClazzName);
+  }
+
+  public Set<Clazz> getDependencies() {
+    return new HashSet<>(dependencies.values());
+  }
+
+  public Set<Clazz> getTransitiveDependencies() {
+    final Set<Clazz> all = new HashSet<>();
+    for (Clazz clazz : clazzes.values()) {
+      clazz.findTransitiveDependencies(all);
     }
+    return all;
+  }
 
-    public Set<Clazz> getClazzes() {
-        return new HashSet<>(clazzes.values());
-    }
-
-    public Map<String, Clazz> getClazzesMap() {
-        return new TreeMap<>(clazzes);
-    }
-
-    public Clazz getClazz( final String pClazzName ) {
-        return clazzes.get(pClazzName);
-    }
-
-    public Set<Clazz> getDependencies() {
-        return new HashSet<>(dependencies.values());
-    }
-
-    public Set<Clazz> getTransitiveDependencies() {
-        final Set<Clazz> all = new HashSet<>();
-        for (Clazz clazz : clazzes.values()) {
-            clazz.findTransitiveDependencies(all);
-        }
-        return all;
-    }
-
-    public String toString() {
-        return id;
-    }
+  public String toString() {
+    return id;
+  }
 }
