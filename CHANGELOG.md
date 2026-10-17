@@ -1,145 +1,144 @@
-# Changelog
+## Version 2.17, dev
 
-## [Unreleased] - 2026-xx-xx
-
-- Added `DeclaredDependencies` to include class references from `META-INF/services`,
+- [FIX] Fixed versioned `module-info.class` in multi-released jars being treated as a class
+- [CHG] Upgraded to ASM 9.11
+- [ADD] Added `DeclaredDependencies` to include class references from `META-INF/services`,
   `module-info.class`, Spring and Sisu metadata (opt-in) #385
-- Fixed versioned `module-info.class` in multi-release jars being treated as a class
 
-## [2.16.0] - 2026-05-24
+## Version 2.16.0, released 2026-05-24
 
-- Upgraded to ASM 9.10
+- [CHG] Upgraded to ASM 9.10
 
-## [2.15.0] - 2026-02-25
+## Version 2.15.0, released 2026-02-25
 
-- Changed minimum Java back to 8
-- Fixed a dangling InputStream
+- [FIX] Fixed a dangling InputStream
+- [CHG] Changed minimum Java back to 8
 
-## [2.14.0] - 2025-10-09
+## Version 2.14.0, released 2025-10-09
 
-- Upgraded to ASM 9.9
-- New release process
+- [CHG] Upgraded to ASM 9.9
+- [CHG] New released process
 
-## [2.13.0] - 2025-06-14
+## Version 2.13.0, released 2025-06-14
 
-- Upgraded to ASM 9.8
+- [CHG] Upgraded to ASM 9.8
 
-## [2.12.0] - 2025-02-02
+## Version 2.12.0, released 2025-02-02
 
-- Upgraded to ASM 9.7.1 (JDK 24 support)
+- [CHG] Upgraded to ASM 9.7.1 (JDK 24 support)
 
-## [2.11.0] - 2024-11-18
+## Version 2.11.0, released 2024-11-18
 
-- Upgraded to ASM 9.7 (JDK 23 support)
-- Changed minimum Java to 11
+- [CHG] Upgraded to ASM 9.7 (JDK 23 support)
+- [CHG] Changed minimum Java to 11
 
-## [2.10.0] - 2024-01-25
+## Version 2.10.0, released 2024-01-25
 
-- Upgraded to ASM 9.6
-- Upgraded other internal dependencies
-- Added support for multi release jars (Thanks to Niels Basjes)
-- Changed minimum Maven version to 3.6.3
+- [CHG] Upgraded to ASM 9.6
+- [CHG] Upgraded other internal dependencies
+- [CHG] Changed minimum Maven version to 3.6.3
+- [ADD] Added support for multi released jars (Thanks to Niels Basjes)
 
-## [2.9.0] - 2023-08-11
+## Version 2.9.0, released 2023-08-11
 
-- Upgraded to ASM 9.4 (JDK 20 support)
+- [CHG] Upgraded to ASM 9.4 (JDK 20 support)
 
-## [2.8.0] - 2022-08-04
+## Version 2.8.0, released 2022-08-04
 
-- Upgraded to ASM 9.3
+- [CHG] Upgraded to ASM 9.3
 
-## [2.7.0] - 2021-06-02
+## Version 2.7.0, released 2021-06-02
 
-- Changed test with java 16
-- Changed requires maven 3.6.0
-- Added ASM9 Opcodes
+- [CHG] Changed test with java 16
+- [CHG] Changed requires maven 3.6.0
+- [ADD] Added ASM9 Opcodes
 
-## [2.6.0] - 2021-02-10
+## Version 2.6.0, released 2021-02-10
 
-- Fixed issue #47, ClazzpathUnits should not be assigned for dependencies
-- Upgraded to ASM 9.1
+- [FIX] Fixed issue #47, ClazzpathUnits should not be assigned for dependencies
+- [CHG] Upgraded to ASM 9.1
 
-## [2.5.0] - 2020-10-16
+## Version 2.5.0, released 2020-10-16
 
-- Upgraded to ASM 9.0 (JDK 16 support)
+- [CHG] Upgraded to ASM 9.0 (JDK 16 support)
 
-## [2.4.0] - 2020-03-30
+## Version 2.4.0, released 2020-03-30
 
-- Upgraded to ASM 8.0
+- [CHG] Upgraded to ASM 8.0
 
-## [2.3.0] - 2019-11-11
+## Version 2.3.0, released 2019-11-11
 
-- Upgraded to ASM 7.2-beta
-- Fixed the shading of the dependencies
+- [FIX] Fixed the shading of the dependencies
+- [CHG] Upgraded to ASM 7.2-beta
 
-## [2.2.0] - 2019-05-23
+## Version 2.2.0, released 2019-05-23
 
-- Upgraded to ASM 7.1
+- [CHG] Upgraded to ASM 7.1
 
-## [2.1.1] - 2018-10-22
+## Version 2.1.1, released 2018-10-22
 
-- Fixed JDK11 compatibility
+- [FIX] Fixed JDK11 compatibility
 
-## [2.1.0] - 2018-10-16
+## Version 2.1.0, released 2018-10-16
 
-- Upgraded to ASM 7-beta (JDK11)
-- Added CI build for Windows
-- Fixed Windows file separator issues
+- [FIX] Fixed Windows file separator issues
+- [CHG] Upgraded to ASM 7-beta (JDK11)
+- [ADD] Added CI build for Windows
 
-## [2.0.0] - 2018-07-27
+## Version 2.0.0, released 2018-07-27
 
-- Upgraded ASM to support java 10
-- Raise minimum java version to 8
-- Internal use of nio
-- API not supports File and Path
-- Fixed tests
-- Added travis
+- [FIX] Fixed tests
+- [CHG] Upgraded ASM to support java 10
+- [CHG] Raise minimum java version to 8
+- [CHG] Internal use of nio
+- [ADD] API not supports File and Path
+- [ADD] Added travis
 
-## [1.4.0] - 2018-05-18
+## Version 1.4.0, released 2018-05-18
 
-- Upgraded dependencies
+- [CHG] Upgraded dependencies
 
-## [1.3.0] - 2018-01-02
+## Version 1.3.0, released 2018-01-02
 
-- Upgraded dependencies
-- Inlined the dependencies
-- Removed prerequisites from POM
+- [CHG] Upgraded dependencies
+- [CHG] Inlined the dependencies
+- [CHG] Removed prerequisites from POM
 
-## [1.2.0] - 2017-08-18
+## Version 1.2.0, released 2017-08-18
 
-- Exclude package-info and module-info
-- Upgrade to ASM 6-beta
+- [CHG] Exclude package-info and module-info
+- [CHG] Upgrade to ASM 6-beta
 
-## [1.1.0] - 2015-11-15
+## Version 1.1.0, released 2015-11-15
 
-- Fixed file handle leak
+- [FIX] Fixed file handle leak
 
-## [1.0.0] - 2015-03-08
+## Version 1.0.0, released 2015-03-08
 
-- Support for static methods on interfaces
+- [ADD] Support for static methods on interfaces
 
-## [0.9.0] - 2014-04-24
+## Version 0.9.0, released 2014-04-24
 
-- Upgrade to asm5 for java8 support
+- [CHG] Upgrade to asm5 for java8 support
 
-## [0.8.0] - Skipped
+## Version 0.8.0, released Skipped
 
-- Skipped for easier merging of forks
+- [CHG] Skipped for easier merging of forks
 
-## [0.7.0] - 2011-02-11
+## Version 0.7.0, released 2011-02-11
 
-- Fixed the commons-io groupId
+- [FIX] Fixed the commons-io groupId
 
-## [0.6.0] - 2010-06-27
+## Version 0.6.0, released 2010-06-27
 
-- Lot of refactoring and rename to jdependency
+- [CHG] Lot of refactoring and rename to jdependency
 
-## [0.5.0] - Skipped
+## Version 0.5.0, released Skipped
 
-## [0.4.0] - 2006-03-24
+## Version 0.4.0, released 2006-03-24
 
-## [0.3.0] - 2006-03-22
+## Version 0.3.0, released 2006-03-22
 
-## [0.2.0] - 2006-01-12
+## Version 0.2.0, released 2006-01-12
 
-## [0.1.0] - 2006-05-28
+## Version 0.1.0, released 2006-05-28
