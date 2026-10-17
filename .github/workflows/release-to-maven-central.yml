@@ -44,17 +44,11 @@ jobs:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
 
-      - name: Extract release notes
-        uses: ffurrer2/extract-release-notes@v3
-        with:
-          changelog_file: CHANGELOG.md
-          release_notes_file: RELEASE_NOTES.md
-
       - name: Create GitHub release
         run: |
           # remove jdependency- prefix of the tag.
           release_name="${GITHUB_REF_NAME#jdependency-}"
-          gh release create ${GITHUB_REF_NAME} --title $release_name --notes-file RELEASE_NOTES.md
+          gh release create ${GITHUB_REF_NAME} --title $release_name --notes-file CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
