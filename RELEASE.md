@@ -1,9 +1,7 @@
 - mvn verify
 - mvn versions:display-dependency-updates
 - mvn versions:display-plugin-updates
-- update CHANGELOG.md
-  1. Change the `Unreleased` header to the release version.
-  2. Add a new `Unreleased` section to the top.
+- update CHANGES.md
 - change version in pom.xml
 - push and wait for build
 - create tag jdependency-VERSION

@@ -1,4 +1,6 @@
-## Version 2.17, dev
+## Version 2.18, dev
+
+## Version 2.17, released 2026-10-18
 
 - [FIX] Fixed versioned `module-info.class` in multi-released jars being treated as a class
 - [CHG] Upgraded to ASM 9.11
